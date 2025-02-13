@@ -402,7 +402,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-02-08
+<strong>Last updated:</strong> 2025-02-13
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -533,15 +533,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree44edc2d93cc16873933d1d6ad9fea832002e9166targetblank44edc2da">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreea222b9e5181ffc01b43d51a323c73d4634da3482targetblanka222b9ea">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/44edc2d93cc16873933d1d6ad9fea832002e9166" target="_blank">44edc2d</a>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/a222b9e5181ffc01b43d51a323c73d4634da3482" target="_blank">a222b9e</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree44edc2d93cc16873933d1d6ad9fea832002e9166targetblank44edc2da"
+id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreea222b9e5181ffc01b43d51a323c73d4634da3482targetblanka222b9ea"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -551,7 +551,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/44edc2d93cc16873933d1d6ad9fea832002e9166" target="_blank">44edc2d</a>.
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/a222b9e5181ffc01b43d51a323c73d4634da3482" target="_blank">a222b9e</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -625,6 +625,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/a222b9e5181ffc01b43d51a323c73d4634da3482/analysis/balanced_nonoverlapping_ebmfcov_diag.Rmd" target="_blank">a222b9e</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+<td>
+Update analysis on ebmfcov for balanced nonoverlap
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/xxie6/covariance_decomps_dsc/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/balanced_nonoverlapping_ebmfcov_diag.html" target="_blank">4d53f1e</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/xxie6/covariance_decomps_dsc/blob/44edc2d93cc16873933d1d6ad9fea832002e9166/analysis/balanced_nonoverlapping_ebmfcov_diag.Rmd" target="_blank">44edc2d</a>
 </td>
 <td>
@@ -664,41 +698,296 @@ group_nonoverlap_1_ebmfcov_diag_1 &lt;- readRDS(&quot;data/group_nonoverlap_1_eb
 that we hope to recover:</p>
 <pre class="r"><code>plot_heatmap(group_nonoverlap_1$true_L)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-4-1.png" target="_blank">4d53f1e</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a heatmap of <span class="math inline">\(\hat{L}\)</span>,
 the estimate for <span class="math inline">\(L\)</span> from
 EBMFcov:</p>
 <pre class="r"><code>plot_heatmap(group_nonoverlap_1_ebmfcov_diag_1$est_L, brks = seq(0, max(group_nonoverlap_1_ebmfcov_diag_1$est_L), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-5-1.png" target="_blank">4d53f1e</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatterplot of the entries of <span
 class="math inline">\(\hat{L}\)</span>:</p>
 <pre class="r"><code>pops_vec &lt;- c(rep(&#39;A&#39;, 40), rep(&#39;B&#39;, 40), rep(&#39;C&#39;, 40), rep(&#39;D&#39;, 40))
 plot_loadings(group_nonoverlap_1_ebmfcov_diag_1$est_L, pops_vec)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-6-1.png" target="_blank">4d53f1e</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="visualizations-related-to-fit" class="section level2">
 <h2>Visualizations related to fit</h2>
 <p>This is the true Gram matrix, <span
 class="math inline">\(\frac{1}{p}XX&#39;\)</span>:</p>
-<pre class="r"><code>plot_heatmap(group_nonoverlap_1$data$YYt, brks = seq(0, max(group_nonoverlap_1$data$YYt), length.out = 50))</code></pre>
+<pre class="r"><code>plot_heatmap(group_nonoverlap_1$data$YYt, colors = c(&#39;blue&#39;,&#39;gray96&#39;, &#39;red&#39;), brks = seq(-max(abs(group_nonoverlap_1$data$YYt)), max(abs(group_nonoverlap_1$data$YYt)), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-7-1.png" target="_blank">4d53f1e</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a heatmap of the estimate of the Gram matrix, <span
 class="math inline">\(\hat{L}\hat{L}&#39;\)</span>:</p>
 <pre class="r"><code>plot_heatmap(group_nonoverlap_1_ebmfcov_diag_1$est_LLt, brks = seq(0, max(group_nonoverlap_1_ebmfcov_diag_1$est_LLt), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-8-1.png" target="_blank">4d53f1e</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatter plot of the fitted values vs observed values:</p>
-<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(group_nonoverlap_1_ebmfcov_diag_1$est_LLt))) + geom_point() + ylim(0, 6) + xlim(0,6) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
-<pre><code>Warning: Removed 3992 rows containing missing values or values outside the scale range
-(`geom_point()`).</code></pre>
+<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(group_nonoverlap_1_ebmfcov_diag_1$est_LLt))) + geom_point() + ylim(-1, 6) + xlim(-1,6) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-9-1.png" target="_blank">4d53f1e</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The model that we fit is <span class="math inline">\(XX&#39; \approx
 LL&#39; + D\)</span>, so let’s focus on the off-diagonal elements for
 now.</p>
 <pre class="r"><code>diag_idx &lt;- seq(1, prod(dim(group_nonoverlap_1$data$YYt)), length.out = ncol(group_nonoverlap_1$data$YYt))
 off_diag_idx &lt;- setdiff(c(1:prod(dim(group_nonoverlap_1$data$YYt))), diag_idx) </code></pre>
-<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(group_nonoverlap_1_ebmfcov_diag_1$est_LLt)[off_diag_idx])) + geom_point() + ylim(0, 6) + xlim(0,6) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
-<pre><code>Warning: Removed 3992 rows containing missing values or values outside the scale range
-(`geom_point()`).</code></pre>
+<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(group_nonoverlap_1_ebmfcov_diag_1$est_LLt)[off_diag_idx])) + geom_point() + ylim(-1, 6) + xlim(-1,6) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-11-1.png" target="_blank">4d53f1e</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="observations" class="section level2">
 <h2>Observations</h2>
@@ -748,10 +1037,84 @@ class="math inline">\(\hat{L}_{backfit}\)</span>, the estimate for <span
 class="math inline">\(L\)</span> from EBMFcov with backfitting:</p>
 <pre class="r"><code>plot_heatmap(cov_fit_backfit_fit$fl$L_pm, brks = seq(0, max(cov_fit_backfit_fit$fl$L_pm), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
+Past versions of unnamed-chunk-14-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-14-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-14-1.png" target="_blank">4d53f1e</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatterplot of the entries of <span
 class="math inline">\(\hat{L}_{backfit}\)</span>:</p>
 <pre class="r"><code>plot_loadings(cov_fit_backfit_fit$fl$L_pm, pops_vec)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
+Past versions of unnamed-chunk-15-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-15-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-15-1.png" target="_blank">4d53f1e</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is the elbo of the flash fit:</p>
 <pre class="r"><code>cov_fit_backfit_fit$fl$elbo</code></pre>
 <pre><code>[1] 20929.4</code></pre>
@@ -763,17 +1126,124 @@ class="math inline">\(\hat{L}_{backfit}\)</span>:</p>
 <pre class="r"><code>cov_fit_backfit_fit_estLLt &lt;- tcrossprod(cov_fit_backfit_fit$fl$L_pm)</code></pre>
 <pre class="r"><code>plot_heatmap(cov_fit_backfit_fit_estLLt, brks = seq(0, max(cov_fit_backfit_fit_estLLt), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-18-1">
+Past versions of unnamed-chunk-18-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-18-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-18-1.png" target="_blank">4d53f1e</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatter plot of the fitted values vs observed values:</p>
-<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(cov_fit_backfit_fit_estLLt))) + geom_point() + ylim(0, 6) + xlim(0,6) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
-<pre><code>Warning: Removed 4005 rows containing missing values or values outside the scale range
-(`geom_point()`).</code></pre>
+<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(cov_fit_backfit_fit_estLLt))) + geom_point() + ylim(-1, 7) + xlim(-1,7) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-19-1">
+Past versions of unnamed-chunk-19-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-19-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-19-1.png" target="_blank">4d53f1e</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatter plot of the off-diagonal entries of the fitted
 values vs those of the observed values:</p>
-<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(cov_fit_backfit_fit_estLLt)[off_diag_idx])) + geom_point() + ylim(0, 6) + xlim(0,6) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
-<pre><code>Warning: Removed 4000 rows containing missing values or values outside the scale range
-(`geom_point()`).</code></pre>
+<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(cov_fit_backfit_fit_estLLt)[off_diag_idx])) + geom_point() + ylim(-1, 7) + xlim(-1,7) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-20-1">
+Past versions of unnamed-chunk-20-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-20-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-20-1.png" target="_blank">4d53f1e</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>In this scatter plot, we should ideally see two groups – one
 corresponding to the near-zero values of the Gram matrix, and one
 corresponding to the non-zero values for samples within the same group.
