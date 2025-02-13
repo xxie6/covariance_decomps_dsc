@@ -1,0 +1,286 @@
+---
+title: "balanced_nonoverlapping_flash_normalf"
+author: "Annie Xie"
+date: "2025-02-04"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+In this analysis, we are exploring EBMF with a normal prior on F in the balanced, nonoverlapping setting.
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+library(flashier)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+# Flash with Normal Prior on F (with backfitting)
+
+```{r}
+group_nonoverlap_1 <- readRDS("data/group_nonoverlap_1.rds")
+group_nonoverlap_1_flash_normalf_1 <- readRDS("data/group_nonoverlap_1_flash_normalf_1.rds")
+```
+
+## Visualization of Estimate
+This is a heatmap of the true $L$ that we are hoping to recover:
+```{r}
+plot_heatmap(group_nonoverlap_1$true_L)
+```
+
+This is a heatmap of $\hat{L}$, the estimate for $L$ from Flashier with normal prior on $F$:
+```{r}
+plot_heatmap(group_nonoverlap_1_flash_normalf_1$est_L, brks = seq(0, max(group_nonoverlap_1_flash_normalf_1$est_L), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}$:
+```{r}
+pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
+plot_loadings(group_nonoverlap_1_flash_normalf_1$est_L, pops_vec)
+```
+
+## Visualizations related to fit
+
+This is the true Gram matrix, $\frac{1}{p}XX'$:
+```{r}
+plot_heatmap(group_nonoverlap_1$data$YYt, colors = c('blue','gray96', 'red'), brks = seq(-max(abs(group_nonoverlap_1$data$YYt)), max(abs(group_nonoverlap_1$data$YYt)), length.out = 50))
+```
+
+This is a heatmap of the estimate of the Gram matrix, $\hat{L}\hat{L}'$:
+```{r}
+plot_heatmap(group_nonoverlap_1_flash_normalf_1$est_LLt, brks = seq(0, max(group_nonoverlap_1_flash_normalf_1$est_LLt), length.out = 50))
+```
+
+This is a scatter plot of the fitted values vs observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(group_nonoverlap_1_flash_normalf_1$est_LLt))) + geom_point() + ylim(-1, 9) + xlim(-1,9) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+Let's focus on the off-diagonal elements:
+```{r}
+diag_idx <- seq(1, prod(dim(group_nonoverlap_1$data$YYt)), length.out = ncol(group_nonoverlap_1$data$YYt))
+off_diag_idx <- setdiff(c(1:prod(dim(group_nonoverlap_1$data$YYt))), diag_idx) 
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(group_nonoverlap_1_flash_normalf_1$est_LLt)[off_diag_idx])) + geom_point() + ylim(-1, 9) + xlim(-1,9) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+As mentioned in other explorations, ideally this scatter plot would have two clusters -- one cluster for the near-zero entries (corresponding to the sparse entries) and another cluster corresponding to the group effects. In this plot, we see that the fitted values corresponding to near-zero observed values range from 1-3., representing an elevated baseline. We have one cluster which falls on the y=x line; this seems to correspond to the group effect for group 3 (the group that was in the intercept factor). Lastly, we see a cluster with fitted values around 7.5-8; this corresponds to the group effect factors for the other groups. 
+
+This is the elbo of the flash fit:
+```{r}
+group_nonoverlap_1_flash_normalf_1$fit_obj$elbo
+```
+
+## Observations
+Similar to EBMFcov-greedy in this setting, Flashier with a normal prior on $F$ seems to add something like an intercept factor. In the ``intercept" factor, the group effect for one group is more prominent than the others; samples from this group have a higher loading value than others. This could be due to the backfitting step; it's possible that Flashier with a normal prior on $F$ without backfitting would lead to an estimate similar to that of EBMFcov-greedy (this is something we check in a later section). Another thought is whether backfitting would make the intercept factor more sparse, turning it into a group effect factor. 
+
+This estimate of $L$ doesn't lead to the best estimate for the Gram matrix. Due to the intercept-like factor, the estimate for the Gram matrix is not sparse.
+
+# Try additional backfitting
+
+```{r}
+flash_normalf_fit <- group_nonoverlap_1_flash_normalf_1$fit_obj
+flash_normalf_fit %>%
+  flash_backfit(maxiter = 1000)
+```
+
+## Visualizations of Estimate
+This is a heatmap of $\hat{L}_{backfit}$, the estimate for $L$:
+```{r}
+plot_heatmap(flash_normalf_fit$L_pm, brks = seq(0, max(flash_normalf_fit$L_pm), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}_{backfit}$:
+```{r}
+plot_loadings(group_nonoverlap_1_flash_normalf_1$est_L, pops_vec)
+```
+
+This is the elbo:
+```{r}
+flash_normalf_fit$elbo
+```
+
+## Observations
+Increasing the number of maximum backfitting iterations does not change the estimate. Therefore, for this setting, we can eliminate the possibility that the backfitting is converging slowly. 
+
+# For comparison, Flash with normal prior on F with no backfitting
+```{r}
+flash_normalf_nobackfit.wrapper <- function(input, args){
+  Kmax <- input$K
+  flash_fit <- flash_init(data = input$Y, var_type = 0) %>%
+    flash_greedy(ebnm_fn = c(args$ebnm_fn, ebnm::ebnm_normal), Kmax = Kmax)
+  flash_ldf <- ldf(flash_fit, type = "f") # I think the default option is type = f
+  flash_scaled_L <- (1/sqrt(ncol(input$Y)))*flash_ldf$L %*% diag(flash_ldf$D)
+  return(list(flash_fit = flash_fit, est_LLt = tcrossprod(flash_scaled_L)))
+}
+flash_normalf_nobackfit_data <- flash_normalf_nobackfit.wrapper(group_nonoverlap_1$data, args = list(ebnm_fn = ebnm::ebnm_generalized_binary))
+```
+
+## Visualization of Estimate
+This is a heatmap of $\hat{L}_{greedy}$, the estimate for $L$ from Flashier with normal prior on $F$ with no backfit:
+```{r}
+plot_heatmap(flash_normalf_nobackfit_data$flash_fit$L_pm, brks = seq(0, max(flash_normalf_nobackfit_data$flash_fit$L_pm), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}_{greedy}$:
+```{r}
+plot_loadings(flash_normalf_nobackfit_data$flash_fit$L_pm, pops_vec)
+```
+
+This is the elbo:
+```{r}
+flash_normalf_nobackfit_data$flash_fit$elbo
+```
+
+## Observations
+The estimate from Flashier with normal prior on F without backfitting looks like that from EBMFcov (without backfitting). The first factor from Flashier can often be interpreted as an intercept factor, so this behavior is not too surprising to me. This is also similar to behavior noted in the coordinate descent symnmf paper by Vandaele et al. (they note how if you use zero as an initial estimate for L, the first factor is often dense and the others are more sparse).
+
+# Try initializing with true values
+```{r}
+flash_normalf_fit_true_init <- flash_init(group_nonoverlap_1$data$Y) %>%
+  flash_factors_init(init = list(group_nonoverlap_1$data$LL, group_nonoverlap_1$data$FF), ebnm_fn = c(ebnm::ebnm_generalized_binary, ebnm::ebnm_normal)) %>%
+  flash_backfit()
+```
+
+## Visualizations of the Estimate
+This is a heatmap of $\hat{L}$, the estimate for $L$:
+```{r}
+plot_heatmap(flash_normalf_fit_true_init$L_pm, brks = seq(0, max(flash_normalf_fit_true_init$L_pm), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}$:
+```{r}
+plot_loadings(flash_normalf_fit_true_init$L_pm, pops_vec)
+```
+
+This is the corresponding elbo:
+```{r}
+flash_normalf_fit_true_init$elbo
+```
+
+## Observations
+We see that when we initialize at the true values, the estimate of $L$ looks much closer to the true value. The elbo is also higher, meaning this estimate is a better estimate (with respect to the objective function) than the one found with the greedy initialization. I'm curious how the joint-update algorithm compares to this.
+
+# Analyzing fit of the data matrix
+
+## Visualizations related to fit
+These visualizations are related to the fit of the data matrix, $X$.
+
+This is a scatter plot of the fitted values for $X$ vs the entries of $X$:
+```{r}
+X_fitted_vals <- fitted(group_nonoverlap_1_flash_normalf_1$fit_obj)
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$Y), y = c(X_fitted_vals))) + geom_point() + xlim(-11, 11) + ylim(-11, 11) + xlab('entries of X') + ylab('fitted values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+## Visualizations of the first component
+These are visualizations of one of the components, $l_k f_k'$, from the decomposition of $X$.
+```{r}
+est_component1 <- (group_nonoverlap_1_flash_normalf_1$fit_obj$L_pm[,1] %*% t(group_nonoverlap_1_flash_normalf_1$fit_obj$F_pm[,1]))
+```
+
+```{r}
+true_component1 <- group_nonoverlap_1$data$LL[,3] %*% t(group_nonoverlap_1$data$FF[,3])
+```
+
+This is a heatmap of the first estimated component:
+```{r}
+plot_heatmap(est_component1, colors_range = c('blue', 'gray96','red'), brks = seq(-max(abs(est_component1)), max(abs(est_component1)), length.out = 50))
+```
+
+This is a scatter plot of one column from the first estimated component:
+```{r}
+ggplot(data = NULL, aes(x = c(1:160))) + geom_point(aes(y = c(true_component1[,1])), color = 'red', alpha = 0.5) + geom_point(aes(y = c(est_component1[,1])), color = 'blue', alpha = 0.5) + xlab('index') + ylab('component entry')
+```
+
+This is a heatmap of the residualized $X$ matrix (this would be the data matrix when re-fitting the first component during backfitting):
+```{r}
+X_resid_est1 <- group_nonoverlap_1$data$Y - (group_nonoverlap_1_flash_normalf_1$fit_obj$L_pm[,2:4] %*% t(group_nonoverlap_1_flash_normalf_1$fit_obj$F_pm[,2:4]))
+```
+
+```{r}
+plot_heatmap(X_resid_est1, colors_range = c('blue', 'gray96','red'), brks = seq(-max(abs(X_resid_est1)), max(abs(X_resid_est1)), length.out = 50))
+```
+
+This is a heatmap of $X$ residualized using the true values for the components:
+```{r}
+X_resid_true1 <- group_nonoverlap_1$data$Y - (group_nonoverlap_1$data$LL[,c(1,2,4)] %*% t(group_nonoverlap_1$data$FF[,c(1,2,4)]))
+```
+
+```{r}
+plot_heatmap(X_resid_true1, colors_range = c('blue', 'gray96','red'), brks = seq(-max(abs(X_resid_true1)), max(abs(X_resid_true1)), length.out = 50))
+```
+
+## Visualizations related to F
+
+This is a heatmap of $\hat{F}'\hat{F}$:
+```{r}
+est_FtF <- crossprod(group_nonoverlap_1_flash_normalf_1$fit_obj$F_pm)
+```
+
+```{r}
+plot_heatmap(est_FtF, colors_range = c('blue', 'gray96','red'), brks = seq(-max(abs(est_FtF)), max(abs(est_FtF)), length.out = 50))
+```
+
+This is a heatmap of $\hat{L}(\hat{F}'\hat{F})$:
+```{r}
+LFtF_est <- group_nonoverlap_1_flash_normalf_1$est_L %*% est_FtF
+```
+
+```{r}
+plot_heatmap(LFtF_est, colors_range = c('blue', 'gray96','red'), brks = seq(-max(abs(LFtF_est)), max(abs(LFtF_est)), length.out = 50))
+```
+
+This is a scatter plot of one of the columns of $\hat{L}(\hat{F}'\hat{F})$:
+```{r}
+plot(LFtF_est[,1])
+```
+
+## Observations
+Analyzing the fit of the observations to the data matrix, the fitted values match the observed values relatively well. When considering $LF'FL'$ as an estimate for $XX'$ (as opposed to $LL'$), it seems like the negative entries in $F'F$ are cancelling out the baseline non-zero entries in the first factor of $L$.
+
+<!--
+# Notes
+This is a record of other things I've tried. 
+1. Fitting flash with a fixed standard normal prior on F. I did not expect this to make a difference, and it, in fact, did not -- the estimate still recovered the same type of structure.
+
+# Test: fixed prior
+```{r}
+ebnm_std_normal_fixed <- function(x, s, g_init, fix_g, output) {
+  ebnm_res <- ebnm::ebnm_normal(
+    x = x,
+    s = s,
+    g_init = ashr::normalmix(pi = 1, mean = 0, sd = 1),
+    fix_g = TRUE,
+    output = output,
+    control = list(iterlim = 10)
+  )
+  return(ebnm_res)
+}
+```
+
+```{r}
+flash_fixed_normalf.wrapper <- function(input, args){
+  Kmax <- input$K
+  flash_fit <- flash_init(data = input$Y, var_type = 0) %>%
+    flash_greedy(ebnm_fn = c(args$ebnm_fn, ebnm_std_normal_fixed), Kmax = Kmax) %>%
+    flash_backfit()
+  flash_ldf <- ldf(flash_fit, type = "f") # I think the default option is type = f
+  flash_scaled_L <- (1/sqrt(ncol(input$Y)))*flash_ldf$L %*% diag(flash_ldf$D)
+  return(list(flash_fit = flash_fit, est_LLt = tcrossprod(flash_scaled_L)))
+}
+flash_fixed_normalf_data <- flash_fixed_normalf.wrapper(group_nonoverlap_1$data, args = list(ebnm_fn = ebnm::ebnm_generalized_binary))
+```
+-->
