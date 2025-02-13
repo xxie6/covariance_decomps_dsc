@@ -10,4 +10,5 @@ editor_options:
 
 This site is for further exploring results from my DSC comparing methods for covariance decomposition.
   
-* Exploration of [EBMFcov in Balanced, nonoverlapping setting](balanced_nonoverlapping_ebmfcov_diag.html).
+* Exploration of [EBMFcov in Balanced, nonoverlapping setting](balanced_nonoverlapping_ebmfcov_diag.html).  
+* Exploration of [EBMF with normal prior on F in Balanced, nonoverlapping setting](balanced_nonoverlapping_flash_normalf.html)
