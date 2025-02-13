@@ -1,5 +1,6 @@
 
-plot_loadings <- function(L_est, Pop, legendYN = TRUE){
+plot_loadings <- function(L_est, Pop, legendYN = TRUE, scales_option = "fixed"){
+  # options for scales_option are "fixed" and "free_y"
   n <- nrow(L_est)
   k <- ncol(L_est)
   Idx <- rep(c(1:n), k)
@@ -9,7 +10,7 @@ plot_loadings <- function(L_est, Pop, legendYN = TRUE){
   plt <- ggplot(tib, aes(x = Idx, y = Loading, col = Pop)) +
     geom_point(show.legend = legendYN) +
     geom_hline(yintercept = 0, linetype = "dashed") +
-    facet_grid(cols = vars(Factor), scales = "free_y") +
+    facet_grid(cols = vars(Factor), scales = scales_option) +
     theme(axis.title.x = element_blank(),
           axis.title.y = element_blank(),
           axis.ticks.x = element_blank(),
