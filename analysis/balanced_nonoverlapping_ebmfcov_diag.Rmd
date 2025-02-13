@@ -51,7 +51,7 @@ plot_loadings(group_nonoverlap_1_ebmfcov_diag_1$est_L, pops_vec)
 
 This is the true Gram matrix, $\frac{1}{p}XX'$:
 ```{r}
-plot_heatmap(group_nonoverlap_1$data$YYt, brks = seq(0, max(group_nonoverlap_1$data$YYt), length.out = 50))
+plot_heatmap(group_nonoverlap_1$data$YYt, colors = c('blue','gray96', 'red'), brks = seq(-max(abs(group_nonoverlap_1$data$YYt)), max(abs(group_nonoverlap_1$data$YYt)), length.out = 50))
 ```
 
 This is a heatmap of the estimate of the Gram matrix, $\hat{L}\hat{L}'$:
@@ -61,7 +61,7 @@ plot_heatmap(group_nonoverlap_1_ebmfcov_diag_1$est_LLt, brks = seq(0, max(group_
 
 This is a scatter plot of the fitted values vs observed values:
 ```{r}
-ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(group_nonoverlap_1_ebmfcov_diag_1$est_LLt))) + geom_point() + ylim(0, 6) + xlim(0,6) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(group_nonoverlap_1_ebmfcov_diag_1$est_LLt))) + geom_point() + ylim(-1, 6) + xlim(-1,6) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
 ```
 
 The model that we fit is $XX' \approx LL' + D$, so let's focus on the off-diagonal elements for now.
@@ -71,7 +71,7 @@ off_diag_idx <- setdiff(c(1:prod(dim(group_nonoverlap_1$data$YYt))), diag_idx)
 ```
 
 ```{r}
-ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(group_nonoverlap_1_ebmfcov_diag_1$est_LLt)[off_diag_idx])) + geom_point() + ylim(0, 6) + xlim(0,6) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(group_nonoverlap_1_ebmfcov_diag_1$est_LLt)[off_diag_idx])) + geom_point() + ylim(-1, 6) + xlim(-1,6) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
 ```
 
 ## Observations
@@ -139,12 +139,12 @@ plot_heatmap(cov_fit_backfit_fit_estLLt, brks = seq(0, max(cov_fit_backfit_fit_e
 
 This is a scatter plot of the fitted values vs observed values:
 ```{r}
-ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(cov_fit_backfit_fit_estLLt))) + geom_point() + ylim(0, 6) + xlim(0,6) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(cov_fit_backfit_fit_estLLt))) + geom_point() + ylim(-1, 7) + xlim(-1,7) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
 ```
 
 This is a scatter plot of the off-diagonal entries of the fitted values vs those of the observed values:
 ```{r}
-ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(cov_fit_backfit_fit_estLLt)[off_diag_idx])) + geom_point() + ylim(0, 6) + xlim(0,6) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(cov_fit_backfit_fit_estLLt)[off_diag_idx])) + geom_point() + ylim(-1, 7) + xlim(-1,7) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
 ```
 
 In this scatter plot, we should ideally see two groups -- one corresponding to the near-zero values of the Gram matrix, and one corresponding to the non-zero values for samples within the same group. We see one group where the observed values are around 4-5 and the fitted values are around 1 -- this probably corresponds to the group effect that was recovered only after backfitting. This group effect has a lower loadings value than the other group effects.
