@@ -91,7 +91,7 @@ This estimate of $L$ doesn't lead to the best estimate for the Gram matrix. Due 
 ```{r}
 flash_normalf_fit <- group_nonoverlap_1_flash_normalf_1$fit_obj
 flash_normalf_fit %>%
-  flash_backfit(maxiter = 1000)
+  flash_backfit(tol = 10^(-16), verbose = 3)
 ```
 
 ## Visualizations of Estimate
@@ -111,7 +111,7 @@ flash_normalf_fit$elbo
 ```
 
 ## Observations
-Increasing the number of maximum backfitting iterations does not change the estimate. Therefore, for this setting, we can eliminate the possibility that the backfitting is converging slowly. 
+One thing I did was try increasing th number of maximum backfitting iterations. Increasing the number of maximum backfitting iterations does not change the estimate. (I checked the number of iterations afterwards and it only took 28 backfitting iterations to stop, so that makes sense). Another thing I tried was decreasing the tolerance level. This also does not change the estimate. Therefore, for this setting, we can eliminate the possibility that the backfitting is converging slowly. 
 
 # For comparison, Flash with normal prior on F with no backfitting
 ```{r}
@@ -250,6 +250,78 @@ plot(LFtF_est[,1])
 
 ## Observations
 Analyzing the fit of the observations to the data matrix, the fitted values match the observed values relatively well. When considering $LF'FL'$ as an estimate for $XX'$ (as opposed to $LL'$), it seems like the negative entries in $F'F$ are cancelling out the baseline non-zero entries in the first factor of $L$.
+
+# Try more factors
+Another question of interest is whether adding a fifth factor would add the final group effect. Furthermore, if we do backfit, then it would make sense for the first factor to zero out (since it is not necessary to explain the fit anymore). We test this out in this section.
+
+```{r}
+flash_normalf_K5_fit <- flash_init(group_nonoverlap_1$data$Y) %>%
+  flash_greedy(Kmax = 5, ebnm_fn = c(ebnm::ebnm_generalized_binary, ebnm_normal)) %>%
+  flash_backfit()
+```
+
+## Visualization of Estimate
+
+This is a heatmap of $\hat{L}$, the estimate for $L$ from Flashier with normal prior on $F$:
+```{r}
+plot_heatmap(flash_normalf_K5_fit$L_pm, brks = seq(0, max(flash_normalf_K5_fit$L_pm), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}_{K5}$:
+```{r}
+pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
+plot_loadings(flash_normalf_K5_fit$L_pm, pops_vec)
+```
+
+This are the entries of the first column of $\hat{L}_{K5}$:
+```{r}
+flash_normalf_K5_fit$L_pm[,1]
+```
+
+## Visualizations related to fit
+
+This is a heatmap of the estimate of the Gram matrix, $\hat{L}_{K5}\hat{L}_{K5}'$:
+
+```{r}
+scaled_flash_normalf_K5_fit <- ldf(flash_normalf_K5_fit, type = 'f')
+scaled_flash_normalf_K5_estLLt <- (1/ncol(group_nonoverlap_1$data$Y)) * (scaled_flash_normalf_K5_fit$L %*% diag(scaled_flash_normalf_K5_fit$D^2) %*% t(scaled_flash_normalf_K5_fit$L))
+```
+
+```{r}
+plot_heatmap(scaled_flash_normalf_K5_estLLt, brks = seq(0, max(scaled_flash_normalf_K5_estLLt), length.out = 50))
+```
+
+This is a scatter plot of the fitted values vs observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(scaled_flash_normalf_K5_estLLt))) + geom_point() + ylim(-1, 9) + xlim(-1,9) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+Let's focus on the off-diagonal elements:
+```{r}
+diag_idx <- seq(1, prod(dim(group_nonoverlap_1$data$YYt)), length.out = ncol(group_nonoverlap_1$data$YYt))
+off_diag_idx <- setdiff(c(1:prod(dim(group_nonoverlap_1$data$YYt))), diag_idx) 
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(scaled_flash_normalf_K5_estLLt)[off_diag_idx])) + geom_point() + ylim(-1, 9) + xlim(-1,9) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+This is a heatmap of $\hat{F}_{K5}'\hat{F}_{K5}$:
+```{r}
+scaled_est_FtF_K5 <- crossprod(scaled_flash_normalf_K5_fit$F)
+```
+
+```{r}
+plot_heatmap(scaled_est_FtF_K5, colors_range = c('blue', 'gray96','red'), brks = seq(-max(abs(scaled_est_FtF_K5)), max(abs(scaled_est_FtF_K5)), length.out = 50))
+```
+
+This is the elbo of the flash fit:
+```{r}
+flash_normalf_K5_fit$elbo
+```
+
+## Observations
+Setting `Kmax = 5` does add a factor that captures the last group effect. This makes sense since the rows of the data matrix are essentially the group effect factors minus some mean value. So there is a subset of rows that still contain the last group effect. The backfitting does decrease the loading value of the first factor (the intercept factor) to some very small number (2.6e-06). This also makes sense because once we have the four group effect factors, the intercept factor is not needed (I did not use an intercept term when simulating this data). 
 
 <!--
 # Notes

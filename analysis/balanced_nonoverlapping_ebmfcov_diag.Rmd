@@ -47,6 +47,21 @@ pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
 plot_loadings(group_nonoverlap_1_ebmfcov_diag_1$est_L, pops_vec)
 ```
 
+This is a heatmap of $\hat{F}$, the estimate for $F$ from EBMFcov (note, I did not scale this, so the scaling is arbitrary):
+```{r}
+plot_heatmap(group_nonoverlap_1_ebmfcov_diag_1$fit_obj$fl$F_pm, brks = seq(0, max(group_nonoverlap_1_ebmfcov_diag_1$fit_obj$fl$F_pm), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}$:
+```{r}
+pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
+plot_loadings(group_nonoverlap_1_ebmfcov_diag_1$fit_obj$fl$F_pm, pops_vec)
+```
+
+```{r}
+group_nonoverlap_1_ebmfcov_diag_1$fit_obj$fl$elbo
+```
+
 ## Visualizations related to fit
 
 This is the true Gram matrix, $\frac{1}{p}XX'$:
@@ -82,11 +97,17 @@ We wonder if backfitting would fix this issue because if you took out the effect
 # Adding backfitting
 Now, we add a backfitting step whenever we fit the flash fits.
 ```{r}
-cov_fit_backfit <- function(covmat, ebnm_fn = ebnm::ebnm_point_laplace, Kmax = 1000, verbose.lvl = 0, backfit_iter = 500) {
-  fl <- flash_init(covmat, var_type = 0) %>%
-    flash_set_verbose(verbose.lvl) %>%
-    flash_greedy(ebnm_fn = ebnm_fn, Kmax = Kmax) %>%
-    flash_backfit(maxiter = backfit_iter)
+cov_fit_backfit <- function(covmat, ebnm_fn = ebnm::ebnm_point_laplace, Kmax = 1000, verbose.lvl = 0, backfit_iter = 500, backfit_tol = NULL, cov_fit_init = NULL) {
+  if (is.null(cov_fit_init)){
+    fl <- flash_init(covmat, var_type = 0) %>%
+      flash_set_verbose(verbose.lvl) %>%
+      flash_greedy(ebnm_fn = ebnm_fn, Kmax = Kmax) %>%
+      flash_backfit(maxiter = backfit_iter, tol = backfit_tol)
+  }
+  else{
+    fl <- flash_init(covmat, var_type = 0) %>%
+      flash_factors_init(cov_fit_init)
+  }
   s2 <- max(0, mean(diag(covmat) - diag(fitted(fl))))
   s2_diff <- Inf
   while(s2 > 0 && abs(s2_diff - 1) > 1e-4) {
@@ -94,7 +115,7 @@ cov_fit_backfit <- function(covmat, ebnm_fn = ebnm::ebnm_point_laplace, Kmax = 1
     fl <- flash_init(covmat_minuss2, var_type = 0) %>%
       flash_set_verbose(verbose.lvl) %>%
       flash_greedy(ebnm_fn = ebnm_fn, Kmax = Kmax) %>%
-      flash_backfit(maxiter = backfit_iter)
+      flash_backfit(maxiter = backfit_iter, tol = backfit_tol)
     old_s2 <- s2
     s2 <- max(0, mean(diag(covmat) - diag(fitted(fl))))
     s2_diff <- s2 / old_s2
@@ -106,19 +127,29 @@ cov_fit_backfit <- function(covmat, ebnm_fn = ebnm::ebnm_point_laplace, Kmax = 1
 
 ```{r}
 cov_fit_backfit_fit <- cov_fit_backfit(group_nonoverlap_1$data$YYt, ebnm_fn = ebnm::ebnm_generalized_binary, 
-                                       Kmax = group_nonoverlap_1$data$K, backfit_iter = 500)
+                                       Kmax = group_nonoverlap_1$data$K, backfit_iter = 500, backfit_tol = 10^(-16))
 ```
 
 ## Visualization of Estimate
 
-This is a heatmap of $\hat{L}_{backfit}$, the estimate for $L$ from EBMFcov with backfitting:
+This is a heatmap of $\hat{L}_{backfit}$, the estimate for $L$ from EBMFcov with backfitting (this is not scaled, so the scaling is arbitrary):
 ```{r}
 plot_heatmap(cov_fit_backfit_fit$fl$L_pm, brks = seq(0, max(cov_fit_backfit_fit$fl$L_pm), length.out = 50))
 ```
 
-This is a scatterplot of the entries of $\hat{L}_{backfit}$:
+This is a scatterplot of the entries of $\hat{L}_{backfit}$ (this is not scaled, so the scaling is arbitrary):
 ```{r}
 plot_loadings(cov_fit_backfit_fit$fl$L_pm, pops_vec)
+```
+
+This is a heatmap of $\hat{F}_{backfit}$, the estimate for $L$ from EBMFcov with backfitting (this is not scaled, so the scaling is arbitrary):
+```{r}
+plot_heatmap(cov_fit_backfit_fit$fl$F_pm, brks = seq(0, max(cov_fit_backfit_fit$fl$F_pm), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{F}_{backfit}$ (this is not scaled, so the scaling is arbitrary):
+```{r}
+plot_loadings(cov_fit_backfit_fit$fl$F_pm, pops_vec)
 ```
 
 This is the elbo of the flash fit:
@@ -126,28 +157,172 @@ This is the elbo of the flash fit:
 cov_fit_backfit_fit$fl$elbo
 ```
 
-## Visualizations related to fit
+### Observations
+We see that with the backfit, the estimate looks closer to what we want. This suggests that the issue with the original estimate is a computational issue (i.e. the objective function is not actively favoring the first estimate) that can be mitigated with backfitting. However, the recovered group effect is not as strong as the other group effects. I tried backfitting with larger numbers of iterations and backfitting with a decreased tolerance to see if the estimate improves (i.e. testing does the backfit have slow convergence?), but it doesn't seem to improve the estimate. After meeting with Matthew, he suggested I look at scaling. (The scaling issues also become more obvious when we also look at the estimate for $F$). So in the next section, I try re-scaling $L$ using the ldf function from flashier.
 
-This is a heatmap of $\hat{L}_{backfit} \hat{L}_{backfit}'$:
+# Rescaling
+It looks like there is an issue with scaling. So we try rescaling the estimates with the ldf function from flashier.
 ```{r}
-cov_fit_backfit_fit_estLLt <- tcrossprod(cov_fit_backfit_fit$fl$L_pm)
+scaled_cov_fit_backfit_fit <- ldf(cov_fit_backfit_fit$fl)
+scaled_cov_fit_backfit_L <- scaled_cov_fit_backfit_fit$L %*% diag(sqrt(scaled_cov_fit_backfit_fit$D))
+scaled_cov_fit_backfit_F <- scaled_cov_fit_backfit_fit$F %*% diag(sqrt(scaled_cov_fit_backfit_fit$D))
+```
+
+This is a heatmap of $\hat{L}_{backfit-scaled}$, the estimate for $L$ from EBMFcov with backfitting:
+```{r}
+plot_heatmap(scaled_cov_fit_backfit_L, brks = seq(0, max(scaled_cov_fit_backfit_L), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}_{backfit-scaled}$:
+```{r}
+plot_loadings(scaled_cov_fit_backfit_L, pops_vec)
+```
+
+This is a heatmap of $\hat{F}_{backfit-scaled}$, the estimate for $L$ from EBMFcov with backfitting:
+```{r}
+plot_heatmap(scaled_cov_fit_backfit_F, brks = seq(0, max(scaled_cov_fit_backfit_L), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{F}_{backfit-scaled}$:
+```{r}
+plot_loadings(scaled_cov_fit_backfit_F, pops_vec)
+```
+
+This is a heatmap of $\hat{L}_{backfit-scaled} \hat{L}_{backfit-scaled}'$:
+```{r}
+scaled_cov_fit_backfit_fit_estLLt <- tcrossprod(scaled_cov_fit_backfit_L)
 ```
 
 ```{r}
-plot_heatmap(cov_fit_backfit_fit_estLLt, brks = seq(0, max(cov_fit_backfit_fit_estLLt), length.out = 50))
+plot_heatmap(scaled_cov_fit_backfit_fit_estLLt, brks = seq(0, max(scaled_cov_fit_backfit_fit_estLLt), length.out = 50))
 ```
 
 This is a scatter plot of the fitted values vs observed values:
 ```{r}
-ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(cov_fit_backfit_fit_estLLt))) + geom_point() + ylim(-1, 7) + xlim(-1,7) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(scaled_cov_fit_backfit_fit_estLLt))) + geom_point() + ylim(-1, 7) + xlim(-1,7) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
 ```
 
 This is a scatter plot of the off-diagonal entries of the fitted values vs those of the observed values:
 ```{r}
-ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(cov_fit_backfit_fit_estLLt)[off_diag_idx])) + geom_point() + ylim(-1, 7) + xlim(-1,7) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(scaled_cov_fit_backfit_fit_estLLt)[off_diag_idx])) + geom_point() + ylim(-1, 7) + xlim(-1,7) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
 ```
 
-In this scatter plot, we should ideally see two groups -- one corresponding to the near-zero values of the Gram matrix, and one corresponding to the non-zero values for samples within the same group. We see one group where the observed values are around 4-5 and the fitted values are around 1 -- this probably corresponds to the group effect that was recovered only after backfitting. This group effect has a lower loadings value than the other group effects.
+## Observations
+After rescaling, we see that the estimate for the covariance matrix is much better. All the group effects have the same scale, as expected. In addition, the fitted values now closely match the observed values. However, one strange feature of this estimate is there are a handful of zero loadings which become non-zero during the backfitting. My hypothesis is that as the baseline values in the first value go to zero, some of the zero values in the other loadings increase. Another thing I want to try is initializing the fit at the true values; I want to see if that estimate also has these small non-zero loadings.
+
+# Progression of the backfitting
+
+## Backfit after 3 iterations
+```{r}
+cov_fit_backfit_iter3_fit <- cov_fit_backfit(group_nonoverlap_1$data$YYt, ebnm_fn = ebnm::ebnm_generalized_binary, 
+                                       Kmax = group_nonoverlap_1$data$K, backfit_iter = 3)
+```
+
+This is a scatterplot of the entries of $\hat{L}_{backfit}$ (this is not scaled, so the scaling is arbitrary):
+```{r}
+plot_loadings(cov_fit_backfit_iter3_fit$fl$L_pm, pops_vec)
+```
+
+This is a scatterplot of the entries of $\hat{F}_{backfit}$ (this is not scaled, so the scaling is arbitrary):
+```{r}
+plot_loadings(cov_fit_backfit_iter3_fit$fl$F_pm, pops_vec)
+```
+
+This is the elbo of the flash fit:
+```{r}
+cov_fit_backfit_iter3_fit$fl$elbo
+```
+
+## Backfit after 4 iterations
+```{r}
+cov_fit_backfit_iter4_fit <- cov_fit_backfit(group_nonoverlap_1$data$YYt, ebnm_fn = ebnm::ebnm_generalized_binary, 
+                                       Kmax = group_nonoverlap_1$data$K, backfit_iter = 4)
+```
+
+This is a scatterplot of the entries of $\hat{L}_{backfit}$ (this is not scaled, so the scaling is arbitrary):
+```{r}
+plot_loadings(cov_fit_backfit_iter4_fit$fl$L_pm, pops_vec)
+```
+
+This is a scatterplot of the entries of $\hat{F}_{backfit}$ (this is not scaled, so the scaling is arbitrary):
+```{r}
+plot_loadings(cov_fit_backfit_iter4_fit$fl$F_pm, pops_vec)
+```
+
+This is the elbo of the flash fit:
+```{r}
+cov_fit_backfit_iter4_fit$fl$elbo
+```
+
+# Initialize at true values
+
+We run EBMFcov initialized with the true loadings matrix:
+```{r}
+cov_fit_true_init_fit <- cov_fit_backfit(group_nonoverlap_1$data$YYt, ebnm_fn = ebnm::ebnm_generalized_binary, 
+                                       Kmax = group_nonoverlap_1$data$K, backfit_iter = 500, backfit_tol = 10^(-16), cov_fit_init = list(group_nonoverlap_1$data$LL, group_nonoverlap_1$data$LL))
+```
+
+We rescale the estimates such that $XX' = LL'$ (the scaling from EBMFcov is arbitrary):
+```{r}
+scaled_cov_fit_true_init_fit <- ldf(cov_fit_true_init_fit$fl)
+scaled_cov_fit_true_init_L <- scaled_cov_fit_true_init_fit$L %*% diag(sqrt(scaled_cov_fit_true_init_fit$D))
+scaled_cov_fit_true_init_F <- scaled_cov_fit_true_init_fit$F %*% diag(sqrt(scaled_cov_fit_true_init_fit$D))
+```
+
+## Visualization of Estimate
+
+This is a heatmap of $\hat{L}_{true-init}$, the estimate for $L$ from EBMFcov intialized with the true values:
+```{r}
+plot_heatmap(scaled_cov_fit_true_init_L, brks = seq(0, max(scaled_cov_fit_true_init_L), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}_{true-init}$ (this is not scaled, so the scaling is arbitrary):
+```{r}
+plot_loadings(scaled_cov_fit_true_init_L, pops_vec)
+```
+
+This is a heatmap of $\hat{F}_{backfit}$, the estimate for $L$ from EBMFcov with backfitting (this is not scaled, so the scaling is arbitrary):
+```{r}
+plot_heatmap(scaled_cov_fit_true_init_F, brks = seq(0, max(scaled_cov_fit_true_init_F), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{F}_{backfit}$ (this is not scaled, so the scaling is arbitrary):
+```{r}
+plot_loadings(scaled_cov_fit_true_init_F, pops_vec)
+```
+
+This is the elbo of the flash fit:
+```{r}
+cov_fit_true_init_fit$fl$elbo
+```
 
 ## Observations
-We see that with the backfit, the estimate looks closer to what we want. This suggests that this is a computational issue (i.e. the objective function is not actively favoring the first estimate) that can be mitigated with backfitting. However, the recovered group effect is not as strong as the other group effects. I tried backfitting with larger numbers of iterations to see if the estimate improves (i.e. testing does the backfit have slow convergence?), but it doesn't seem to improve the estimate.
+The estimate from EBMFcov initialized with the true values also has these small non-zero values. This suggests that the objective function favors an estimate with these small loading values rather than zero values. I'm not sure if this is related to the data?
+
+# Try more factors
+Another question of interest is whether adding a fifth factor would add the final group effect. Furthermore, if we do backfit, then it would make sense for the first factor to zero out (since it is not necessary to explain the fit anymore). We test this out in this section.
+
+We run EBMFcov with `Kmax = 5`:
+```{r}
+cov_fit_backfit_K5_fit <- cov_fit_backfit(group_nonoverlap_1$data$YYt, ebnm_fn = ebnm::ebnm_generalized_binary, 
+                                       Kmax = 5, backfit_iter = 500)
+```
+
+This is a scatterplot of the entries of $\hat{L}_{backfit-K5}$ (this is not scaled, so the scaling is arbitrary):
+```{r}
+plot_loadings(cov_fit_backfit_K5_fit$fl$L_pm, pops_vec)
+```
+
+This is a scatterplot of the entries of $\hat{F}_{backfit-K5}$ (this is not scaled, so the scaling is arbitrary):
+```{r}
+plot_loadings(cov_fit_backfit_K5_fit$fl$F_pm, pops_vec)
+```
+
+This is the elbo of the flash fit:
+```{r}
+cov_fit_backfit_K5_fit$fl$elbo
+```
+
+## Observations
+The estimate from fitting EBMFcov with a higher Kmax still has four factors. During the greedy algorithm, when the fifth factor is added, flash states the "Factor doesn't significantly increase objective and won't be added". I think the structure of the Gram matrix strongly supports the matrix having rank four, so perhaps flash doesn't want to add another factor, creating an over-complete basis.
+
