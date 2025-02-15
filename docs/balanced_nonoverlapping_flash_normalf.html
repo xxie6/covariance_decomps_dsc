@@ -402,7 +402,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-02-13
+<strong>Last updated:</strong> 2025-02-15
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -533,15 +533,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreee78661ea1b0ed0dc188723b11ae740df560ce363targetblanke78661ea">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree31d7e8d47d3adf86985158aa37199a793fab5736targetblank31d7e8da">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/e78661ea1b0ed0dc188723b11ae740df560ce363" target="_blank">e78661e</a>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/31d7e8d47d3adf86985158aa37199a793fab5736" target="_blank">31d7e8d</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreee78661ea1b0ed0dc188723b11ae740df560ce363targetblanke78661ea"
+id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree31d7e8d47d3adf86985158aa37199a793fab5736targetblank31d7e8da"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -551,7 +551,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/e78661ea1b0ed0dc188723b11ae740df560ce363" target="_blank">e78661e</a>.
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/31d7e8d47d3adf86985158aa37199a793fab5736" target="_blank">31d7e8d</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -623,6 +623,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/31d7e8d47d3adf86985158aa37199a793fab5736/analysis/balanced_nonoverlapping_flash_normalf.Rmd" target="_blank">31d7e8d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-15
+</td>
+<td>
+Update ebmfcov and flash with normal F analyses
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/xxie6/covariance_decomps_dsc/d92f1f956b5110a7135dc0fe80873723c619f185/docs/balanced_nonoverlapping_flash_normalf.html" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e78661ea1b0ed0dc188723b11ae740df560ce363/analysis/balanced_nonoverlapping_flash_normalf.Rmd" target="_blank">e78661e</a>
 </td>
 <td>
@@ -663,16 +697,127 @@ group_nonoverlap_1_flash_normalf_1 &lt;- readRDS(&quot;data/group_nonoverlap_1_f
 that we are hoping to recover:</p>
 <pre class="r"><code>plot_heatmap(group_nonoverlap_1$true_L)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-4-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a heatmap of <span class="math inline">\(\hat{L}\)</span>,
 the estimate for <span class="math inline">\(L\)</span> from Flashier
 with normal prior on <span class="math inline">\(F\)</span>:</p>
 <pre class="r"><code>plot_heatmap(group_nonoverlap_1_flash_normalf_1$est_L, brks = seq(0, max(group_nonoverlap_1_flash_normalf_1$est_L), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-5-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatterplot of the entries of <span
 class="math inline">\(\hat{L}\)</span>:</p>
 <pre class="r"><code>pops_vec &lt;- c(rep(&#39;A&#39;, 40), rep(&#39;B&#39;, 40), rep(&#39;C&#39;, 40), rep(&#39;D&#39;, 40))
 plot_loadings(group_nonoverlap_1_flash_normalf_1$est_L, pops_vec)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-6-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="visualizations-related-to-fit" class="section level2">
 <h2>Visualizations related to fit</h2>
@@ -680,18 +825,166 @@ plot_loadings(group_nonoverlap_1_flash_normalf_1$est_L, pops_vec)</code></pre>
 class="math inline">\(\frac{1}{p}XX&#39;\)</span>:</p>
 <pre class="r"><code>plot_heatmap(group_nonoverlap_1$data$YYt, colors = c(&#39;blue&#39;,&#39;gray96&#39;, &#39;red&#39;), brks = seq(-max(abs(group_nonoverlap_1$data$YYt)), max(abs(group_nonoverlap_1$data$YYt)), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-7-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a heatmap of the estimate of the Gram matrix, <span
 class="math inline">\(\hat{L}\hat{L}&#39;\)</span>:</p>
 <pre class="r"><code>plot_heatmap(group_nonoverlap_1_flash_normalf_1$est_LLt, brks = seq(0, max(group_nonoverlap_1_flash_normalf_1$est_LLt), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-8-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatter plot of the fitted values vs observed values:</p>
 <pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(group_nonoverlap_1_flash_normalf_1$est_LLt))) + geom_point() + ylim(-1, 9) + xlim(-1,9) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-9-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Let’s focus on the off-diagonal elements:</p>
 <pre class="r"><code>diag_idx &lt;- seq(1, prod(dim(group_nonoverlap_1$data$YYt)), length.out = ncol(group_nonoverlap_1$data$YYt))
 off_diag_idx &lt;- setdiff(c(1:prod(dim(group_nonoverlap_1$data$YYt))), diag_idx) </code></pre>
 <pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(group_nonoverlap_1_flash_normalf_1$est_LLt)[off_diag_idx])) + geom_point() + ylim(-1, 9) + xlim(-1,9) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-11-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>As mentioned in other explorations, ideally this scatter plot would
 have two clusters – one cluster for the near-zero entries (corresponding
 to the sparse entries) and another cluster corresponding to the group
@@ -728,8 +1021,38 @@ factor, the estimate for the Gram matrix is not sparse.</p>
 <h1>Try additional backfitting</h1>
 <pre class="r"><code>flash_normalf_fit &lt;- group_nonoverlap_1_flash_normalf_1$fit_obj
 flash_normalf_fit %&gt;%
-  flash_backfit(maxiter = 1000)</code></pre>
-<pre><code>Backfitting 4 factors (tolerance: 2.38e-03)...
+  flash_backfit(tol = 10^(-16), verbose = 3)</code></pre>
+<pre><code>Backfitting 4 factors (tolerance: 1.00e-16)...
+    Iteration  Factor   ELBO Diff  LF Max Chg
+            1     all    6.71e-04    5.27e-06 
+            2     all    9.22e-04    7.59e-06 
+            3     all    1.04e-03    9.11e-06 
+            4     all    1.13e-03    1.07e-05 
+            5     all    1.23e-03    1.28e-05 
+            6     all    1.35e-03    1.62e-05 
+            7     all    1.47e-03    2.21e-05 
+            8     all    1.38e-03    3.36e-05 
+            9     all    3.48e-05    7.37e-07 
+           10     all    6.18e-05    1.36e-06 
+           11     all    8.95e-05    2.10e-06 
+           12     all    1.24e-04    3.27e-06 
+           13     all    1.67e-04    5.47e-06 
+           14     all    1.77e-04    1.03e-05 
+           15     all    1.22e-06    1.38e-07 
+           16     all    2.28e-06    2.69e-07 
+           17     all    3.48e-06    4.40e-07 
+           18     all    5.06e-06    7.30e-07 
+           19     all    6.85e-06    1.32e-06 
+           20     all    4.70e-06    2.62e-06 
+           21     all    2.07e-08    2.69e-08 
+           22     all    3.97e-08    5.13e-08 
+           23     all    5.40e-08    8.20e-08 
+           24     all    6.89e-08    1.32e-07 
+           25     all    6.41e-08    2.31e-07 
+           26     all    8.73e-10    4.06e-09 
+           27     all    1.46e-09    7.84e-09 
+           28     all   -7.28e-10    3.65e-09 
+  Backfit complete. Objective: -239447.305 
 Wrapping up...
 Done.</code></pre>
 <pre><code>Flash object with 4 factors.
@@ -738,7 +1061,7 @@ Done.</code></pre>
     Factor 2: 0.185
     Factor 3: 0.191
     Factor 4: 0.190
-  Variational lower bound: -239447.314</code></pre>
+  Variational lower bound: -239447.305</code></pre>
 <div id="visualizations-of-estimate" class="section level2">
 <h2>Visualizations of Estimate</h2>
 <p>This is a heatmap of <span
@@ -746,19 +1069,97 @@ class="math inline">\(\hat{L}_{backfit}\)</span>, the estimate for <span
 class="math inline">\(L\)</span>:</p>
 <pre class="r"><code>plot_heatmap(flash_normalf_fit$L_pm, brks = seq(0, max(flash_normalf_fit$L_pm), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
+Past versions of unnamed-chunk-14-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-14-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-14-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatterplot of the entries of <span
 class="math inline">\(\hat{L}_{backfit}\)</span>:</p>
 <pre class="r"><code>plot_loadings(group_nonoverlap_1_flash_normalf_1$est_L, pops_vec)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
+Past versions of unnamed-chunk-15-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-15-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-15-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is the elbo:</p>
 <pre class="r"><code>flash_normalf_fit$elbo</code></pre>
 <pre><code>[1] -239447.3</code></pre>
 </div>
 <div id="observations-1" class="section level2">
 <h2>Observations</h2>
-<p>Increasing the number of maximum backfitting iterations does not
-change the estimate. Therefore, for this setting, we can eliminate the
-possibility that the backfitting is converging slowly.</p>
+<p>One thing I did was try increasing th number of maximum backfitting
+iterations. Increasing the number of maximum backfitting iterations does
+not change the estimate. (I checked the number of iterations afterwards
+and it only took 28 backfitting iterations to stop, so that makes
+sense). Another thing I tried was decreasing the tolerance level. This
+also does not change the estimate. Therefore, for this setting, we can
+eliminate the possibility that the backfitting is converging slowly.</p>
 </div>
 </div>
 <div
@@ -789,10 +1190,84 @@ class="math inline">\(L\)</span> from Flashier with normal prior on
 <span class="math inline">\(F\)</span> with no backfit:</p>
 <pre class="r"><code>plot_heatmap(flash_normalf_nobackfit_data$flash_fit$L_pm, brks = seq(0, max(flash_normalf_nobackfit_data$flash_fit$L_pm), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-18-1">
+Past versions of unnamed-chunk-18-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-18-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-18-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatterplot of the entries of <span
 class="math inline">\(\hat{L}_{greedy}\)</span>:</p>
 <pre class="r"><code>plot_loadings(flash_normalf_nobackfit_data$flash_fit$L_pm, pops_vec)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-19-1">
+Past versions of unnamed-chunk-19-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-19-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-19-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is the elbo:</p>
 <pre class="r"><code>flash_normalf_nobackfit_data$flash_fit$elbo</code></pre>
 <pre><code>[1] -283016.6</code></pre>
@@ -824,10 +1299,84 @@ Done.</code></pre>
 the estimate for <span class="math inline">\(L\)</span>:</p>
 <pre class="r"><code>plot_heatmap(flash_normalf_fit_true_init$L_pm, brks = seq(0, max(flash_normalf_fit_true_init$L_pm), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-1">
+Past versions of unnamed-chunk-22-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-22-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-22-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatterplot of the entries of <span
 class="math inline">\(\hat{L}\)</span>:</p>
 <pre class="r"><code>plot_loadings(flash_normalf_fit_true_init$L_pm, pops_vec)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-23-1">
+Past versions of unnamed-chunk-23-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-23-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-23-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is the corresponding elbo:</p>
 <pre class="r"><code>flash_normalf_fit_true_init$elbo</code></pre>
 <pre><code>[1] -238183.1</code></pre>
@@ -854,6 +1403,43 @@ class="math inline">\(X\)</span>:</p>
 <pre class="r"><code>X_fitted_vals &lt;- fitted(group_nonoverlap_1_flash_normalf_1$fit_obj)</code></pre>
 <pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$Y), y = c(X_fitted_vals))) + geom_point() + xlim(-11, 11) + ylim(-11, 11) + xlab(&#39;entries of X&#39;) + ylab(&#39;fitted values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-26-1">
+Past versions of unnamed-chunk-26-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-26-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-26-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="visualizations-of-the-first-component" class="section level2">
 <h2>Visualizations of the first component</h2>
@@ -865,21 +1451,169 @@ class="math inline">\(l_k f_k&#39;\)</span>, from the decomposition of
 <p>This is a heatmap of the first estimated component:</p>
 <pre class="r"><code>plot_heatmap(est_component1, colors_range = c(&#39;blue&#39;, &#39;gray96&#39;,&#39;red&#39;), brks = seq(-max(abs(est_component1)), max(abs(est_component1)), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-29-1">
+Past versions of unnamed-chunk-29-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-29-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-29-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatter plot of one column from the first estimated
 component:</p>
 <pre class="r"><code>ggplot(data = NULL, aes(x = c(1:160))) + geom_point(aes(y = c(true_component1[,1])), color = &#39;red&#39;, alpha = 0.5) + geom_point(aes(y = c(est_component1[,1])), color = &#39;blue&#39;, alpha = 0.5) + xlab(&#39;index&#39;) + ylab(&#39;component entry&#39;)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-30-1">
+Past versions of unnamed-chunk-30-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-30-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-30-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a heatmap of the residualized <span
 class="math inline">\(X\)</span> matrix (this would be the data matrix
 when re-fitting the first component during backfitting):</p>
 <pre class="r"><code>X_resid_est1 &lt;- group_nonoverlap_1$data$Y - (group_nonoverlap_1_flash_normalf_1$fit_obj$L_pm[,2:4] %*% t(group_nonoverlap_1_flash_normalf_1$fit_obj$F_pm[,2:4]))</code></pre>
 <pre class="r"><code>plot_heatmap(X_resid_est1, colors_range = c(&#39;blue&#39;, &#39;gray96&#39;,&#39;red&#39;), brks = seq(-max(abs(X_resid_est1)), max(abs(X_resid_est1)), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-32-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-32-1">
+Past versions of unnamed-chunk-32-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-32-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-32-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a heatmap of <span class="math inline">\(X\)</span>
 residualized using the true values for the components:</p>
 <pre class="r"><code>X_resid_true1 &lt;- group_nonoverlap_1$data$Y - (group_nonoverlap_1$data$LL[,c(1,2,4)] %*% t(group_nonoverlap_1$data$FF[,c(1,2,4)]))</code></pre>
 <pre class="r"><code>plot_heatmap(X_resid_true1, colors_range = c(&#39;blue&#39;, &#39;gray96&#39;,&#39;red&#39;), brks = seq(-max(abs(X_resid_true1)), max(abs(X_resid_true1)), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-34-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-34-1">
+Past versions of unnamed-chunk-34-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-34-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-34-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="visualizations-related-to-f" class="section level2">
 <h2>Visualizations related to F</h2>
@@ -888,15 +1622,126 @@ class="math inline">\(\hat{F}&#39;\hat{F}\)</span>:</p>
 <pre class="r"><code>est_FtF &lt;- crossprod(group_nonoverlap_1_flash_normalf_1$fit_obj$F_pm)</code></pre>
 <pre class="r"><code>plot_heatmap(est_FtF, colors_range = c(&#39;blue&#39;, &#39;gray96&#39;,&#39;red&#39;), brks = seq(-max(abs(est_FtF)), max(abs(est_FtF)), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-36-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-36-1">
+Past versions of unnamed-chunk-36-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-36-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-36-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a heatmap of <span
 class="math inline">\(\hat{L}(\hat{F}&#39;\hat{F})\)</span>:</p>
 <pre class="r"><code>LFtF_est &lt;- group_nonoverlap_1_flash_normalf_1$est_L %*% est_FtF</code></pre>
 <pre class="r"><code>plot_heatmap(LFtF_est, colors_range = c(&#39;blue&#39;, &#39;gray96&#39;,&#39;red&#39;), brks = seq(-max(abs(LFtF_est)), max(abs(LFtF_est)), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-38-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-38-1">
+Past versions of unnamed-chunk-38-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-38-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-38-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatter plot of one of the columns of <span
 class="math inline">\(\hat{L}(\hat{F}&#39;\hat{F})\)</span>:</p>
 <pre class="r"><code>plot(LFtF_est[,1])</code></pre>
 <p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-39-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-39-1">
+Past versions of unnamed-chunk-39-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-39-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d92f1f956b5110a7135dc0fe80873723c619f185/docs/figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-39-1.png" target="_blank">d92f1f9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="observations-4" class="section level2">
 <h2>Observations</h2>
@@ -908,6 +1753,114 @@ class="math inline">\(LL&#39;\)</span>), it seems like the negative
 entries in <span class="math inline">\(F&#39;F\)</span> are cancelling
 out the baseline non-zero entries in the first factor of <span
 class="math inline">\(L\)</span>.</p>
+</div>
+</div>
+<div id="try-more-factors" class="section level1">
+<h1>Try more factors</h1>
+<p>Another question of interest is whether adding a fifth factor would
+add the final group effect. Furthermore, if we do backfit, then it would
+make sense for the first factor to zero out (since it is not necessary
+to explain the fit anymore). We test this out in this section.</p>
+<pre class="r"><code>flash_normalf_K5_fit &lt;- flash_init(group_nonoverlap_1$data$Y) %&gt;%
+  flash_greedy(Kmax = 5, ebnm_fn = c(ebnm::ebnm_generalized_binary, ebnm_normal)) %&gt;%
+  flash_backfit()</code></pre>
+<pre><code>Adding factor 1 to flash object...
+Adding factor 2 to flash object...
+Adding factor 3 to flash object...
+Adding factor 4 to flash object...
+Adding factor 5 to flash object...
+Wrapping up...
+Done.
+Backfitting 5 factors (tolerance: 2.38e-03)...
+  Difference between iterations is within 1.0e+03...
+  Difference between iterations is within 1.0e+02...
+  Difference between iterations is within 1.0e+01...
+Wrapping up...
+Done.</code></pre>
+<div id="visualization-of-estimate-2" class="section level2">
+<h2>Visualization of Estimate</h2>
+<p>This is a heatmap of <span class="math inline">\(\hat{L}\)</span>,
+the estimate for <span class="math inline">\(L\)</span> from Flashier
+with normal prior on <span class="math inline">\(F\)</span>:</p>
+<pre class="r"><code>plot_heatmap(flash_normalf_K5_fit$L_pm, brks = seq(0, max(flash_normalf_K5_fit$L_pm), length.out = 50))</code></pre>
+<p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-41-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a scatterplot of the entries of <span
+class="math inline">\(\hat{L}_{K5}\)</span>:</p>
+<pre class="r"><code>pops_vec &lt;- c(rep(&#39;A&#39;, 40), rep(&#39;B&#39;, 40), rep(&#39;C&#39;, 40), rep(&#39;D&#39;, 40))
+plot_loadings(flash_normalf_K5_fit$L_pm, pops_vec)</code></pre>
+<p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-42-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This are the entries of the first column of <span
+class="math inline">\(\hat{L}_{K5}\)</span>:</p>
+<pre class="r"><code>flash_normalf_K5_fit$L_pm[,1]</code></pre>
+<pre><code>  [1] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+  [6] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [11] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [16] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [21] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [26] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [31] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [36] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [41] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [46] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [51] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [56] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [61] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [66] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [71] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [76] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [81] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [86] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [91] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+ [96] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+[101] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+[106] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+[111] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+[116] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+[121] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+[126] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+[131] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+[136] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+[141] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+[146] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+[151] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06
+[156] 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06 2.646994e-06</code></pre>
+</div>
+<div id="visualizations-related-to-fit-2" class="section level2">
+<h2>Visualizations related to fit</h2>
+<p>This is a heatmap of the estimate of the Gram matrix, <span
+class="math inline">\(\hat{L}_{K5}\hat{L}_{K5}&#39;\)</span>:</p>
+<pre class="r"><code>scaled_flash_normalf_K5_fit &lt;- ldf(flash_normalf_K5_fit, type = &#39;f&#39;)
+scaled_flash_normalf_K5_estLLt &lt;- (1/ncol(group_nonoverlap_1$data$Y)) * (scaled_flash_normalf_K5_fit$L %*% diag(scaled_flash_normalf_K5_fit$D^2) %*% t(scaled_flash_normalf_K5_fit$L))</code></pre>
+<pre class="r"><code>plot_heatmap(scaled_flash_normalf_K5_estLLt, brks = seq(0, max(scaled_flash_normalf_K5_estLLt), length.out = 50))</code></pre>
+<p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-45-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a scatter plot of the fitted values vs observed values:</p>
+<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(scaled_flash_normalf_K5_estLLt))) + geom_point() + ylim(-1, 9) + xlim(-1,9) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
+<p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-46-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Let’s focus on the off-diagonal elements:</p>
+<pre class="r"><code>diag_idx &lt;- seq(1, prod(dim(group_nonoverlap_1$data$YYt)), length.out = ncol(group_nonoverlap_1$data$YYt))
+off_diag_idx &lt;- setdiff(c(1:prod(dim(group_nonoverlap_1$data$YYt))), diag_idx) </code></pre>
+<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(scaled_flash_normalf_K5_estLLt)[off_diag_idx])) + geom_point() + ylim(-1, 9) + xlim(-1,9) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
+<p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-48-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a heatmap of <span
+class="math inline">\(\hat{F}_{K5}&#39;\hat{F}_{K5}\)</span>:</p>
+<pre class="r"><code>scaled_est_FtF_K5 &lt;- crossprod(scaled_flash_normalf_K5_fit$F)</code></pre>
+<pre class="r"><code>plot_heatmap(scaled_est_FtF_K5, colors_range = c(&#39;blue&#39;, &#39;gray96&#39;,&#39;red&#39;), brks = seq(-max(abs(scaled_est_FtF_K5)), max(abs(scaled_est_FtF_K5)), length.out = 50))</code></pre>
+<p><img src="figure/balanced_nonoverlapping_flash_normalf.Rmd/unnamed-chunk-50-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the elbo of the flash fit:</p>
+<pre class="r"><code>flash_normalf_K5_fit$elbo</code></pre>
+<pre><code>[1] -238127.6</code></pre>
+</div>
+<div id="observations-5" class="section level2">
+<h2>Observations</h2>
+<p>Setting <code>Kmax = 5</code> does add a factor that captures the
+last group effect. This makes sense since the rows of the data matrix
+are essentially the group effect factors minus some mean value. So there
+is a subset of rows that still contain the last group effect. The
+backfitting does decrease the loading value of the first factor (the
+intercept factor) to some very small number (2.6e-06). This also makes
+sense because once we have the four group effect factors, the intercept
+factor is not needed (I did not use an intercept term when simulating
+this data).</p>
 <!--
 # Notes
 This is a record of other things I've tried. 

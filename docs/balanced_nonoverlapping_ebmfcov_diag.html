@@ -402,7 +402,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-02-13
+<strong>Last updated:</strong> 2025-02-15
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -533,15 +533,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreea222b9e5181ffc01b43d51a323c73d4634da3482targetblanka222b9ea">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree31d7e8d47d3adf86985158aa37199a793fab5736targetblank31d7e8da">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/a222b9e5181ffc01b43d51a323c73d4634da3482" target="_blank">a222b9e</a>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/31d7e8d47d3adf86985158aa37199a793fab5736" target="_blank">31d7e8d</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreea222b9e5181ffc01b43d51a323c73d4634da3482targetblanka222b9ea"
+id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree31d7e8d47d3adf86985158aa37199a793fab5736targetblank31d7e8da"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -551,7 +551,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/a222b9e5181ffc01b43d51a323c73d4634da3482" target="_blank">a222b9e</a>.
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/31d7e8d47d3adf86985158aa37199a793fab5736" target="_blank">31d7e8d</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -571,9 +571,7 @@ Ignored files:
     Ignored:    data/.DS_Store
 
 Untracked files:
-    Untracked:  analysis/balanced_nonoverlapping_flash_normalf.Rmd
     Untracked:  analysis/tree_symnmf.Rmd
-    Untracked:  data/group_nonoverlap_1_flash_normalf_1.rds
 
 </code></pre>
 <p>
@@ -620,6 +618,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/31d7e8d47d3adf86985158aa37199a793fab5736/analysis/balanced_nonoverlapping_ebmfcov_diag.Rmd" target="_blank">31d7e8d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-15
+</td>
+<td>
+Update ebmfcov and flash with normal F analyses
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/xxie6/covariance_decomps_dsc/596a67a736aefc71a132b5a93e4e0ed136d37dcd/docs/balanced_nonoverlapping_ebmfcov_diag.html" target="_blank">596a67a</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -819,12 +851,10 @@ Annie Xie
 </table>
 </div>
 </div>
-</div>
-<div id="visualizations-related-to-fit" class="section level2">
-<h2>Visualizations related to fit</h2>
-<p>This is the true Gram matrix, <span
-class="math inline">\(\frac{1}{p}XX&#39;\)</span>:</p>
-<pre class="r"><code>plot_heatmap(group_nonoverlap_1$data$YYt, colors = c(&#39;blue&#39;,&#39;gray96&#39;, &#39;red&#39;), brks = seq(-max(abs(group_nonoverlap_1$data$YYt)), max(abs(group_nonoverlap_1$data$YYt)), length.out = 50))</code></pre>
+<p>This is a heatmap of <span class="math inline">\(\hat{F}\)</span>,
+the estimate for <span class="math inline">\(F\)</span> from EBMFcov
+(note, I did not scale this, so the scaling is arbitrary):</p>
+<pre class="r"><code>plot_heatmap(group_nonoverlap_1_ebmfcov_diag_1$fit_obj$fl$F_pm, brks = seq(0, max(group_nonoverlap_1_ebmfcov_diag_1$fit_obj$fl$F_pm), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
@@ -850,6 +880,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/596a67a736aefc71a132b5a93e4e0ed136d37dcd/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-7-1.png" target="_blank">596a67a</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-7-1.png" target="_blank">4d53f1e</a>
 </td>
 <td>
@@ -863,9 +904,10 @@ Annie Xie
 </table>
 </div>
 </div>
-<p>This is a heatmap of the estimate of the Gram matrix, <span
-class="math inline">\(\hat{L}\hat{L}&#39;\)</span>:</p>
-<pre class="r"><code>plot_heatmap(group_nonoverlap_1_ebmfcov_diag_1$est_LLt, brks = seq(0, max(group_nonoverlap_1_ebmfcov_diag_1$est_LLt), length.out = 50))</code></pre>
+<p>This is a scatterplot of the entries of <span
+class="math inline">\(\hat{L}\)</span>:</p>
+<pre class="r"><code>pops_vec &lt;- c(rep(&#39;A&#39;, 40), rep(&#39;B&#39;, 40), rep(&#39;C&#39;, 40), rep(&#39;D&#39;, 40))
+plot_loadings(group_nonoverlap_1_ebmfcov_diag_1$fit_obj$fl$F_pm, pops_vec)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
@@ -904,52 +946,18 @@ Annie Xie
 </table>
 </div>
 </div>
-<p>This is a scatter plot of the fitted values vs observed values:</p>
-<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(group_nonoverlap_1_ebmfcov_diag_1$est_LLt))) + geom_point() + ylim(-1, 6) + xlim(-1,6) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
-<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
-Past versions of unnamed-chunk-9-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-9-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-9-1.png" target="_blank">4d53f1e</a>
-</td>
-<td>
-Annie Xie
-</td>
-<td>
-2025-02-08
-</td>
-</tr>
-</tbody>
-</table>
+<pre class="r"><code>group_nonoverlap_1_ebmfcov_diag_1$fit_obj$fl$elbo</code></pre>
+<pre><code>[1] -41238.91</code></pre>
 </div>
-</div>
-<p>The model that we fit is <span class="math inline">\(XX&#39; \approx
-LL&#39; + D\)</span>, so let’s focus on the off-diagonal elements for
-now.</p>
-<pre class="r"><code>diag_idx &lt;- seq(1, prod(dim(group_nonoverlap_1$data$YYt)), length.out = ncol(group_nonoverlap_1$data$YYt))
-off_diag_idx &lt;- setdiff(c(1:prod(dim(group_nonoverlap_1$data$YYt))), diag_idx) </code></pre>
-<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(group_nonoverlap_1_ebmfcov_diag_1$est_LLt)[off_diag_idx])) + geom_point() + ylim(-1, 6) + xlim(-1,6) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
+<div id="visualizations-related-to-fit" class="section level2">
+<h2>Visualizations related to fit</h2>
+<p>This is the true Gram matrix, <span
+class="math inline">\(\frac{1}{p}XX&#39;\)</span>:</p>
+<pre class="r"><code>plot_heatmap(group_nonoverlap_1$data$YYt, colors = c(&#39;blue&#39;,&#39;gray96&#39;, &#39;red&#39;), brks = seq(-max(abs(group_nonoverlap_1$data$YYt)), max(abs(group_nonoverlap_1$data$YYt)), length.out = 50))</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a heatmap of the estimate of the Gram matrix, <span
+class="math inline">\(\hat{L}\hat{L}&#39;\)</span>:</p>
+<pre class="r"><code>plot_heatmap(group_nonoverlap_1_ebmfcov_diag_1$est_LLt, brks = seq(0, max(group_nonoverlap_1_ebmfcov_diag_1$est_LLt), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
@@ -975,6 +983,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/596a67a736aefc71a132b5a93e4e0ed136d37dcd/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-11-1.png" target="_blank">596a67a</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-11-1.png" target="_blank">4d53f1e</a>
 </td>
 <td>
@@ -988,54 +1007,15 @@ Annie Xie
 </table>
 </div>
 </div>
-</div>
-<div id="observations" class="section level2">
-<h2>Observations</h2>
-<p>Based off the visualizations, it seems like this method wants to add
-an intercept term. This is not totally surprising since the loadings and
-factors are added in a greedy way, and for this scenario, an intercept
-factor provides an equally good rank one fit as a factor identifying one
-group. However, looking at the heatmap of <span
-class="math inline">\(LL&#39;\)</span>, this looks like a bad estimate
-for the Gram matrix. (Side note: it’s possible that if we add another
-factor, this fifth factor would pick up the last group.)</p>
-<p>We wonder if backfitting would fix this issue because if you took out
-the effect of the three groups, then the intercept factor would be a bad
-fit to the residualized data matrix. We will test this in the next
-section.</p>
-</div>
-</div>
-<div id="adding-backfitting" class="section level1">
-<h1>Adding backfitting</h1>
-<p>Now, we add a backfitting step whenever we fit the flash fits.</p>
-<pre class="r"><code>cov_fit_backfit &lt;- function(covmat, ebnm_fn = ebnm::ebnm_point_laplace, Kmax = 1000, verbose.lvl = 0, backfit_iter = 500) {
-  fl &lt;- flash_init(covmat, var_type = 0) %&gt;%
-    flash_set_verbose(verbose.lvl) %&gt;%
-    flash_greedy(ebnm_fn = ebnm_fn, Kmax = Kmax) %&gt;%
-    flash_backfit(maxiter = backfit_iter)
-  s2 &lt;- max(0, mean(diag(covmat) - diag(fitted(fl))))
-  s2_diff &lt;- Inf
-  while(s2 &gt; 0 &amp;&amp; abs(s2_diff - 1) &gt; 1e-4) {
-    covmat_minuss2 &lt;- covmat - diag(rep(s2, ncol(covmat)))
-    fl &lt;- flash_init(covmat_minuss2, var_type = 0) %&gt;%
-      flash_set_verbose(verbose.lvl) %&gt;%
-      flash_greedy(ebnm_fn = ebnm_fn, Kmax = Kmax) %&gt;%
-      flash_backfit(maxiter = backfit_iter)
-    old_s2 &lt;- s2
-    s2 &lt;- max(0, mean(diag(covmat) - diag(fitted(fl))))
-    s2_diff &lt;- s2 / old_s2
-  }
-  
-  return(list(fl=fl, s2 = s2))
-}</code></pre>
-<pre class="r"><code>cov_fit_backfit_fit &lt;- cov_fit_backfit(group_nonoverlap_1$data$YYt, ebnm_fn = ebnm::ebnm_generalized_binary, 
-                                       Kmax = group_nonoverlap_1$data$K, backfit_iter = 500)</code></pre>
-<div id="visualization-of-estimate" class="section level2">
-<h2>Visualization of Estimate</h2>
-<p>This is a heatmap of <span
-class="math inline">\(\hat{L}_{backfit}\)</span>, the estimate for <span
-class="math inline">\(L\)</span> from EBMFcov with backfitting:</p>
-<pre class="r"><code>plot_heatmap(cov_fit_backfit_fit$fl$L_pm, brks = seq(0, max(cov_fit_backfit_fit$fl$L_pm), length.out = 50))</code></pre>
+<p>This is a scatter plot of the fitted values vs observed values:</p>
+<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(group_nonoverlap_1_ebmfcov_diag_1$est_LLt))) + geom_point() + ylim(-1, 6) + xlim(-1,6) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The model that we fit is <span class="math inline">\(XX&#39; \approx
+LL&#39; + D\)</span>, so let’s focus on the off-diagonal elements for
+now.</p>
+<pre class="r"><code>diag_idx &lt;- seq(1, prod(dim(group_nonoverlap_1$data$YYt)), length.out = ncol(group_nonoverlap_1$data$YYt))
+off_diag_idx &lt;- setdiff(c(1:prod(dim(group_nonoverlap_1$data$YYt))), diag_idx) </code></pre>
+<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(group_nonoverlap_1_ebmfcov_diag_1$est_LLt)[off_diag_idx])) + geom_point() + ylim(-1, 6) + xlim(-1,6) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
@@ -1074,57 +1054,66 @@ Annie Xie
 </table>
 </div>
 </div>
+</div>
+<div id="observations" class="section level2">
+<h2>Observations</h2>
+<p>Based off the visualizations, it seems like this method wants to add
+an intercept term. This is not totally surprising since the loadings and
+factors are added in a greedy way, and for this scenario, an intercept
+factor provides an equally good rank one fit as a factor identifying one
+group. However, looking at the heatmap of <span
+class="math inline">\(LL&#39;\)</span>, this looks like a bad estimate
+for the Gram matrix. (Side note: it’s possible that if we add another
+factor, this fifth factor would pick up the last group.)</p>
+<p>We wonder if backfitting would fix this issue because if you took out
+the effect of the three groups, then the intercept factor would be a bad
+fit to the residualized data matrix. We will test this in the next
+section.</p>
+</div>
+</div>
+<div id="adding-backfitting" class="section level1">
+<h1>Adding backfitting</h1>
+<p>Now, we add a backfitting step whenever we fit the flash fits.</p>
+<pre class="r"><code>cov_fit_backfit &lt;- function(covmat, ebnm_fn = ebnm::ebnm_point_laplace, Kmax = 1000, verbose.lvl = 0, backfit_iter = 500, backfit_tol = NULL, cov_fit_init = NULL) {
+  if (is.null(cov_fit_init)){
+    fl &lt;- flash_init(covmat, var_type = 0) %&gt;%
+      flash_set_verbose(verbose.lvl) %&gt;%
+      flash_greedy(ebnm_fn = ebnm_fn, Kmax = Kmax) %&gt;%
+      flash_backfit(maxiter = backfit_iter, tol = backfit_tol)
+  }
+  else{
+    fl &lt;- flash_init(covmat, var_type = 0) %&gt;%
+      flash_factors_init(cov_fit_init)
+  }
+  s2 &lt;- max(0, mean(diag(covmat) - diag(fitted(fl))))
+  s2_diff &lt;- Inf
+  while(s2 &gt; 0 &amp;&amp; abs(s2_diff - 1) &gt; 1e-4) {
+    covmat_minuss2 &lt;- covmat - diag(rep(s2, ncol(covmat)))
+    fl &lt;- flash_init(covmat_minuss2, var_type = 0) %&gt;%
+      flash_set_verbose(verbose.lvl) %&gt;%
+      flash_greedy(ebnm_fn = ebnm_fn, Kmax = Kmax) %&gt;%
+      flash_backfit(maxiter = backfit_iter, tol = backfit_tol)
+    old_s2 &lt;- s2
+    s2 &lt;- max(0, mean(diag(covmat) - diag(fitted(fl))))
+    s2_diff &lt;- s2 / old_s2
+  }
+  
+  return(list(fl=fl, s2 = s2))
+}</code></pre>
+<pre class="r"><code>cov_fit_backfit_fit &lt;- cov_fit_backfit(group_nonoverlap_1$data$YYt, ebnm_fn = ebnm::ebnm_generalized_binary, 
+                                       Kmax = group_nonoverlap_1$data$K, backfit_iter = 500, backfit_tol = 10^(-16))</code></pre>
+<div id="visualization-of-estimate" class="section level2">
+<h2>Visualization of Estimate</h2>
+<p>This is a heatmap of <span
+class="math inline">\(\hat{L}_{backfit}\)</span>, the estimate for <span
+class="math inline">\(L\)</span> from EBMFcov with backfitting (this is
+not scaled, so the scaling is arbitrary):</p>
+<pre class="r"><code>plot_heatmap(cov_fit_backfit_fit$fl$L_pm, brks = seq(0, max(cov_fit_backfit_fit$fl$L_pm), length.out = 50))</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>This is a scatterplot of the entries of <span
-class="math inline">\(\hat{L}_{backfit}\)</span>:</p>
+class="math inline">\(\hat{L}_{backfit}\)</span> (this is not scaled, so
+the scaling is arbitrary):</p>
 <pre class="r"><code>plot_loadings(cov_fit_backfit_fit$fl$L_pm, pops_vec)</code></pre>
-<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
-Past versions of unnamed-chunk-15-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-15-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-15-1.png" target="_blank">4d53f1e</a>
-</td>
-<td>
-Annie Xie
-</td>
-<td>
-2025-02-08
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>This is the elbo of the flash fit:</p>
-<pre class="r"><code>cov_fit_backfit_fit$fl$elbo</code></pre>
-<pre><code>[1] 20929.4</code></pre>
-</div>
-<div id="visualizations-related-to-fit-1" class="section level2">
-<h2>Visualizations related to fit</h2>
-<p>This is a heatmap of <span class="math inline">\(\hat{L}_{backfit}
-\hat{L}_{backfit}&#39;\)</span>:</p>
-<pre class="r"><code>cov_fit_backfit_fit_estLLt &lt;- tcrossprod(cov_fit_backfit_fit$fl$L_pm)</code></pre>
-<pre class="r"><code>plot_heatmap(cov_fit_backfit_fit_estLLt, brks = seq(0, max(cov_fit_backfit_fit_estLLt), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-18-1">
@@ -1163,8 +1152,11 @@ Annie Xie
 </table>
 </div>
 </div>
-<p>This is a scatter plot of the fitted values vs observed values:</p>
-<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(cov_fit_backfit_fit_estLLt))) + geom_point() + ylim(-1, 7) + xlim(-1,7) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
+<p>This is a heatmap of <span
+class="math inline">\(\hat{F}_{backfit}\)</span>, the estimate for <span
+class="math inline">\(L\)</span> from EBMFcov with backfitting (this is
+not scaled, so the scaling is arbitrary):</p>
+<pre class="r"><code>plot_heatmap(cov_fit_backfit_fit$fl$F_pm, brks = seq(0, max(cov_fit_backfit_fit$fl$F_pm), length.out = 50))</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-19-1">
@@ -1190,6 +1182,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/596a67a736aefc71a132b5a93e4e0ed136d37dcd/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-19-1.png" target="_blank">596a67a</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-19-1.png" target="_blank">4d53f1e</a>
 </td>
 <td>
@@ -1203,9 +1206,10 @@ Annie Xie
 </table>
 </div>
 </div>
-<p>This is a scatter plot of the off-diagonal entries of the fitted
-values vs those of the observed values:</p>
-<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(cov_fit_backfit_fit_estLLt)[off_diag_idx])) + geom_point() + ylim(-1, 7) + xlim(-1,7) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
+<p>This is a scatterplot of the entries of <span
+class="math inline">\(\hat{F}_{backfit}\)</span> (this is not scaled, so
+the scaling is arbitrary):</p>
+<pre class="r"><code>plot_loadings(cov_fit_backfit_fit$fl$F_pm, pops_vec)</code></pre>
 <p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-20-1">
@@ -1231,6 +1235,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/596a67a736aefc71a132b5a93e4e0ed136d37dcd/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-20-1.png" target="_blank">596a67a</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-13
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/xxie6/covariance_decomps_dsc/blob/4d53f1ebdead05d24bff2eb9ae7c1e1ae5f98bfc/docs/figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-20-1.png" target="_blank">4d53f1e</a>
 </td>
 <td>
@@ -1244,24 +1259,221 @@ Annie Xie
 </table>
 </div>
 </div>
-<p>In this scatter plot, we should ideally see two groups – one
-corresponding to the near-zero values of the Gram matrix, and one
-corresponding to the non-zero values for samples within the same group.
-We see one group where the observed values are around 4-5 and the fitted
-values are around 1 – this probably corresponds to the group effect that
-was recovered only after backfitting. This group effect has a lower
-loadings value than the other group effects.</p>
-</div>
-<div id="observations-1" class="section level2">
-<h2>Observations</h2>
+<p>This is the elbo of the flash fit:</p>
+<pre class="r"><code>cov_fit_backfit_fit$fl$elbo</code></pre>
+<pre><code>[1] 20929.4</code></pre>
+<div id="observations-1" class="section level3">
+<h3>Observations</h3>
 <p>We see that with the backfit, the estimate looks closer to what we
-want. This suggests that this is a computational issue (i.e. the
-objective function is not actively favoring the first estimate) that can
-be mitigated with backfitting. However, the recovered group effect is
-not as strong as the other group effects. I tried backfitting with
-larger numbers of iterations to see if the estimate improves
+want. This suggests that the issue with the original estimate is a
+computational issue (i.e. the objective function is not actively
+favoring the first estimate) that can be mitigated with backfitting.
+However, the recovered group effect is not as strong as the other group
+effects. I tried backfitting with larger numbers of iterations and
+backfitting with a decreased tolerance to see if the estimate improves
 (i.e. testing does the backfit have slow convergence?), but it doesn’t
-seem to improve the estimate.</p>
+seem to improve the estimate. After meeting with Matthew, he suggested I
+look at scaling. (The scaling issues also become more obvious when we
+also look at the estimate for <span class="math inline">\(F\)</span>).
+So in the next section, I try re-scaling <span
+class="math inline">\(L\)</span> using the ldf function from
+flashier.</p>
+</div>
+</div>
+</div>
+<div id="rescaling" class="section level1">
+<h1>Rescaling</h1>
+<p>It looks like there is an issue with scaling. So we try rescaling the
+estimates with the ldf function from flashier.</p>
+<pre class="r"><code>scaled_cov_fit_backfit_fit &lt;- ldf(cov_fit_backfit_fit$fl)
+scaled_cov_fit_backfit_L &lt;- scaled_cov_fit_backfit_fit$L %*% diag(sqrt(scaled_cov_fit_backfit_fit$D))
+scaled_cov_fit_backfit_F &lt;- scaled_cov_fit_backfit_fit$F %*% diag(sqrt(scaled_cov_fit_backfit_fit$D))</code></pre>
+<p>This is a heatmap of <span
+class="math inline">\(\hat{L}_{backfit-scaled}\)</span>, the estimate
+for <span class="math inline">\(L\)</span> from EBMFcov with
+backfitting:</p>
+<pre class="r"><code>plot_heatmap(scaled_cov_fit_backfit_L, brks = seq(0, max(scaled_cov_fit_backfit_L), length.out = 50))</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a scatterplot of the entries of <span
+class="math inline">\(\hat{L}_{backfit-scaled}\)</span>:</p>
+<pre class="r"><code>plot_loadings(scaled_cov_fit_backfit_L, pops_vec)</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a heatmap of <span
+class="math inline">\(\hat{F}_{backfit-scaled}\)</span>, the estimate
+for <span class="math inline">\(L\)</span> from EBMFcov with
+backfitting:</p>
+<pre class="r"><code>plot_heatmap(scaled_cov_fit_backfit_F, brks = seq(0, max(scaled_cov_fit_backfit_L), length.out = 50))</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a scatterplot of the entries of <span
+class="math inline">\(\hat{F}_{backfit-scaled}\)</span>:</p>
+<pre class="r"><code>plot_loadings(scaled_cov_fit_backfit_F, pops_vec)</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a heatmap of <span
+class="math inline">\(\hat{L}_{backfit-scaled}
+\hat{L}_{backfit-scaled}&#39;\)</span>:</p>
+<pre class="r"><code>scaled_cov_fit_backfit_fit_estLLt &lt;- tcrossprod(scaled_cov_fit_backfit_L)</code></pre>
+<pre class="r"><code>plot_heatmap(scaled_cov_fit_backfit_fit_estLLt, brks = seq(0, max(scaled_cov_fit_backfit_fit_estLLt), length.out = 50))</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a scatter plot of the fitted values vs observed values:</p>
+<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt), y = c(scaled_cov_fit_backfit_fit_estLLt))) + geom_point() + ylim(-1, 7) + xlim(-1,7) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a scatter plot of the off-diagonal entries of the fitted
+values vs those of the observed values:</p>
+<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_1$data$YYt)[off_diag_idx], y = c(scaled_cov_fit_backfit_fit_estLLt)[off_diag_idx])) + geom_point() + ylim(-1, 7) + xlim(-1,7) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div id="observations-2" class="section level2">
+<h2>Observations</h2>
+<p>After rescaling, we see that the estimate for the covariance matrix
+is much better. All the group effects have the same scale, as expected.
+In addition, the fitted values now closely match the observed values.
+However, one strange feature of this estimate is there are a handful of
+zero loadings which become non-zero during the backfitting. My
+hypothesis is that as the baseline values in the first value go to zero,
+some of the zero values in the other loadings increase. Another thing I
+want to try is initializing the fit at the true values; I want to see if
+that estimate also has these small non-zero loadings.</p>
+</div>
+</div>
+<div id="progression-of-the-backfitting" class="section level1">
+<h1>Progression of the backfitting</h1>
+<div id="backfit-after-3-iterations" class="section level2">
+<h2>Backfit after 3 iterations</h2>
+<pre class="r"><code>cov_fit_backfit_iter3_fit &lt;- cov_fit_backfit(group_nonoverlap_1$data$YYt, ebnm_fn = ebnm::ebnm_generalized_binary, 
+                                       Kmax = group_nonoverlap_1$data$K, backfit_iter = 3)</code></pre>
+<pre><code>Warning in report.maxiter.reached(verbose.lvl): Maximum number of iterations
+reached.
+Warning in report.maxiter.reached(verbose.lvl): Maximum number of iterations
+reached.
+Warning in report.maxiter.reached(verbose.lvl): Maximum number of iterations
+reached.
+Warning in report.maxiter.reached(verbose.lvl): Maximum number of iterations
+reached.</code></pre>
+<p>This is a scatterplot of the entries of <span
+class="math inline">\(\hat{L}_{backfit}\)</span> (this is not scaled, so
+the scaling is arbitrary):</p>
+<pre class="r"><code>plot_loadings(cov_fit_backfit_iter3_fit$fl$L_pm, pops_vec)</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-32-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a scatterplot of the entries of <span
+class="math inline">\(\hat{F}_{backfit}\)</span> (this is not scaled, so
+the scaling is arbitrary):</p>
+<pre class="r"><code>plot_loadings(cov_fit_backfit_iter3_fit$fl$F_pm, pops_vec)</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the elbo of the flash fit:</p>
+<pre class="r"><code>cov_fit_backfit_iter3_fit$fl$elbo</code></pre>
+<pre><code>[1] -731.2368</code></pre>
+</div>
+<div id="backfit-after-4-iterations" class="section level2">
+<h2>Backfit after 4 iterations</h2>
+<pre class="r"><code>cov_fit_backfit_iter4_fit &lt;- cov_fit_backfit(group_nonoverlap_1$data$YYt, ebnm_fn = ebnm::ebnm_generalized_binary, 
+                                       Kmax = group_nonoverlap_1$data$K, backfit_iter = 4)</code></pre>
+<pre><code>Warning in report.maxiter.reached(verbose.lvl): Maximum number of iterations
+reached.
+Warning in report.maxiter.reached(verbose.lvl): Maximum number of iterations
+reached.
+Warning in report.maxiter.reached(verbose.lvl): Maximum number of iterations
+reached.
+Warning in report.maxiter.reached(verbose.lvl): Maximum number of iterations
+reached.</code></pre>
+<p>This is a scatterplot of the entries of <span
+class="math inline">\(\hat{L}_{backfit}\)</span> (this is not scaled, so
+the scaling is arbitrary):</p>
+<pre class="r"><code>plot_loadings(cov_fit_backfit_iter4_fit$fl$L_pm, pops_vec)</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-36-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a scatterplot of the entries of <span
+class="math inline">\(\hat{F}_{backfit}\)</span> (this is not scaled, so
+the scaling is arbitrary):</p>
+<pre class="r"><code>plot_loadings(cov_fit_backfit_iter4_fit$fl$F_pm, pops_vec)</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-37-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the elbo of the flash fit:</p>
+<pre class="r"><code>cov_fit_backfit_iter4_fit$fl$elbo</code></pre>
+<pre><code>[1] 19173.48</code></pre>
+</div>
+</div>
+<div id="initialize-at-true-values" class="section level1">
+<h1>Initialize at true values</h1>
+<p>We run EBMFcov initialized with the true loadings matrix:</p>
+<pre class="r"><code>cov_fit_true_init_fit &lt;- cov_fit_backfit(group_nonoverlap_1$data$YYt, ebnm_fn = ebnm::ebnm_generalized_binary, 
+                                       Kmax = group_nonoverlap_1$data$K, backfit_iter = 500, backfit_tol = 10^(-16), cov_fit_init = list(group_nonoverlap_1$data$LL, group_nonoverlap_1$data$LL))</code></pre>
+<p>We rescale the estimates such that <span
+class="math inline">\(XX&#39; = LL&#39;\)</span> (the scaling from
+EBMFcov is arbitrary):</p>
+<pre class="r"><code>scaled_cov_fit_true_init_fit &lt;- ldf(cov_fit_true_init_fit$fl)
+scaled_cov_fit_true_init_L &lt;- scaled_cov_fit_true_init_fit$L %*% diag(sqrt(scaled_cov_fit_true_init_fit$D))
+scaled_cov_fit_true_init_F &lt;- scaled_cov_fit_true_init_fit$F %*% diag(sqrt(scaled_cov_fit_true_init_fit$D))</code></pre>
+<div id="visualization-of-estimate-1" class="section level2">
+<h2>Visualization of Estimate</h2>
+<p>This is a heatmap of <span
+class="math inline">\(\hat{L}_{true-init}\)</span>, the estimate for
+<span class="math inline">\(L\)</span> from EBMFcov intialized with the
+true values:</p>
+<pre class="r"><code>plot_heatmap(scaled_cov_fit_true_init_L, brks = seq(0, max(scaled_cov_fit_true_init_L), length.out = 50))</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-41-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a scatterplot of the entries of <span
+class="math inline">\(\hat{L}_{true-init}\)</span> (this is not scaled,
+so the scaling is arbitrary):</p>
+<pre class="r"><code>plot_loadings(scaled_cov_fit_true_init_L, pops_vec)</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-42-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a heatmap of <span
+class="math inline">\(\hat{F}_{backfit}\)</span>, the estimate for <span
+class="math inline">\(L\)</span> from EBMFcov with backfitting (this is
+not scaled, so the scaling is arbitrary):</p>
+<pre class="r"><code>plot_heatmap(scaled_cov_fit_true_init_F, brks = seq(0, max(scaled_cov_fit_true_init_F), length.out = 50))</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-43-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a scatterplot of the entries of <span
+class="math inline">\(\hat{F}_{backfit}\)</span> (this is not scaled, so
+the scaling is arbitrary):</p>
+<pre class="r"><code>plot_loadings(scaled_cov_fit_true_init_F, pops_vec)</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-44-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the elbo of the flash fit:</p>
+<pre class="r"><code>cov_fit_true_init_fit$fl$elbo</code></pre>
+<pre><code>[1] 20929.4</code></pre>
+</div>
+<div id="observations-3" class="section level2">
+<h2>Observations</h2>
+<p>The estimate from EBMFcov initialized with the true values also has
+these small non-zero values. This suggests that the objective function
+favors an estimate with these small loading values rather than zero
+values. I’m not sure if this is related to the data?</p>
+</div>
+</div>
+<div id="try-more-factors" class="section level1">
+<h1>Try more factors</h1>
+<p>Another question of interest is whether adding a fifth factor would
+add the final group effect. Furthermore, if we do backfit, then it would
+make sense for the first factor to zero out (since it is not necessary
+to explain the fit anymore). We test this out in this section.</p>
+<p>We run EBMFcov with <code>Kmax = 5</code>:</p>
+<pre class="r"><code>cov_fit_backfit_K5_fit &lt;- cov_fit_backfit(group_nonoverlap_1$data$YYt, ebnm_fn = ebnm::ebnm_generalized_binary, 
+                                       Kmax = 5, backfit_iter = 500)</code></pre>
+<pre><code>Warning in scale.EF(EF): Fitting stopped after the initialization function
+failed to find a non-zero factor.
+Warning in scale.EF(EF): Fitting stopped after the initialization function
+failed to find a non-zero factor.
+Warning in scale.EF(EF): Fitting stopped after the initialization function
+failed to find a non-zero factor.
+Warning in scale.EF(EF): Fitting stopped after the initialization function
+failed to find a non-zero factor.</code></pre>
+<p>This is a scatterplot of the entries of <span
+class="math inline">\(\hat{L}_{backfit-K5}\)</span> (this is not scaled,
+so the scaling is arbitrary):</p>
+<pre class="r"><code>plot_loadings(cov_fit_backfit_K5_fit$fl$L_pm, pops_vec)</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-47-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a scatterplot of the entries of <span
+class="math inline">\(\hat{F}_{backfit-K5}\)</span> (this is not scaled,
+so the scaling is arbitrary):</p>
+<pre class="r"><code>plot_loadings(cov_fit_backfit_K5_fit$fl$F_pm, pops_vec)</code></pre>
+<p><img src="figure/balanced_nonoverlapping_ebmfcov_diag.Rmd/unnamed-chunk-48-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the elbo of the flash fit:</p>
+<pre class="r"><code>cov_fit_backfit_K5_fit$fl$elbo</code></pre>
+<pre><code>[1] 20929.4</code></pre>
+<div id="observations-4" class="section level2">
+<h2>Observations</h2>
+<p>The estimate from fitting EBMFcov with a higher Kmax still has four
+factors. During the greedy algorithm, when the fifth factor is added,
+flash states the “Factor doesn’t significantly increase objective and
+won’t be added”. I think the structure of the Gram matrix strongly
+supports the matrix having rank four, so perhaps flash doesn’t want to
+add another factor, creating an over-complete basis.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
