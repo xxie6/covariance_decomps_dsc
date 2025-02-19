@@ -1,0 +1,393 @@
+---
+title: "tree_flash_normalf"
+author: "Annie Xie"
+date: "2025-02-15"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+In this analysis, we explore flash with a normal prior on F in the balanced tree setting.
+
+## Questions of Interest
+Flash with the normal prior on $F$ does not perform significantly well in this setting. Therefore, I am interested in exploring why it performs so poorly. Is it because the objective function doesn't prefer the hierarchical loadings? Is it because of the initialization? Is it a convergence issue? On the other hand, the GBCD method performs really well in this setting. So why does GBCD perform well?
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+library(flashier)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+```{r}
+compute_L2_fit <- function(est, dat, with_diag = FALSE){
+  if (with_diag == FALSE){
+    score <- sum((dat - est)^2) - sum((diag(dat) - diag(est))^2)
+  }
+  else{
+    score <- sum((dat - est)^2)
+  }
+  return(score)
+}
+```
+
+# Flash with normal prior on F (with backfitting)
+
+```{r}
+baltree_4pop_1 <- readRDS("data/baltree_4pop_1.rds")
+baltree_4pop_1_flash_normalf_1 <- readRDS("data/baltree_4pop_1_flash_normalf_1.rds")
+```
+
+## Visualization of Estimate
+This is a heatmap of the true $L$ that we are hoping to recover:
+```{r}
+plot_heatmap(baltree_4pop_1$true_L)
+```
+
+This is a heatmap of $\hat{L}$, the estimate for $L$ from Flashier with normal prior on $F$ (this estimate is not scaled):
+```{r}
+plot_heatmap(baltree_4pop_1_flash_normalf_1$est_L, brks = seq(0, max(baltree_4pop_1_flash_normalf_1$est_L), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}$:
+```{r}
+pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
+plot_loadings(baltree_4pop_1_flash_normalf_1$est_L, pops_vec)
+```
+
+These are the entries of the first column, sixth column, and seventh column of $\hat{L}$, which appear to be zero in the scatter plot:
+```{r}
+baltree_4pop_1_flash_normalf_1$est_L[1,1]
+baltree_4pop_1_flash_normalf_1$est_L[1,6]
+baltree_4pop_1_flash_normalf_1$est_L[1,7]
+```
+
+## Visualizations related to fit
+
+This is the true Gram matrix, $\frac{1}{p}XX'$:
+```{r}
+plot_heatmap(baltree_4pop_1$data$YYt, colors = c('blue','gray96', 'red'), brks = seq(-max(abs(baltree_4pop_1$data$YYt)), max(abs(baltree_4pop_1$data$YYt)), length.out = 50))
+```
+
+This is a heatmap of the estimate of the Gram matrix, $\hat{L}\hat{L}'$ (the $\hat{L}$ used here is scaled):
+```{r}
+plot_heatmap(baltree_4pop_1_flash_normalf_1$est_LLt, brks = seq(0, max(baltree_4pop_1_flash_normalf_1$est_LLt), length.out = 50))
+```
+
+This is a scatter plot of the fitted values vs observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt), y = c(baltree_4pop_1_flash_normalf_1$est_LLt))) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+Let's focus on the off-diagonal elements:
+```{r}
+diag_idx <- seq(1, prod(dim(baltree_4pop_1$data$YYt)), length.out = ncol(baltree_4pop_1$data$YYt))
+off_diag_idx <- setdiff(c(1:prod(dim(baltree_4pop_1$data$YYt))), diag_idx) 
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt)[off_diag_idx], y = c(baltree_4pop_1_flash_normalf_1$est_LLt)[off_diag_idx])) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+This is the L2-norm of the difference (not including the diagonal entries):
+```{r}
+compute_L2_fit(baltree_4pop_1_flash_normalf_1$est_LLt, baltree_4pop_1$data$YYt)
+```
+
+This is the elbo of the flash fit:
+```{r}
+baltree_4pop_1_flash_normalf_1$fit_obj$elbo
+```
+
+## Visualizations relating to fit of the data matrix
+
+This is a heatmap of $\hat{F}'\hat{F}$ (this is not scaled; the scaling is arbitrary):
+```{r}
+flash_normalf_fit_estFtF <- crossprod(baltree_4pop_1_flash_normalf_1$fit_obj$F_pm)
+```
+
+```{r}
+plot_heatmap(flash_normalf_fit_estFtF, brks = seq(0, max(flash_normalf_fit_estFtF), length.out = 50))
+```
+  
+Interestingly, the L2 norms corresponding to factors 1, 6, and 7 are very close to zero.
+
+This is a scatterplot of fitted values vs observed values for the data matrix, $X$:
+```{r}
+X_fitted_vals <- fitted(baltree_4pop_1_flash_normalf_1$fit_obj)
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$Y), y = c(X_fitted_vals))) + geom_point() + ylim(-15, 17) + xlim(-15,17) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+## Observations
+Flash with normal prior on F does not perform particularly well in terms of recovering the desired loadings matrix. In particular, the estimate uses only four out of seven factors. This is not entirely surprising because the data could be explained in four factors (e.g. one factor for each group effect). However, this representation misses the overlapping, hierarchical structure. 
+
+The estimate explains the data by considering all the 2 vs 2 groupings. I have also seen this type of solution in previous work when working with tree data. For a 4 population, balanced tree, the Gram matrix looks like
+$$\begin{bmatrix}
+3 & 2 & 1 & 1\\
+2 & 3 & 1 & 1\\
+1 & 1 & 3 & 2\\
+1 & 1 & 2 & 3
+\end{bmatrix}.$$
+
+Say we're interested in finding an $L$ such that $XX' approx LWL'$, where $W$ is a diagonal matrix. The matrix we want to find is 
+$$\begin{bmatrix}
+1 & 1 & 0 & 1 & 0 & 0 & 0\\
+1 & 1 & 0 & 0 & 1 & 0 & 0\\
+1 & 0 & 1 & 0 & 0 & 1 & 0\\
+1 & 0 & 1 & 0 & 0 & 0 & 1
+\end{bmatrix}$$
+
+with weight matrix equal to the identity matrix.
+
+However, an alternative solution is
+$$\begin{bmatrix}
+1 & 1 & 0 & 0 & 1 & 1 & 0\\
+1 & 1 & 0 & 1 & 0  & 0 & 1 \\
+1 & 0 & 1 & 1  & 1 & 0 & 0\\
+1 & 0 & 1 & 0 & 0 & 1 & 1
+\end{bmatrix}$$
+
+with weight matrix having diagonal entries $(1/\sqrt{2})^2, (\sqrt{6}/2)^2, (\sqrt{6}/2)^2, (1/\sqrt{2})^2, (1/\sqrt{2})^2, (1/\sqrt{2})^2, (1/\sqrt{2})^2$. 
+
+The estimate for the Gram matrix is somewhat close to the true Gram matrix. However there is a subset of off-diagonal entries which have value 0 in the estimate, but ideally should be around 5 (because we have an intercept factor).
+
+# Try initializing with true values
+To start, I am going to try initializing with the true values. I want to see if the method moves away from this solution and towards a different solution with a higher objective function value.
+
+```{r}
+flash_normalf_fit_true_init <- flash_init(baltree_4pop_1$data$Y) %>%
+  flash_factors_init(init = list(baltree_4pop_1$data$LL, baltree_4pop_1$data$FF), ebnm_fn = c(ebnm::ebnm_generalized_binary, ebnm::ebnm_normal)) %>%
+  flash_backfit() %>% 
+  flash_nullcheck()
+```
+
+## Visualizations of the Estimate
+This is a heatmap of $\hat{L}_{true-init}$, the estimate for $L$:
+```{r}
+plot_heatmap(flash_normalf_fit_true_init$L_pm, brks = seq(0, max(flash_normalf_fit_true_init$L_pm), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}_{true-init}$:
+```{r}
+plot_loadings(flash_normalf_fit_true_init$L_pm, pops_vec)
+```
+
+This are the entries of the first three columns of $\hat{L}_{true-init}$, which appear to be zero in the scatterplot:
+```{r}
+flash_normalf_fit_true_init$L_pm[1,1]
+flash_normalf_fit_true_init$L_pm[1,2]
+flash_normalf_fit_true_init$L_pm[1,3]
+```
+
+This is the corresponding elbo:
+```{r}
+flash_normalf_fit_true_init$elbo
+```
+
+## Visualizations relating to fit of the Gram matrix
+```{r}
+scaled_flash_normalf_fit_true_init <- ldf(flash_normalf_fit_true_init)
+scaled_flash_normalf_true_init_L <- sqrt(1/ncol(baltree_4pop_1$data$Y)) * scaled_flash_normalf_fit_true_init$L %*% diag(scaled_flash_normalf_fit_true_init$D)
+```
+
+This is a heatmap of $\hat{L}_{true-init} \hat{L}_{true-init}'$:
+```{r}
+scaled_flash_normalf_fit_true_init_estLLt <- tcrossprod(scaled_flash_normalf_true_init_L)
+```
+
+```{r}
+plot_heatmap(scaled_flash_normalf_fit_true_init_estLLt, brks = seq(0, max(scaled_flash_normalf_fit_true_init_estLLt), length.out = 50))
+```
+
+This is a scatter plot of the fitted values vs observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt), y = c(scaled_flash_normalf_fit_true_init_estLLt))) + geom_point() + ylim(-1, 15) + xlim(-1,15) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+This is a scatter plot of the off-diagonal entries of the fitted values vs those of the observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt)[off_diag_idx], y = c(scaled_flash_normalf_fit_true_init_estLLt)[off_diag_idx])) + geom_point() + ylim(-1, 15) + xlim(-1,15) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+This is the L2-norm of the difference (not including the diagonal entries):
+```{r}
+compute_L2_fit(scaled_flash_normalf_fit_true_init_estLLt, baltree_4pop_1$data$YYt)
+```
+
+## Visualizations relating to fit of the data matrix
+
+This is a heatmap of $\hat{F}_{true-init}'\hat{F}_{true-init}$:
+```{r}
+scaled_flash_normalf_fit_true_init_estFtF <- crossprod(scaled_flash_normalf_fit_true_init$F)
+```
+
+```{r}
+plot_heatmap(scaled_flash_normalf_fit_true_init_estFtF, brks = seq(0, max(scaled_flash_normalf_fit_true_init_estFtF), length.out = 50))
+```
+
+This is a scatterplot of fitted values vs observed values for the data matrix, $X$ (not $XX'$):
+```{r}
+X_true_init_fitted_vals <- fitted(flash_normalf_fit_true_init)
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$Y), y = c(X_true_init_fitted_vals))) + geom_point() + ylim(-15, 17) + xlim(-15,17) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+This is a heatmap of $\hat{L}_{true-init} \hat{F}_{true-init}' \hat{F}_{true-init}$:
+```{r}
+flash_normalf_fit_true_init_estLFtF <- flash_normalf_fit_true_init$L_pm %*% crossprod(flash_normalf_fit_true_init$F_pm)
+```
+
+```{r}
+plot_heatmap(flash_normalf_fit_true_init_estLFtF, brks = seq(0, max(flash_normalf_fit_true_init_estLFtF), length.out = 50))
+```
+
+## Observations
+When initialized with the true loadings and factor values, flash with a normal prior on $F$ moves away from the true solution. Instead, it finds a solution with four factors, one factor for each group effect. Perhaps it prefers this solution due to its sparsity? The elbo for this estimate is higher than that of the estimate from flash with the greedy initialization.
+
+For this setting, I'm guessing the factors in the factor matrix have significant correlations due to the overlapping structure in the data; this overlapping structure is not shown in the loadings matrix so it would make sense for it to be baked into the factor matrix. This is what we see in our plot of $\hat{F}_{true-init}'\hat{F}_{true-init}$. One of our old questions was whether drift would perform better in this setting because it considers correlations of the factors in $F$ in its model.
+
+Furthermore, in this setting, $\hat{L}_{true-init}\hat{L}_{true-init}'$ does not do a good job at estimating the true Gram matrix. This is a little surprising because our result shows that the update for $L$ depends on $X$ through $XX'$. 
+
+# Try initializing with GBCD type initialization
+Another question is the role of the initialization. Right now, we hypothesize that GBCD's initialization procedure is the reason for the method's high performance in the tree setting. I'm doubtful that an initialization procedure like the GBCD one will help given that when initialized with the true values, this method moves to a different estimate. In this section, I will check that.
+
+```{r}
+# think more about this!
+gbcd_initialization <- function(YYt, Kmax){
+  flash_fit_laplace_init <- flash_init(YYt) %>%
+    flash_greedy(Kmax = Kmax, ebnm_fn = ebnm::ebnm_point_laplace) %>%
+    flash_backfit()
+  scaled_flash_fit_laplace_init <- ldf(flash_fit_laplace_init)
+  scaled_flash_fit_laplace_init_L <- scaled_flash_fit_laplace_init$L %*% diag(sqrt(scaled_flash_fit_laplace_init$D))
+  scaled_flash_fit_laplace_init_F <- scaled_flash_fit_laplace_init$F %*% diag(sqrt(scaled_flash_fit_laplace_init$D))
+  flash_fit_init_L <- cbind(pmax(scaled_flash_fit_laplace_init_L, 0), pmax(-scaled_flash_fit_laplace_init_L, 0))
+  flash_fit_init_F <- cbind(pmax(scaled_flash_fit_laplace_init_F, 0), pmax(-scaled_flash_fit_laplace_init_F, 0))
+  return(list(flash_fit_init_L, flash_fit_init_F))
+}
+```
+
+```{r}
+# test if this works
+flash_normalf_gbcd_init <- gbcd_initialization(baltree_4pop_1$data$YYt, 7)
+```
+
+These are scatterplots of the initializations:
+```{r}
+plot_loadings(flash_normalf_gbcd_init[[1]], pops_vec)
+```
+
+```{r}
+plot_loadings(flash_normalf_gbcd_init[[2]], pops_vec)
+```
+  
+Both matrices seem capture the same type of structure. Also, I rescaled the matrices so that they're both on the same scale. One observation is the first factor of the initialization appears to be zero, so I have decided to remove it.
+
+```{r}
+# I remove the first factor of the loadings initialization since it was essentially zero
+fit.L <- flash_normalf_gbcd_init[[1]][,c(-1)]
+```
+
+To initialize $F$, we solve the matrix equation $L'X = (L'L)F'$. 
+```{r}
+init.F <- t(solve(crossprod(fit.L), as.matrix(Matrix::crossprod(fit.L, baltree_4pop_1$data$Y))))
+```
+
+```{r}
+flash_normalf_gbcd_init_fit <- flash_init(baltree_4pop_1$data$Y) %>%
+  flash_factors_init(list(fit.L, init.F), ebnm_fn = c(ebnm::ebnm_generalized_binary, ebnm::ebnm_normal)) %>%
+  flash_backfit() %>%
+  flash_nullcheck()
+```
+
+## Visualizations of the Estimate
+This is a heatmap of $\hat{L}_{gbcd-init}$, the estimate for $L$:
+```{r}
+plot_heatmap(flash_normalf_gbcd_init_fit$L_pm, brks = seq(0, max(flash_normalf_gbcd_init_fit$L_pm), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}_{gbcd-init}$:
+```{r}
+plot_loadings(flash_normalf_gbcd_init_fit$L_pm, pops_vec)
+```
+
+This is the corresponding elbo:
+```{r}
+flash_normalf_gbcd_init_fit$elbo
+```
+
+## Visualizations relating to fit of the Gram matrix
+```{r}
+scaled_flash_normalf_fit_gbcd_init <- ldf(flash_normalf_gbcd_init_fit)
+scaled_flash_normalf_gbcd_init_L <- sqrt(1/ncol(baltree_4pop_1$data$Y)) * scaled_flash_normalf_fit_gbcd_init$L %*% diag(scaled_flash_normalf_fit_gbcd_init$D)
+```
+
+This is a heatmap of $\hat{L}_{gbcd-init} \hat{L}_{gbcd-init}'$:
+```{r}
+scaled_flash_normalf_fit_gbcd_init_estLLt <- tcrossprod(scaled_flash_normalf_gbcd_init_L)
+```
+
+```{r}
+plot_heatmap(scaled_flash_normalf_fit_gbcd_init_estLLt, brks = seq(0, max(scaled_flash_normalf_fit_gbcd_init_estLLt), length.out = 50))
+```
+
+This is a scatter plot of the fitted values vs observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt), y = c(scaled_flash_normalf_fit_gbcd_init_estLLt))) + geom_point() + ylim(-1, 25) + xlim(-1,25) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+This is a scatter plot of the off-diagonal entries of the fitted values vs those of the observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt)[off_diag_idx], y = c(scaled_flash_normalf_fit_gbcd_init_estLLt)[off_diag_idx])) + geom_point() + ylim(-1, 25) + xlim(-1,25) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+```{r}
+compute_L2_fit(scaled_flash_normalf_fit_gbcd_init_estLLt, baltree_4pop_1$data$YYt)
+```
+
+## Visualizations relating to fit of the data matrix
+
+This is a heatmap of $\hat{F}_{gbcd-init}'\hat{F}_{gbcd-init}$:
+```{r}
+scaled_flash_normalf_fit_gbcd_init_estFtF <- crossprod(scaled_flash_normalf_fit_gbcd_init$F)
+```
+
+```{r}
+plot_heatmap(scaled_flash_normalf_fit_gbcd_init_estFtF, brks = seq(0, max(scaled_flash_normalf_fit_gbcd_init_estFtF), length.out = 50))
+```
+
+This is a scatterplot of fitted values vs observed values for the data matrix, $X$ (not $XX'$):
+```{r}
+X_gbcd_init_fitted_vals <- fitted(flash_normalf_gbcd_init_fit)
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$Y), y = c(X_gbcd_init_fitted_vals))) + geom_point() + ylim(-15, 17) + xlim(-15,17) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+This is a heatmap of $\hat{L}_{gbcd-init} \hat{F}_{gbcd-init}' \hat{F}_{gbcd-init}$:
+```{r}
+flash_normalf_fit_gbcd_init_estLFtF <- flash_normalf_gbcd_init_fit$L_pm %*% crossprod(flash_normalf_gbcd_init_fit$F_pm)
+```
+
+```{r}
+plot_heatmap(flash_normalf_fit_gbcd_init_estLFtF, brks = seq(0, max(flash_normalf_fit_gbcd_init_estLFtF), length.out = 50))
+```
+
+## Observations
+As expected, the GBCD initialization adapted for this setting also yields an estimate which uses only four factors. In this case, the method seemed to remove redundant factors. The first factor is kind of like an intercept-like factor; however, the fourth group has a higher loadings value than the other groups. One factor is subtype-like, but the two groups have different loadings values. Two factors are population-like factors (one from each subtype). The elbo for this fit is lower than that of flash initialized with the true values and that of flash initialized with the greedy procedure. The GBCD method does use a point-Laplace prior over the factors, so I wonder if that helps GBCD find the desired structure.
+
+The estimate for the Gram matrix is not the worst, but not the best. Because there is one subtype-like factor, we do see something like the subtype effect in one part of $\hat{L}_{gbcd-init}\hat{L}_{gbcd-init}'$; we did not see any subtype effects in $\hat{L}_{true-init}\hat{L}_{true-init}'$. However, we're missing one subtype effect in the Gram matrix estimate. 
+
+Another observation is the different initializations yield different styles of estimates. This is not so surprising because of the identifiability issues in this particular setting. The columns of the true loadings matrix are linearly dependent, so you could construct other loadings matrices that provide as good a fit to the data matrix.
