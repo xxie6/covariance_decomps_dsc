@@ -1,0 +1,312 @@
+---
+title: "tree_gbcd"
+author: "Annie Xie"
+date: "2025-02-15"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+In this analysis, we explore GBCD (with `Kmax` set to the true $K$ value) in the balanced tree setting.
+
+## Questions of Interest
+This analysis is complementary to other analyses of methods in the tree setting. GBCD method performs really well in this setting while other methods do not perform nearly as well. Therefore, we want to know why GBCD performs so well. 
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+library(flashier)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+```{r}
+compute_L2_fit <- function(est, dat, with_diag = FALSE){
+  if (with_diag == FALSE){
+    score <- sum((dat - est)^2) - sum((diag(dat) - diag(est))^2)
+  }
+  else{
+    score <- sum((dat - est)^2)
+  }
+  return(score)
+}
+```
+
+# GBCD
+
+```{r}
+baltree_4pop_1 <- readRDS("data/baltree_4pop_1.rds")
+baltree_4pop_1_gbcd_1 <- readRDS("data/baltree_4pop_1_gbcd_inputK_1.rds")
+```
+
+## Visualization of Estimate
+This is a heatmap of the true $L$ that we are hoping to recover:
+```{r}
+plot_heatmap(baltree_4pop_1$true_L)
+```
+
+This is a heatmap of $\hat{L}$, the estimate for $L$ from GBCD:
+```{r}
+plot_heatmap(baltree_4pop_1_gbcd_1$est_L, brks = seq(0, max(baltree_4pop_1_gbcd_1$est_L), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}$:
+```{r}
+pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
+plot_loadings(baltree_4pop_1_gbcd_1$est_L, pops_vec)
+```
+
+## Visualizations related to fit
+
+This is the true Gram matrix, $\frac{1}{p}XX'$:
+```{r}
+plot_heatmap(baltree_4pop_1$data$YYt, colors = c('blue','gray96', 'red'), brks = seq(-max(abs(baltree_4pop_1$data$YYt)), max(abs(baltree_4pop_1$data$YYt)), length.out = 50))
+```
+
+This is a heatmap of the estimate of the Gram matrix, $\hat{L}\hat{L}'$ (the $\hat{L}$ used here is scaled):
+```{r}
+plot_heatmap(baltree_4pop_1_gbcd_1$est_LLt, brks = seq(0, max(baltree_4pop_1_gbcd_1$est_LLt), length.out = 50))
+```
+
+This is a scatter plot of the fitted values vs observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt), y = c(baltree_4pop_1_gbcd_1$est_LLt))) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+Let's focus on the off-diagonal elements:
+```{r}
+diag_idx <- seq(1, prod(dim(baltree_4pop_1$data$YYt)), length.out = ncol(baltree_4pop_1$data$YYt))
+off_diag_idx <- setdiff(c(1:prod(dim(baltree_4pop_1$data$YYt))), diag_idx) 
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt)[off_diag_idx], y = c(baltree_4pop_1_gbcd_1$est_LLt)[off_diag_idx])) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+This is the L2-norm of the difference (not including the diagonal entries):
+```{r}
+compute_L2_fit(baltree_4pop_1_gbcd_1$est_LLt, baltree_4pop_1$data$YYt)
+```
+
+## Observations
+We see that GBCD is able to capture the overlapping structure quite well in this setting. The fit of $\hat{L} \hat{L}'$ to the true Gram matrix is really close. 
+
+A natural method to compare GBCD is EBMFcov. EBMFcov and GBCD estimate the $L$ matrix in a similar fashion. However, EBMFcov does not perform as well as GBCD in this setting. EBMFcov only finds three factors, one intercept factor and two factors corresponding to the subtypes. One major difference is the initialization procedure that GBCD uses. Another major difference is the amount of backfitting that GBCD uses.
+
+# Trying GBCD with greedy initialization
+
+```{r}
+fit_ebmf_to_YY <- function (dat, fl, extrapolate = TRUE, warmstart = TRUE,
+                            maxiter = 500, tol = NULL, epsilon = 2e-2,
+                            verbose = 1) {
+  if (is.matrix(dat) || inherits(dat, "Matrix")) {
+    data_diag <- diag(dat)
+  } else {
+    data_diag <- Matrix::rowSums(dat$U * dat$D * dat$V)
+  }
+  
+  s2 <- max(0, mean(data_diag - rowSums(fl$L_pm * fl$F_pm)))
+  s2_diff <- Inf
+  old_s2 <- 0
+  
+  ### alternate between estimating s2 and backfitting until convergence
+  while(s2 > 0 && abs(s2_diff - 1) > epsilon) {
+    if (is.matrix(dat) || inherits(dat, "Matrix")) {
+      dat_minuss2 <- dat - diag(rep(s2, ncol(dat)))
+    }
+    else{
+      dat_minuss2 <- list(U = dat$U, D = dat$D, V = dat$V,
+                          S = Matrix::Diagonal(nrow(dat$U), -s2))
+    }
+    Y2_diff <- sum((data_diag - s2)^2 - (data_diag - old_s2)^2)
+    fl <- fl |>
+      flash_update_data(dat_minuss2, Y2_diff = Y2_diff) |>
+      flash_backfit(extrapolate = extrapolate, warmstart = warmstart,
+                    maxiter = maxiter, tol = tol, verbose = verbose)
+    
+    old_s2 <- s2
+    s2 <- max(0, mean(data_diag - rowSums(fl$L_pm * fl$F_pm)))
+    s2_diff <- s2 / old_s2
+  }
+  
+  return(list(dat = dat, fl = fl, s2 = s2))
+}
+```
+
+```{r}
+warmstart <- TRUE
+extrapolate <- FALSE
+verbose <- 1
+
+fit.cov_greedy_init <- flash_init(baltree_4pop_1$data$YYt) %>%
+  flash_greedy(Kmax = 1, ebnm_fn = ebnm::ebnm_point_laplace) %>%
+  flash_greedy(Kmax = (baltree_4pop_1$data$K - 1), ebnm_fn = ebnm::ebnm_generalized_binary) %>%
+  flash_backfit(extrapolate = FALSE, warmstart = warmstart, maxiter = 25, verbose = verbose)
+  
+### keep at most Kmax factors based on proportion of variance explained and refit EB-NMF to covariance matrix
+kset <- (fit.cov_greedy_init$pve > 0)
+kall <- 1:fit.cov_greedy_init$n_factors
+if(!all(kset)){
+  fit.cov_greedy_init <- flash_factors_remove(fit.cov_greedy_init, kset=kall[!kset])
+}
+fit.cov_greedy_init <- fit_ebmf_to_YY(baltree_4pop_1$data$YYt, fl = fit.cov_greedy_init, extrapolate = extrapolate, warmstart = warmstart, maxiter = 200, verbose = verbose)$fl
+```
+
+## Visualization of Estimate
+This is a heatmap of $\hat{L}_{greedy-init}$:
+```{r}
+plot_heatmap(fit.cov_greedy_init$L_pm, colors_range = c('blue', 'gray96','red'), brks = seq(-max(fit.cov_greedy_init$L_pm), max(fit.cov_greedy_init$L_pm), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}_{greedy-init}$:
+```{r}
+pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
+plot_loadings(fit.cov_greedy_init$L_pm, pops_vec)
+```
+
+This is a heatmap of $\hat{F}_{greedy-init}$:
+```{r}
+plot_heatmap(fit.cov_greedy_init$F_pm, colors_range = c('blue', 'gray96','red'), brks = seq(-max(fit.cov_greedy_init$F_pm), max(fit.cov_greedy_init$F_pm), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{F}_{greedy-init}$:
+```{r}
+pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
+plot_loadings(fit.cov_greedy_init$F_pm, pops_vec)
+```
+
+## Visualizations related to fit
+
+```{r}
+scaled_fit.cov_greedy_init <- ldf(fit.cov_greedy_init)
+scaled_fit.cov_greedy_init_L <- scaled_fit.cov_greedy_init$L %*% diag(sqrt(scaled_fit.cov_greedy_init$D))
+scaled_fit.cov_greedy_init_estLLt <- tcrossprod(scaled_fit.cov_greedy_init_L)
+```
+
+This is a heatmap of the estimate of the Gram matrix, $\hat{L}\hat{L}'$ (the $\hat{L}$ used here is scaled):
+```{r}
+plot_heatmap(scaled_fit.cov_greedy_init_estLLt, colors_range = c('blue', 'gray96','red'), brks = seq(-max(scaled_fit.cov_greedy_init_estLLt), max(scaled_fit.cov_greedy_init_estLLt), length.out = 50))
+```
+
+This is a scatter plot of the fitted values vs observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt), y = c(scaled_fit.cov_greedy_init_estLLt))) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+Let's focus on the off-diagonal elements:
+```{r}
+diag_idx <- seq(1, prod(dim(baltree_4pop_1$data$YYt)), length.out = ncol(baltree_4pop_1$data$YYt))
+off_diag_idx <- setdiff(c(1:prod(dim(baltree_4pop_1$data$YYt))), diag_idx) 
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt)[off_diag_idx], y = c(scaled_fit.cov_greedy_init_estLLt)[off_diag_idx])) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+This is the L2-norm of the difference (not including the diagonal entries):
+```{r}
+compute_L2_fit(scaled_fit.cov_greedy_init_estLLt, baltree_4pop_1$data$YYt)
+```
+
+This is the elbo:
+```{r}
+fit.cov_greedy_init$elbo
+```
+
+## Observations
+GBCD with a greedy initialization does very poorly. The greedy initialization only adds three factors, so the final estimate is only three factors. This behavior aligns with the behavior we've seen from EMBFcov in this setting. Furthermore, the point-Laplace prior on the first factor results in that factor having negative entries.
+
+# Try initializing with true values
+In this section, I try initializing GBCD with the true values. Given how well GBCD performs in this setting, I expect GBCD initialized with the true values to yield an estimate that also looks like a tree.
+
+```{r}
+warmstart <- TRUE
+extrapolate <- FALSE
+verbose <- 1
+
+kmax <- 1
+cov.init <- list(baltree_4pop_1$data$LL, baltree_4pop_1$data$LL)
+
+fit.cov_true_init <- flash_init(baltree_4pop_1$data$YYt) %>%
+  flash_factors_init(init = lapply(cov.init, function(x) x[, kmax, drop = FALSE]), ebnm_fn = ebnm::ebnm_point_laplace) %>%
+  flash_factors_init(init = lapply(cov.init, function(x) x[, -c(kmax), drop = FALSE]), ebnm_fn = ebnm::ebnm_generalized_binary) %>%
+  flash_backfit(extrapolate = FALSE, warmstart = warmstart, maxiter = 25, verbose = verbose)
+  
+### keep at most Kmax factors based on proportion of variance explained and refit EB-NMF to covariance matrix
+kset <- (fit.cov_true_init$pve > 0)
+kall <- 1:fit.cov_true_init$n_factors
+if(!all(kset)){
+  fit.cov_true_init <- flash_factors_remove(fit.cov_true_init, kset=kall[!kset])
+}
+fit.cov_true_init <- fit_ebmf_to_YY(baltree_4pop_1$data$YYt, fl = fit.cov_true_init, extrapolate = extrapolate, warmstart = warmstart, maxiter = 200, verbose = verbose)$fl
+```
+
+## Visualization of Estimate
+This is a heatmap of $\hat{L}_{true-init}$:
+```{r}
+plot_heatmap(fit.cov_true_init$L_pm, colors_range = c('blue', 'gray96','red'), brks = seq(-max(fit.cov_true_init$L_pm), max(fit.cov_true_init$L_pm), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}_{true-init}$:
+```{r}
+pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
+plot_loadings(fit.cov_true_init$L_pm, pops_vec)
+```
+
+This is a heatmap of $\hat{F}_{true-init}$:
+```{r}
+plot_heatmap(fit.cov_true_init$F_pm, colors_range = c('blue', 'gray96','red'), brks = seq(-max(fit.cov_true_init$F_pm), max(fit.cov_true_init$F_pm), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{F}_{true-init}$:
+```{r}
+pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
+plot_loadings(fit.cov_true_init$F_pm, pops_vec)
+```
+
+## Visualizations related to fit
+
+```{r}
+scaled_fit.cov_true_init <- ldf(fit.cov_true_init)
+scaled_fit.cov_true_init_L <- scaled_fit.cov_true_init$L %*% diag(sqrt(scaled_fit.cov_true_init$D))
+scaled_fit.cov_true_init_estLLt <- tcrossprod(scaled_fit.cov_true_init_L)
+```
+
+This is a heatmap of the estimate of the Gram matrix, $\hat{L}\hat{L}'$ (the $\hat{L}$ used here is scaled):
+```{r}
+plot_heatmap(scaled_fit.cov_true_init_estLLt, colors_range = c('blue', 'gray96','red'), brks = seq(-max(scaled_fit.cov_true_init_estLLt), max(scaled_fit.cov_true_init_estLLt), length.out = 50))
+```
+
+This is a scatter plot of the fitted values vs observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt), y = c(scaled_fit.cov_true_init_estLLt))) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+Let's focus on the off-diagonal elements:
+```{r}
+diag_idx <- seq(1, prod(dim(baltree_4pop_1$data$YYt)), length.out = ncol(baltree_4pop_1$data$YYt))
+off_diag_idx <- setdiff(c(1:prod(dim(baltree_4pop_1$data$YYt))), diag_idx) 
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt)[off_diag_idx], y = c(scaled_fit.cov_true_init_estLLt)[off_diag_idx])) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+This is the L2-norm of the difference (not including the diagonal entries):
+```{r}
+compute_L2_fit(scaled_fit.cov_true_init_estLLt, baltree_4pop_1$data$YYt)
+```
+
+This is the elbo:
+```{r}
+fit.cov_true_init$elbo
+```
+
+## Observations
+As expected, GBCD initialized with the true loadings value returns an estimate that looks like a tree. Furthermore, the estimated Gram matrix matches the observed Gram matrix very well.
