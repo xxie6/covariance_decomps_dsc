@@ -35,6 +35,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
@@ -233,6 +234,9 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -356,6 +360,14 @@ div.tocify {
 </div><!--/.navbar -->
 
 <div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
 
 
 
@@ -521,15 +533,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreec05406891682b63f067c38c77ff3a196c211c684targetblankc054068a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreed9042ff1933dd5716ac9fa0024af3a9038e3f94dtargetblankd9042ffa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/c05406891682b63f067c38c77ff3a196c211c684" target="_blank">c054068</a>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/d9042ff1933dd5716ac9fa0024af3a9038e3f94d" target="_blank">d9042ff</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreec05406891682b63f067c38c77ff3a196c211c684targetblankc054068a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreed9042ff1933dd5716ac9fa0024af3a9038e3f94dtargetblankd9042ffa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -539,7 +551,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/c05406891682b63f067c38c77ff3a196c211c684" target="_blank">c054068</a>.
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/d9042ff1933dd5716ac9fa0024af3a9038e3f94d" target="_blank">d9042ff</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -616,6 +628,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/d9042ff1933dd5716ac9fa0024af3a9038e3f94d/analysis/tree_ebmfcov_diag.Rmd" target="_blank">d9042ff</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+<td>
+Update analysis aesthetics
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/xxie6/covariance_decomps_dsc/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/tree_ebmfcov_diag.html" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/xxie6/covariance_decomps_dsc/blob/c05406891682b63f067c38c77ff3a196c211c684/analysis/tree_ebmfcov_diag.Rmd" target="_blank">c054068</a>
 </td>
 <td>
@@ -673,26 +719,211 @@ baltree_4pop_1_ebmfcov_1 &lt;- readRDS(&quot;data/baltree_4pop_1_ebmfcov_diag_1.
 that we are hoping to recover:</p>
 <pre class="r"><code>plot_heatmap(baltree_4pop_1$true_L)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-5-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a heatmap of <span class="math inline">\(\hat{L}\)</span>,
 the estimate for <span class="math inline">\(L\)</span> from EBMFcov
 (this estimate is not scaled):</p>
 <pre class="r"><code>plot_heatmap(baltree_4pop_1_ebmfcov_1$est_L, brks = seq(0, max(baltree_4pop_1_ebmfcov_1$est_L), length.out = 50))</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-6-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatterplot of the entries of <span
 class="math inline">\(\hat{L}\)</span>:</p>
 <pre class="r"><code>pops_vec &lt;- c(rep(&#39;A&#39;, 40), rep(&#39;B&#39;, 40), rep(&#39;C&#39;, 40), rep(&#39;D&#39;, 40))
 plot_loadings(baltree_4pop_1_ebmfcov_1$est_L, pops_vec)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-7-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a heatmap of <span class="math inline">\(\hat{F}\)</span> (we
 hope this is similar to <span class="math inline">\(\hat{L}\)</span>, up
 to a scaling):</p>
 <pre class="r"><code>plot_heatmap(baltree_4pop_1_ebmfcov_1$fit_obj$fl$F_pm, brks = seq(0, max(baltree_4pop_1_ebmfcov_1$fit_obj$fl$F_pm), length.out = 50))</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-8-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatterplot of the entries of <span
 class="math inline">\(\hat{F}\)</span>:</p>
 <pre class="r"><code>pops_vec &lt;- c(rep(&#39;A&#39;, 40), rep(&#39;B&#39;, 40), rep(&#39;C&#39;, 40), rep(&#39;D&#39;, 40))
 plot_loadings(baltree_4pop_1_ebmfcov_1$fit_obj$fl$F_pm, pops_vec)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-9-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is the estimate of the diagonal component:</p>
 <pre class="r"><code>baltree_4pop_1_ebmfcov_1$fit_obj$s2</code></pre>
 <pre><code>[1] 3.180925</code></pre>
@@ -706,19 +937,167 @@ plot_loadings(baltree_4pop_1_ebmfcov_1$fit_obj$fl$F_pm, pops_vec)</code></pre>
 class="math inline">\(\frac{1}{p}XX&#39;\)</span>:</p>
 <pre class="r"><code>plot_heatmap(baltree_4pop_1$data$YYt, colors = c(&#39;blue&#39;,&#39;gray96&#39;, &#39;red&#39;), brks = seq(-max(abs(baltree_4pop_1$data$YYt)), max(abs(baltree_4pop_1$data$YYt)), length.out = 50))</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
+Past versions of unnamed-chunk-12-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-12-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-12-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a heatmap of the estimate of the Gram matrix, <span
 class="math inline">\(\hat{L}\hat{L}&#39;\)</span> (the <span
 class="math inline">\(\hat{L}\)</span> used here is scaled):</p>
 <pre class="r"><code>plot_heatmap(baltree_4pop_1_ebmfcov_1$est_LLt, brks = seq(0, max(baltree_4pop_1_ebmfcov_1$est_LLt), length.out = 50))</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
+Past versions of unnamed-chunk-13-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-13-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatter plot of the fitted values vs observed values:</p>
 <pre class="r"><code>ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt), y = c(baltree_4pop_1_ebmfcov_1$est_LLt))) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
+Past versions of unnamed-chunk-14-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-14-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-14-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Let’s focus on the off-diagonal elements:</p>
 <pre class="r"><code>diag_idx &lt;- seq(1, prod(dim(baltree_4pop_1$data$YYt)), length.out = ncol(baltree_4pop_1$data$YYt))
 off_diag_idx &lt;- setdiff(c(1:prod(dim(baltree_4pop_1$data$YYt))), diag_idx) </code></pre>
 <pre class="r"><code>ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt)[off_diag_idx], y = c(baltree_4pop_1_ebmfcov_1$est_LLt)[off_diag_idx])) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-1">
+Past versions of unnamed-chunk-16-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-16-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-16-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is the L2-norm of the difference (not including the diagonal
 entries):</p>
 <pre class="r"><code>compute_L2_fit(baltree_4pop_1_ebmfcov_1$est_LLt, baltree_4pop_1$data$YYt)</code></pre>
@@ -831,20 +1210,168 @@ Done.</code></pre>
 class="math inline">\(\hat{L}_{true-init}\)</span>:</p>
 <pre class="r"><code>plot_heatmap(ebmfcov_true_init$fl$L_pm, brks = seq(0, max(ebmfcov_true_init$fl$L_pm), length.out = 50))</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-21-1">
+Past versions of unnamed-chunk-21-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-21-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-21-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatterplot of the entries of <span
 class="math inline">\(\hat{L}_{true-init}\)</span>:</p>
 <pre class="r"><code>pops_vec &lt;- c(rep(&#39;A&#39;, 40), rep(&#39;B&#39;, 40), rep(&#39;C&#39;, 40), rep(&#39;D&#39;, 40))
 plot_loadings(ebmfcov_true_init$fl$L_pm, pops_vec)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-1">
+Past versions of unnamed-chunk-22-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-22-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-22-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a heatmap of <span
 class="math inline">\(\hat{F}_{true-init}\)</span>:</p>
 <pre class="r"><code>plot_heatmap(ebmfcov_true_init$fl$F_pm, brks = seq(0, max(ebmfcov_true_init$fl$F_pm), length.out = 50))</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-23-1">
+Past versions of unnamed-chunk-23-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-23-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-23-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatterplot of the entries of <span
 class="math inline">\(\hat{F}_{true-init}\)</span>:</p>
 <pre class="r"><code>pops_vec &lt;- c(rep(&#39;A&#39;, 40), rep(&#39;B&#39;, 40), rep(&#39;C&#39;, 40), rep(&#39;D&#39;, 40))
 plot_loadings(ebmfcov_true_init$fl$F_pm, pops_vec)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-24-1">
+Past versions of unnamed-chunk-24-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-24-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-24-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="visualizations-related-to-fit-1" class="section level2">
 <h2>Visualizations related to fit</h2>
@@ -857,14 +1384,125 @@ class="math inline">\(\hat{L}_{true-init}\hat{L}_{true-init}&#39;\)</span>
 is scaled):</p>
 <pre class="r"><code>plot_heatmap(scaled_ebmfcov_true_init_estLLt, brks = seq(0, max(scaled_ebmfcov_true_init_estLLt), length.out = 50))</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-26-1">
+Past versions of unnamed-chunk-26-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-26-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-26-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatter plot of the fitted values vs observed values:</p>
 <pre class="r"><code>ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt), y = c(scaled_ebmfcov_true_init_estLLt))) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-27-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-27-1">
+Past versions of unnamed-chunk-27-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-27-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-27-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Let’s focus on the off-diagonal elements:</p>
 <pre class="r"><code>diag_idx &lt;- seq(1, prod(dim(baltree_4pop_1$data$YYt)), length.out = ncol(baltree_4pop_1$data$YYt))
 off_diag_idx &lt;- setdiff(c(1:prod(dim(baltree_4pop_1$data$YYt))), diag_idx) </code></pre>
 <pre class="r"><code>ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt)[off_diag_idx], y = c(scaled_ebmfcov_true_init_estLLt)[off_diag_idx])) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-29-1">
+Past versions of unnamed-chunk-29-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-29-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-29-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is the L2-norm of the difference (not including the diagonal
 entries):</p>
 <pre class="r"><code>compute_L2_fit(scaled_ebmfcov_true_init_estLLt, baltree_4pop_1$data$YYt)</code></pre>
@@ -964,20 +1602,168 @@ Done.</code></pre>
 class="math inline">\(\hat{L}_{true-init2}\)</span>:</p>
 <pre class="r"><code>plot_heatmap(ebmfcov_true_init2$fl$L_pm, brks = seq(0, max(ebmfcov_true_init2$fl$L_pm), length.out = 50))</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-34-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-34-1">
+Past versions of unnamed-chunk-34-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-34-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-34-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatterplot of the entries of <span
 class="math inline">\(\hat{L}_{true-init2}\)</span>:</p>
 <pre class="r"><code>pops_vec &lt;- c(rep(&#39;A&#39;, 40), rep(&#39;B&#39;, 40), rep(&#39;C&#39;, 40), rep(&#39;D&#39;, 40))
 plot_loadings(ebmfcov_true_init2$fl$L_pm, pops_vec)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-35-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-35-1">
+Past versions of unnamed-chunk-35-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-35-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-35-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a heatmap of <span
 class="math inline">\(\hat{F}_{true-init2}\)</span>:</p>
 <pre class="r"><code>plot_heatmap(ebmfcov_true_init2$fl$F_pm, brks = seq(0, max(ebmfcov_true_init2$fl$F_pm), length.out = 50))</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-36-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-36-1">
+Past versions of unnamed-chunk-36-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-36-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-36-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatterplot of the entries of <span
 class="math inline">\(\hat{F}_{true-init2}\)</span>:</p>
 <pre class="r"><code>pops_vec &lt;- c(rep(&#39;A&#39;, 40), rep(&#39;B&#39;, 40), rep(&#39;C&#39;, 40), rep(&#39;D&#39;, 40))
 plot_loadings(ebmfcov_true_init2$fl$F_pm, pops_vec)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-37-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-37-1">
+Past versions of unnamed-chunk-37-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-37-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-37-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="visualizations-related-to-fit-2" class="section level2">
 <h2>Visualizations related to fit</h2>
@@ -990,14 +1776,125 @@ class="math inline">\(\hat{L}_{true-init2}\hat{L}_{true-init2}&#39;\)</span>
 is scaled):</p>
 <pre class="r"><code>plot_heatmap(scaled_ebmfcov_true_init2_estLLt, brks = seq(0, max(scaled_ebmfcov_true_init2_estLLt), length.out = 50))</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-39-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-39-1">
+Past versions of unnamed-chunk-39-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-39-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-39-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatter plot of the fitted values vs observed values:</p>
 <pre class="r"><code>ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt), y = c(scaled_ebmfcov_true_init2_estLLt))) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-40-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-40-1">
+Past versions of unnamed-chunk-40-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-40-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-40-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Let’s focus on the off-diagonal elements:</p>
 <pre class="r"><code>diag_idx &lt;- seq(1, prod(dim(baltree_4pop_1$data$YYt)), length.out = ncol(baltree_4pop_1$data$YYt))
 off_diag_idx &lt;- setdiff(c(1:prod(dim(baltree_4pop_1$data$YYt))), diag_idx) </code></pre>
 <pre class="r"><code>ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt)[off_diag_idx], y = c(scaled_ebmfcov_true_init2_estLLt)[off_diag_idx])) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-42-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-42-1">
+Past versions of unnamed-chunk-42-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-42-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-42-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is the L2-norm of the difference (not including the diagonal
 entries):</p>
 <pre class="r"><code>compute_L2_fit(scaled_ebmfcov_true_init2_estLLt, baltree_4pop_1$data$YYt)</code></pre>
@@ -1137,24 +2034,209 @@ Done.</code></pre>
 that we are hoping to recover:</p>
 <pre class="r"><code>plot_heatmap(baltree_8pop_1$LL)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-49-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-49-1">
+Past versions of unnamed-chunk-49-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-49-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-49-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a heatmap of <span
 class="math inline">\(\hat{L}_{8pop}\)</span>:</p>
 <pre class="r"><code>plot_heatmap(baltree_8pop_1_ebmfcov_1$fl$L_pm, brks = seq(0, max(baltree_8pop_1_ebmfcov_1$fl$L_pm), length.out = 50))</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-50-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-50-1">
+Past versions of unnamed-chunk-50-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-50-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-50-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatterplot of the entries of <span
 class="math inline">\(\hat{L}_{8pop}\)</span>:</p>
 <pre class="r"><code>pops_vec &lt;- c(rep(&#39;A&#39;, 40), rep(&#39;B&#39;, 40), rep(&#39;C&#39;, 40), rep(&#39;D&#39;, 40), rep(&#39;E&#39;, 40), rep(&#39;F&#39;, 40), rep(&#39;G&#39;, 40), rep(&#39;H&#39;, 40))
 plot_loadings(baltree_8pop_1_ebmfcov_1$fl$L_pm, pops_vec)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-51-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-51-1">
+Past versions of unnamed-chunk-51-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-51-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-51-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a heatmap of <span
 class="math inline">\(\hat{F}_{8pop}\)</span>:</p>
 <pre class="r"><code>plot_heatmap(baltree_8pop_1_ebmfcov_1$fl$F_pm, brks = seq(0, max(baltree_8pop_1_ebmfcov_1$fl$F_pm), length.out = 50))</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-52-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-52-1">
+Past versions of unnamed-chunk-52-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-52-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-52-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatterplot of the entries of <span
 class="math inline">\(\hat{F}_{8pop}\)</span>:</p>
 <pre class="r"><code>pops_vec &lt;- c(rep(&#39;A&#39;, 40), rep(&#39;B&#39;, 40), rep(&#39;C&#39;, 40), rep(&#39;D&#39;, 40), rep(&#39;E&#39;, 40), rep(&#39;F&#39;, 40), rep(&#39;G&#39;, 40), rep(&#39;H&#39;, 40))
 plot_loadings(baltree_8pop_1_ebmfcov_1$fl$F_pm, pops_vec)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-53-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-53-1">
+Past versions of unnamed-chunk-53-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-53-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-53-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="visualizations-related-to-fit-3" class="section level2">
 <h2>Visualizations related to fit</h2>
@@ -1162,6 +2244,43 @@ plot_loadings(baltree_8pop_1_ebmfcov_1$fl$F_pm, pops_vec)</code></pre>
 class="math inline">\(\frac{1}{p}XX&#39;\)</span>:</p>
 <pre class="r"><code>plot_heatmap(baltree_8pop_1$YYt, colors = c(&#39;blue&#39;,&#39;gray96&#39;, &#39;red&#39;), brks = seq(-max(abs(baltree_8pop_1$YYt)), max(abs(baltree_8pop_1$YYt)), length.out = 50))</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-54-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-54-1">
+Past versions of unnamed-chunk-54-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-54-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-54-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>scaled_baltree_8pop_ebmfcov_fit &lt;- ldf(baltree_8pop_1_ebmfcov_1$fl)
 scaled_baltree_8pop_ebmfcov_fit_L &lt;- scaled_baltree_8pop_ebmfcov_fit$L %*% diag(sqrt(scaled_baltree_8pop_ebmfcov_fit$D))
 scaled_baltree_8pop_ebmfcov_fit_estLLt &lt;- tcrossprod(scaled_baltree_8pop_ebmfcov_fit_L)</code></pre>
@@ -1171,14 +2290,125 @@ class="math inline">\(\hat{L}_{8pop}\hat{L}_{8pop}&#39;\)</span> (the
 scaled):</p>
 <pre class="r"><code>plot_heatmap(scaled_baltree_8pop_ebmfcov_fit_estLLt, brks = seq(0, max(scaled_baltree_8pop_ebmfcov_fit_estLLt), length.out = 50))</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-56-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-56-1">
+Past versions of unnamed-chunk-56-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-56-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-56-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is a scatter plot of the fitted values vs observed values:</p>
 <pre class="r"><code>ggplot(data = NULL, aes(x = c(baltree_8pop_1$YYt), y = c(scaled_baltree_8pop_ebmfcov_fit_estLLt))) + geom_point() + ylim(-1, 20) + xlim(-1,20) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-57-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-57-1">
+Past versions of unnamed-chunk-57-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-57-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-57-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Let’s focus on the off-diagonal elements:</p>
 <pre class="r"><code>diag_idx &lt;- seq(1, prod(dim(baltree_8pop_1$YYt)), length.out = ncol(baltree_8pop_1$YYt))
 off_diag_idx &lt;- setdiff(c(1:prod(dim(baltree_8pop_1$YYt))), diag_idx) </code></pre>
 <pre class="r"><code>ggplot(data = NULL, aes(x = c(baltree_8pop_1$YYt)[off_diag_idx], y = c(scaled_baltree_8pop_ebmfcov_fit_estLLt)[off_diag_idx])) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
 <p><img src="figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-59-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-59-1">
+Past versions of unnamed-chunk-59-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-59-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/2934a7bcb56a46e7a4a0d87a62c0ff5eb849e117/docs/figure/tree_ebmfcov_diag.Rmd/unnamed-chunk-59-1.png" target="_blank">2934a7b</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-21
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>This is the L2-norm of the difference (not including the diagonal
 entries):</p>
 <pre class="r"><code>compute_L2_fit(scaled_baltree_8pop_ebmfcov_fit_estLLt, baltree_8pop_1$YYt)</code></pre>
@@ -1309,6 +2539,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 <script>
 $(document).ready(function ()  {
