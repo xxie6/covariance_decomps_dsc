@@ -2,7 +2,9 @@
 title: "tree_ebmfcov_diag"
 author: "Annie Xie"
 date: "2025-02-19"
-output: workflowr::wflow_html
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
 editor_options:
   chunk_output_type: console
 ---
