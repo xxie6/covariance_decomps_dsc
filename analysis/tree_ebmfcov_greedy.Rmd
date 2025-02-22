@@ -1,0 +1,185 @@
+---
+title: "tree_ebmfcov_greedy"
+author: "Annie Xie"
+date: "2025-02-20"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+In this analysis, I explore the greedy procedure on tree data. This is based off of my exploration of EBMFcov in the tree setting.
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+library(flashier)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+```{r}
+compute_L2_fit <- function(est, dat, with_diag = FALSE){
+  if (with_diag == FALSE){
+    score <- sum((dat - est)^2) - sum((diag(dat) - diag(est))^2)
+  }
+  else{
+    score <- sum((dat - est)^2)
+  }
+  return(score)
+}
+```
+
+# EBMFcov (without backfitting)
+
+```{r}
+baltree_4pop_1 <- readRDS("data/baltree_4pop_1.rds")
+baltree_4pop_1_ebmfcov_1 <- readRDS("data/baltree_4pop_1_ebmfcov_diag_1.rds")
+```
+
+# Exploration of Greedy Procedure on Tree Data
+In this section, let $\bar{L}_m$ denote the matrix composed of the first $m$ columns of $\bar{L}$, i.e. $\bar{L}_m = \Big[ \bar{\ell}_1, \dots,  \bar{\ell}_m \Big]$. $\bar{F}_m$ is defined analogously. 
+
+## Rank one fit
+This is a heatmap of the matrix $\frac{1}{p}XX' - \bar{L}_1 \bar{F}_1'$:
+```{r}
+# I don't need to rescale since I using L and F from the flash fit (instead of just L)
+XXt_rank1_fit <- (baltree_4pop_1_ebmfcov_1$fit_obj$fl$L_pm[,1] %*% t(baltree_4pop_1_ebmfcov_1$fit_obj$fl$F_pm[,1]))
+XXt_resid1 <- baltree_4pop_1$data$YYt - XXt_rank1_fit
+```
+
+This is a heatmap of the rank-one fit, $\bar{L}_1 \bar{F}_1'$:
+```{r}
+plot_heatmap(XXt_rank1_fit, colors_range = c('blue', 'gray96', 'red'), brks = seq(-max(abs(XXt_rank1_fit)), max(abs(XXt_rank1_fit)), length.out = 50 ))
+```
+
+This is a heatmap of the full observed Gram matrix:
+```{r}
+plot_heatmap(baltree_4pop_1$data$YYt, colors = c('blue','gray96', 'red'), brks = seq(-max(abs(baltree_4pop_1$data$YYt)), max(abs(baltree_4pop_1$data$YYt)), length.out = 50))
+```
+
+This is a heatmap of  $\frac{1}{p}XX' - \bar{L}_1 \bar{F}_1'$:
+```{r}
+plot_heatmap(XXt_resid1, colors_range = c('blue', 'gray96', 'red'), brks = seq(-max(abs(XXt_resid1)), max(abs(XXt_resid1)), length.out = 50 ))
+```
+
+This is a scatterplot of the entries of the first column of $\frac{1}{p}XX' - \bar{L}_1 \bar{F}_1'$:
+```{r}
+plot(XXt_resid1[,1])
+```
+
+## Rank two fit
+Now we consider the rank-two fit.
+
+This is a heatmap of the matrix $\frac{1}{p}XX' - \bar{L}_2 \bar{F}_2'$:
+```{r}
+XXt_rank2_fit <- (baltree_4pop_1_ebmfcov_1$fit_obj$fl$L_pm[,c(1:2)] %*% t(baltree_4pop_1_ebmfcov_1$fit_obj$fl$F_pm[,c(1:2)]))
+XXt_resid2 <- baltree_4pop_1$data$YYt - XXt_rank2_fit
+```
+
+This is a heatmap of the rank-two fit, $\bar{L}_2 \bar{F}_2'$:
+```{r}
+plot_heatmap(XXt_rank2_fit, colors_range = c('blue', 'gray96', 'red'), brks = seq(-max(abs(XXt_rank2_fit)), max(abs(XXt_rank2_fit)), length.out = 50 ))
+```
+
+This is a heatmap of  $\frac{1}{p}XX' - \bar{L}_2 \bar{F}_2'$:
+```{r}
+plot_heatmap(XXt_resid2, colors_range = c('blue', 'gray96', 'red'), brks = seq(-max(abs(XXt_resid2)), max(abs(XXt_resid2)), length.out = 50 ))
+```
+
+This is a scatterplot of the entries of the last column of $\frac{1}{p}XX' - \bar{L}_2 \bar{F}_2'$:
+```{r}
+plot(XXt_resid2[,160])
+```
+
+## Rank three fit
+```{r}
+XXt_rank3_fit <- fitted(baltree_4pop_1_ebmfcov_1$fit_obj$fl)
+XXt_resid3 <- baltree_4pop_1$data$YYt - XXt_rank3_fit
+```
+
+This is a heatmap of the rank-three fit (the fit which EBMFcov finds), $\bar{L}_3 \bar{F}_3'$:
+```{r}
+plot_heatmap(XXt_rank3_fit, colors_range = c('blue', 'gray96', 'red'), brks = seq(-max(abs(XXt_rank3_fit)), max(abs(XXt_rank3_fit)), length.out = 50 ))
+```
+
+This is a heatmap of  $\frac{1}{p}XX' - \bar{L}_3 \bar{F}_3'$:
+```{r}
+plot_heatmap(XXt_resid3, colors_range = c('blue', 'gray96', 'red'), brks = seq(-max(abs(XXt_resid3)), max(abs(XXt_resid3)), length.out = 50 ))
+```
+  
+This is a scatterplot of the entries of the first column of $\frac{1}{p}XX' - \bar{L}_3 \bar{F}_3'$:
+```{r}
+plot(XXt_resid3[,1])
+```
+
+This is the estimate for the residual standard deviation (from the flash fit from EBMFcov):
+```{r}
+baltree_4pop_1_ebmfcov_1$fit_obj$fl$residuals_sd
+```
+
+## Observations
+The residualized matrix has blocks of negative entries which are of a comparable magnitude to the blocks of positive entries. Is this why EBMFcov stops adding more factors? Is it just attributing variation to normal noise? The estimated residual standard deviation from the flash object is 2.69 which is larger than the true value, which is 1.
+
+# Try applying flash to XXt residualized with true loadings
+
+This is a heatmap of the "true" rank-three fit:
+```{r}
+XXt_true_rank3_fit <- (1/ncol(baltree_4pop_1$data$Y))*tcrossprod(baltree_4pop_1$data$LL[,c(1:3)] %*% t(baltree_4pop_1$data$FF[,c(1:3)]))
+XXt_true_resid3 <- baltree_4pop_1$data$YYt - XXt_true_rank3_fit
+```
+
+```{r}
+plot_heatmap(XXt_true_rank3_fit, colors_range = c('blue', 'gray96', 'red'), brks = seq(-max(abs(XXt_true_rank3_fit)), max(abs(XXt_true_rank3_fit)), length.out = 50 ))
+```
+
+This is a heatmap of the observed Gram matrix:
+```{r}
+plot_heatmap(baltree_4pop_1$data$YYt, colors = c('blue','gray96', 'red'), brks = seq(-max(abs(baltree_4pop_1$data$YYt)), max(abs(baltree_4pop_1$data$YYt)), length.out = 50))
+```
+
+This is a heatmap of the residualized Gram matrix, $\frac{1}{p} XX' - L_3 F_3'$:
+```{r}
+plot_heatmap(XXt_true_resid3, colors_range = c('blue', 'gray96', 'red'), brks = seq(-max(abs(XXt_true_resid3)), max(abs(XXt_true_resid3)), length.out = 50 ))
+```
+
+Now, we try applying flash to $\frac{1}{p} XX' - L_3 F_3'$. I am curious to see whether it will add more factors or not. I expect flash to add factors to capture the group-specific effects.
+```{r}
+flash_test <- flash_init(XXt_true_resid3) %>%
+  flash_set_verbose(2) %>%
+  flash_greedy(Kmax = 5, ebnm_fn = ebnm::ebnm_generalized_binary) %>%
+  flash_backfit()
+```
+
+This is a heatmap of $\hat{L}$:
+```{r}
+plot_heatmap(flash_test$L_pm, colors_range = c('blue', 'gray96', 'red'), brks = seq(-max(abs(flash_test$L_pm)), max(abs(flash_test$L_pm)), length.out = 50 ))
+```
+
+This is a heatmap of $\hat{F}$:
+```{r}
+plot_heatmap(flash_test$F_pm, colors_range = c('blue', 'gray96', 'red'), brks = seq(-max(abs(flash_test$F_pm)), max(abs(flash_test$F_pm)), length.out = 50 ))
+```
+
+This is a heatmap of $\hat{L} \hat{F}'$:
+```{r}
+plot_heatmap(fitted(flash_test), colors_range = c('blue', 'gray96', 'red'), brks = seq(-max(abs(fitted(flash_test))), max(abs(fitted(flash_test))), length.out = 50 ))
+```
+
+This is the estimate of the residual standard deviation:
+```{r}
+flash_test$residuals_sd
+```
+
+## Observations
+Flash does add factors when fitting the "true" residualized matrix. This is the behavior I expected since the residualized matrix looks like the Gram matrix in the balanced non-overlapping setting. After backfitting, we get something that looks like the desired loadings matrix.
+
+<!--
+# Thoughts
+I wonder if an initialization like the non-negative matrix underapproximation (NMU) procedure from Gillis would perform well in this setting. NMU is like NMF, but the factorization is built recursively. Furthermore, it requires that each component underapproximates the residualized data matrix (in order to keep the next residualized data matrix non-negative). This method does require the data matrix to be non-negative which is not always the case in my simulations. But I maybe could still think of a method that works if this is the case.
+-->
