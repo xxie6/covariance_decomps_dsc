@@ -1,0 +1,105 @@
+---
+title: "tree_symnmf"
+author: "Annie Xie"
+date: "2025-02-04"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+In this analysis, we are exploring symNMF in the tree setting.
+
+## Questions of Interest
+In my DSC analysis, symNMF did an okay job in the tree setting. The average crossproduct similarity across ten simulated datasets in the tree setting was about 0.9 (double check), which is noticeably better than many of the other methods. However, when looking at the estimates, the estimate from symNMF did not particularly look like a tree. (This shows how the metrics don't paint the whole picture). So I wanted to explore this estimate a little bit and evaluate the fit of the estimate to the data.
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+library(flashier)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+```{r}
+compute_L2_fit <- function(est, dat, with_diag = FALSE){
+  if (with_diag == FALSE){
+    score <- sum((dat - est)^2) - sum((diag(dat) - diag(est))^2)
+  }
+  else{
+    score <- sum((dat - est)^2)
+  }
+  return(score)
+}
+```
+
+# symNMF
+```{r}
+baltree_4pop_1 <- readRDS("data/baltree_4pop_1.rds")
+baltree_4pop_1_symnmf_1 <- readRDS("data/baltree_4pop_1_symnmf_1.rds")
+```
+
+## Visualization of Estimate
+This is a heatmap of the true $L$ that we are hoping to recover:
+```{r}
+plot_heatmap(baltree_4pop_1$true_L)
+```
+
+This is a heatmap of $\hat{L}$, the estimate for $L$ from symNMF:
+```{r}
+plot_heatmap(baltree_4pop_1_symnmf_1$est_L, brks = seq(0, max(baltree_4pop_1_symnmf_1$est_L), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}$:
+```{r}
+pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
+plot_loadings(baltree_4pop_1_symnmf_1$est_L, pops_vec)
+```
+
+## Visualizations related to fit
+
+This is the true Gram matrix, $\frac{1}{p}XX'$:
+```{r}
+plot_heatmap(baltree_4pop_1$data$YYt, colors_range = c('blue','gray96', 'red'), brks = seq(-max(abs(baltree_4pop_1$data$YYt)), max(abs(baltree_4pop_1$data$YYt)), length.out = 50))
+```
+
+This is a heatmap of the estimate of the Gram matrix, $\hat{L}\hat{L}'$:
+```{r}
+plot_heatmap(baltree_4pop_1_symnmf_1$est_LLt, colors_range = c('blue','gray96', 'red'), brks = seq(-max(abs(baltree_4pop_1_symnmf_1$est_LLt)), max(abs(baltree_4pop_1_symnmf_1$est_LLt)), length.out = 50))
+```
+
+This is a scatter plot of the fitted values vs observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt), y = c(baltree_4pop_1_symnmf_1$est_LLt))) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+Let's focus on the off-diagonal elements:
+```{r}
+diag_idx <- seq(1, prod(dim(baltree_4pop_1$data$YYt)), length.out = ncol(baltree_4pop_1$data$YYt))
+off_diag_idx <- setdiff(c(1:prod(dim(baltree_4pop_1$data$YYt))), diag_idx) 
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt)[off_diag_idx], y = c(baltree_4pop_1_symnmf_1$est_LLt)[off_diag_idx])) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+This is the L2-norm of the difference (not including the diagonal entries):
+```{r}
+compute_L2_fit(baltree_4pop_1_symnmf_1$est_LLt, baltree_4pop_1$data$YYt)
+```
+
+This is the L2-norm of the difference including the diagonal entries (this is the objective function of symNMF):
+```{r}
+compute_L2_fit(baltree_4pop_1_symnmf_1$est_LLt, baltree_4pop_1$data$YYt, with_diag = TRUE)
+```
+
+## Observations
+The loadings estimate from symNMF does not particularly look like a tree. The estimate is also not as sparse as we would hope for it to be. That is not entirely surprising to me; there is nothing encouraging sparsity besides the non-negativity constraint. However, despite the loadings estimate not matching the "true" loadings estimate, the estimated Gram matrix matches the observed Gram matrix really well. This speaks to the identifiability issues in the tree setting. 
+
+# Thoughts,Notes, and Ideas for things to try
+It'd be interesting to see if symNMF still performs well when initialized with the true loadings matrix.
