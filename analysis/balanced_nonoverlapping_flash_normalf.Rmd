@@ -23,6 +23,18 @@ library(flashier)
 source('code/visualization_functions.R')
 ```
 
+```{r}
+compute_L2_fit <- function(est, dat, with_diag = FALSE){
+  if (with_diag == FALSE){
+    score <- sum((dat - est)^2) - sum((diag(dat) - diag(est))^2)
+  }
+  else{
+    score <- sum((dat - est)^2)
+  }
+  return(score)
+}
+```
+
 # Flash with Normal Prior on F (with backfitting)
 
 ```{r}
@@ -153,12 +165,12 @@ flash_normalf_fit_true_init <- flash_init(group_nonoverlap_1$data$Y) %>%
 ```
 
 ## Visualizations of the Estimate
-This is a heatmap of $\hat{L}$, the estimate for $L$:
+This is a heatmap of $\hat{L}_{true-init}$:
 ```{r}
 plot_heatmap(flash_normalf_fit_true_init$L_pm, brks = seq(0, max(flash_normalf_fit_true_init$L_pm), length.out = 50))
 ```
 
-This is a scatterplot of the entries of $\hat{L}$:
+This is a scatterplot of the entries of $\hat{L}_{true-init}$:
 ```{r}
 plot_loadings(flash_normalf_fit_true_init$L_pm, pops_vec)
 ```
@@ -257,7 +269,8 @@ Another question of interest is whether adding a fifth factor would add the fina
 ```{r}
 flash_normalf_K5_fit <- flash_init(group_nonoverlap_1$data$Y) %>%
   flash_greedy(Kmax = 5, ebnm_fn = c(ebnm::ebnm_generalized_binary, ebnm_normal)) %>%
-  flash_backfit()
+  flash_backfit() %>%
+  flash_nullcheck()
 ```
 
 ## Visualization of Estimate
@@ -275,7 +288,12 @@ plot_loadings(flash_normalf_K5_fit$L_pm, pops_vec)
 
 This are the entries of the first column of $\hat{L}_{K5}$:
 ```{r}
-flash_normalf_K5_fit$L_pm[,1]
+flash_normalf_K5_fit$L_pm[1,1]
+```
+
+This is the elbo of the flash fit:
+```{r}
+flash_normalf_K5_fit$elbo
 ```
 
 ## Visualizations related to fit
@@ -315,13 +333,165 @@ scaled_est_FtF_K5 <- crossprod(scaled_flash_normalf_K5_fit$F)
 plot_heatmap(scaled_est_FtF_K5, colors_range = c('blue', 'gray96','red'), brks = seq(-max(abs(scaled_est_FtF_K5)), max(abs(scaled_est_FtF_K5)), length.out = 50))
 ```
 
-This is the elbo of the flash fit:
+## Observations
+Setting `Kmax = 5` does add a factor that captures the last group effect. This makes sense since the rows of the data matrix are essentially the group effect factors minus some mean value. So there is a subset of rows that still contain the last group effect. The backfitting does decrease the loading value of the first factor (the intercept factor) to some very small number (2.6e-06). This also makes sense because once we have the four group effect factors, the intercept factor is not needed (I did not use an intercept term when simulating this data). 
+
+# Work in Progress - Testing how many factors it wants to add
+In this section, my goal is to determine how many factors flashier wants to add.
+
+## Just Greedy
 ```{r}
-flash_normalf_K5_fit$elbo
+flash_normalf_largeK_fit <- flash_init(group_nonoverlap_1$data$Y) %>%
+  flash_greedy(Kmax = 10, ebnm_fn = c(ebnm::ebnm_generalized_binary, ebnm_normal)) %>%
+  flash_nullcheck()
+```
+
+This is a heatmap of $\hat{L}_{large-K}$:
+```{r}
+plot_heatmap(flash_normalf_largeK_fit$L_pm, brks = seq(0, max(flash_normalf_largeK_fit$L_pm), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}_{large-K}$:
+```{r}
+pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
+plot_loadings(flash_normalf_largeK_fit$L_pm, pops_vec)
+```
+
+This is the L2 norm of the columns of the factor matrix, $\hat{F}_{large-K}$:
+```{r}
+apply(flash_normalf_largeK_fit$F_pm, 2, function(x){sqrt(sum(x^2))})
+```
+
+```{r}
+scaled_flash_normalf_largeK_fit <- ldf(flash_normalf_largeK_fit)
+scaled_flash_normalf_largeK_L <- scaled_flash_normalf_largeK_fit$L %*% diag(scaled_flash_normalf_largeK_fit$D)
+```
+
+This is the elbo:
+```{r}
+flash_normalf_largeK_fit$elbo
+```
+
+This is the L2 norm of the difference between the observed Gram matrix and estimated Gram matrix (not including diagonal entries):
+```{r}
+compute_L2_fit((1/ncol(group_nonoverlap_1$data$Y))*tcrossprod(scaled_flash_normalf_largeK_L), group_nonoverlap_1$data$YYt)
+```
+
+This is the L2 norm of the difference between the observed Gram matrix and estimated Gram matrix (including diagonal entries):
+```{r}
+compute_L2_fit((1/ncol(group_nonoverlap_1$data$Y))*tcrossprod(scaled_flash_normalf_largeK_L), group_nonoverlap_1$data$YYt, with_diag = TRUE)
+```
+
+This is the estimate of the residual standard deviation:
+```{r}
+flash_normalf_largeK_fit$residuals_sd
+```
+
+This is the KL term:
+```{r}
+sum(unlist(flash_normalf_largeK_fit$flash_fit$KL)) # it seems like the KL changes the most
+```
+
+This is the KL for the individual loadings and factors:
+```{r}
+flash_normalf_largeK_fit$flash_fit$KL # it seems like the KL changes the most
+```
+
+This is the estimate for the prior for the sixth loadings column:
+```{r}
+flash_normalf_largeK_fit$L_ghat[[6]]
+```
+
+This is a heatmap of the residualized data matrix:
+```{r}
+X_resid_est <- group_nonoverlap_1$data$Y - fitted(flash_normalf_largeK_fit)
+```
+
+```{r}
+plot_heatmap(X_resid_est, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(X_resid_est)), max(abs(X_resid_est)), length.out = 50))
+```
+
+This is a scatterplot of one of the columns of the residualized data matrix:
+```{r}
+plot(X_resid_est[,4])
+```
+
+## Add Backfitting
+```{r}
+flash_normalf_largeK_backfit_fit <- flash_normalf_largeK_fit %>% flash_backfit() %>% flash_nullcheck()
+```
+
+This is the number of factors kept in the backfit:
+```{r}
+flash_normalf_largeK_backfit_fit$n_factors
+```
+
+This is a heatmap of $\hat{L}$, the estimate for $L$ from Flashier with normal prior on $F$:
+```{r}
+plot_heatmap(flash_normalf_largeK_backfit_fit$L_pm, brks = seq(0, max(flash_normalf_largeK_backfit_fit$L_pm), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}_{K}$:
+```{r}
+pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
+plot_loadings(flash_normalf_largeK_backfit_fit$L_pm, pops_vec)
+```
+
+This is the elbo:
+```{r}
+flash_normalf_largeK_backfit_fit$elbo
+```
+
+```{r}
+scaled_flash_normalf_largeK_backfit_fit <- ldf(flash_normalf_largeK_backfit_fit)
+scaled_flash_normalf_largeK_backfit_L <- scaled_flash_normalf_largeK_backfit_fit$L %*% diag(scaled_flash_normalf_largeK_backfit_fit$D)
+```
+
+This is the L2 norm of the difference between the observed Gram matrix and estimated Gram matrix (not including diagonal entries):
+```{r}
+compute_L2_fit((1/ncol(group_nonoverlap_1$data$Y))*tcrossprod(scaled_flash_normalf_largeK_backfit_L), group_nonoverlap_1$data$YYt)
+```
+
+This is the L2 norm of the difference between the observed Gram matrix and estimated Gram matrix (including diagonal entries):
+```{r}
+compute_L2_fit((1/ncol(group_nonoverlap_1$data$Y))*tcrossprod(scaled_flash_normalf_largeK_backfit_L), group_nonoverlap_1$data$YYt, with_diag = TRUE)
+```
+
+This is the estimate of the residual standard deviation:
+```{r}
+flash_normalf_largeK_backfit_fit$residuals_sd
+```
+
+This is the KL term:
+```{r}
+sum(unlist(flash_normalf_largeK_backfit_fit$flash_fit$KL)) # it seems like the KL changes the most
+```
+
+This is the KL of the inidivudal loadings and factors:
+```{r}
+flash_normalf_largeK_backfit_fit$flash_fit$KL # it seems like the KL changes the most
+```
+
+This is the estimate of the prior for the sixth loadings vector:
+```{r}
+flash_normalf_largeK_backfit_fit$L_ghat[[6]]
+```
+
+This is a heatmap of the residualized data matrix:
+```{r}
+X_backfit_resid_est <- group_nonoverlap_1$data$Y - fitted(flash_normalf_largeK_backfit_fit)
+```
+
+```{r}
+plot_heatmap(X_backfit_resid_est, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(X_backfit_resid_est)), max(abs(X_backfit_resid_est)), length.out = 50))
 ```
 
 ## Observations
-Setting `Kmax = 5` does add a factor that captures the last group effect. This makes sense since the rows of the data matrix are essentially the group effect factors minus some mean value. So there is a subset of rows that still contain the last group effect. The backfitting does decrease the loading value of the first factor (the intercept factor) to some very small number (2.6e-06). This also makes sense because once we have the four group effect factors, the intercept factor is not needed (I did not use an intercept term when simulating this data). 
+I tested setting `Kmax` to 100 and flashier did add 100 factors in the greedy procedure. Taking a closer look at the factors, we have an intercept factor, four group effect factors, and then a bunch of factors with a very small entry value. I tried backfitting on top of this fit. The entries of the intercept factor decrease to a very small value. The backfitting also found two factors to be numerically zero. However, it kept the other factors with very small entry values. I checked the corresponding factors in the $F$ matrix, and these columns also have very small entries (but not zero). 
+
+I wonder if changing the tolerance settings would cause these factors to become zero vectors. I also find this behavior puzzling since it seems to keep adding a new intercept factor where all the entries are a very small value. If, hypothetically, it did need an intercept factor, why wouldn't it just add everything together in one intercept factor?
+
+Based off my experimentation, it seems like the KL term is primarily what is changing when a new factor is being added. I find that the KL term associated with the new loadings factor is usually 55.45177 and the KL term associated with the new factor is usually a really small number. As a result, the new factor is able to decrease the magnitude of the negative KL term and increase the elbo. I'm still trying to figure out a narrative for why this is happening.
 
 <!--
 # Notes
@@ -329,7 +499,7 @@ This is a record of other things I've tried.
 1. Fitting flash with a fixed standard normal prior on F. I did not expect this to make a difference, and it, in fact, did not -- the estimate still recovered the same type of structure.
 
 # Test: fixed prior
-```{r}
+```{r, eval = FALSE, include = FALSE}
 ebnm_std_normal_fixed <- function(x, s, g_init, fix_g, output) {
   ebnm_res <- ebnm::ebnm_normal(
     x = x,
@@ -343,7 +513,7 @@ ebnm_std_normal_fixed <- function(x, s, g_init, fix_g, output) {
 }
 ```
 
-```{r}
+```{r, eval = FALSE, include = FALSE}
 flash_fixed_normalf.wrapper <- function(input, args){
   Kmax <- input$K
   flash_fit <- flash_init(data = input$Y, var_type = 0) %>%
