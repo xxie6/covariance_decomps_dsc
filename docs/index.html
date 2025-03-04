@@ -310,7 +310,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-02-23
+<strong>Last updated:</strong> 2025-03-04
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -357,15 +357,15 @@ results.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree1e0aca3faf18e397783643c2ee314c8f183cc91btargetblank1e0aca3a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree9e775ff37647517bebe792d84b15bc5e61db0cf7targetblank9e775ffa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/1e0aca3faf18e397783643c2ee314c8f183cc91b" target="_blank">1e0aca3</a>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/9e775ff37647517bebe792d84b15bc5e61db0cf7" target="_blank">9e775ff</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree1e0aca3faf18e397783643c2ee314c8f183cc91btargetblank1e0aca3a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree9e775ff37647517bebe792d84b15bc5e61db0cf7targetblank9e775ffa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -375,7 +375,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/1e0aca3faf18e397783643c2ee314c8f183cc91b" target="_blank">1e0aca3</a>.
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/9e775ff37647517bebe792d84b15bc5e61db0cf7" target="_blank">9e775ff</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -394,8 +394,8 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    data/.DS_Store
 
-Unstaged changes:
-    Modified:   analysis/balanced_nonoverlapping_flash_normalf.Rmd
+Untracked files:
+    Untracked:  analysis/tree_flash_normalf_part2.Rmd
 
 </code></pre>
 <p>
@@ -440,6 +440,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/9e775ff37647517bebe792d84b15bc5e61db0cf7/analysis/index.Rmd" target="_blank">9e775ff</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-03-04
+</td>
+<td>
+Update website with takeaways
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/xxie6/covariance_decomps_dsc/8b1697fdc520f3d957f2033d9dbeeb328ad5225d/docs/index.html" target="_blank">8b1697f</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-02-23
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -585,25 +619,35 @@ Start workflowr project.
 </div>
 <p>This site is for further exploring results from my DSC comparing
 methods for covariance decomposition.</p>
-<ul>
-<li>Exploration of <a
+<p>Main takeways thus far:<br />
+* For flash with normal prior on F in the balanced, nonoverlapping
+setting, when I set Kmax to a large number, I find flash will add a
+bunch of factors whose loadings are a really small number. I’m still
+trying to figure out why it does that. Results <a
+href="balanced_nonoverlapping_flash_normalf.html">here</a>.<br />
+* Flash’s greedy method with gb priors does not do well in the tree
+setting. It always stops prematurely at 3 factors. Results <a
+href="tree_ebmfcov_diag.html">here</a> and <a
+href="tree_ebmfcov_greedy.html">here</a>.<br />
+* Flash with normal prior on F also struggles to find trees. When
+initialized with the true values, the method finds the factorization
+which clusters the samples by population. Perhaps it prefers that
+representation because it is more sparse? Results <a
+href="tree_flash_normalf.html">here</a>.</p>
+<p>All analyses:<br />
+* Exploration of <a
 href="balanced_nonoverlapping_ebmfcov_diag.html">EBMFcov in Balanced,
 nonoverlapping setting</a><br />
-</li>
-<li>Exploration of <a
+* Exploration of <a
 href="balanced_nonoverlapping_flash_normalf.html">EBMF with normal prior
-on F in Balanced, nonoverlapping setting</a></li>
-<li>Exploration of <a href="tree_flash_normalf.html">EBMF with normal
-prior on F in tree setting</a></li>
-<li>Exploration of <a href="tree_gbcd.html">GBCD in tree
-setting</a></li>
-<li>Exploration of <a href="tree_ebmfcov_diag.html">EBMFcov in tree
-setting</a></li>
-<li>Exploration of <a href="tree_ebmfcov_greedy.html">Flashier’s greedy
-method in tree setting</a></li>
-<li>Exploration of <a href="tree_symnmf.html">symNMF in tree
-setting</a></li>
-</ul>
+on F in Balanced, nonoverlapping setting</a> * Exploration of <a
+href="tree_flash_normalf.html">EBMF with normal prior on F in tree
+setting</a> * Exploration of <a href="tree_gbcd.html">GBCD in tree
+setting</a> * Exploration of <a href="tree_ebmfcov_diag.html">EBMFcov in
+tree setting</a> * Exploration of <a
+href="tree_ebmfcov_greedy.html">Flashier’s greedy method in tree
+setting</a> * Exploration of <a href="tree_symnmf.html">symNMF in tree
+setting</a></p>
 
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
