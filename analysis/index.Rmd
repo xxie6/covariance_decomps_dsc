@@ -17,9 +17,9 @@ Main takeways thus far:
 
 All analyses:    
 * Exploration of [EBMFcov in Balanced, nonoverlapping setting](balanced_nonoverlapping_ebmfcov_diag.html)  
-* Exploration of [EBMF with normal prior on F in Balanced, nonoverlapping setting](balanced_nonoverlapping_flash_normalf.html)
-* Exploration of [EBMF with normal prior on F in tree setting](tree_flash_normalf.html)
-* Exploration of [GBCD in tree setting](tree_gbcd.html)
-* Exploration of [EBMFcov in tree setting](tree_ebmfcov_diag.html)
-* Exploration of [Flashier's greedy method in tree setting](tree_ebmfcov_greedy.html)
-* Exploration of [symNMF in tree setting](tree_symnmf.html)
+* Exploration of [EBMF with normal prior on F in Balanced, nonoverlapping setting](balanced_nonoverlapping_flash_normalf.html)  
+* Exploration of [EBMF with normal prior on F in tree setting](tree_flash_normalf.html)  
+* Exploration of [GBCD in tree setting](tree_gbcd.html)  
+* Exploration of [EBMFcov in tree setting](tree_ebmfcov_diag.html)  
+* Exploration of [Flashier's greedy method in tree setting](tree_ebmfcov_greedy.html)  
+* Exploration of [symNMF in tree setting](tree_symnmf.html)  
