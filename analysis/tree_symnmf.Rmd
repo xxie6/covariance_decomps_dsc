@@ -55,7 +55,7 @@ This is a heatmap of $\hat{L}$, the estimate for $L$ from symNMF:
 plot_heatmap(baltree_4pop_1_symnmf_1$est_L, brks = seq(0, max(baltree_4pop_1_symnmf_1$est_L), length.out = 50))
 ```
 
-This is a scatterplot of the entries of $\hat{L}$:
+This is a scatter plot of the entries of $\hat{L}$:
 ```{r}
 pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
 plot_loadings(baltree_4pop_1_symnmf_1$est_L, pops_vec)
@@ -99,7 +99,7 @@ compute_L2_fit(baltree_4pop_1_symnmf_1$est_LLt, baltree_4pop_1$data$YYt, with_di
 ```
 
 ## Observations
-The loadings estimate from symNMF does not particularly look like a tree. The estimate is also not as sparse as we would hope for it to be. That is not entirely surprising to me; there is nothing encouraging sparsity besides the non-negativity constraint. However, despite the loadings estimate not matching the "true" loadings estimate, the estimated Gram matrix matches the observed Gram matrix really well. This speaks to the identifiability issues in the tree setting. 
+The loadings estimate from symNMF does not completely look like a tree. However, there are a few factors that look similar to what we'd see in a tree, e.g. the fourth and fifth factor look like population-specific effects and the third factor looks like a subtype effect. The estimate is not as sparse as we would hope for it to be. That is not entirely surprising to me; there is nothing encouraging sparsity besides the non-negativity constraint. However, despite the loadings estimate not matching the "true" loadings estimate, the estimated Gram matrix matches the observed Gram matrix really well. This speaks to the identifiability issues in the tree setting. 
 
 # Thoughts, Notes, and Ideas for things to try
 It'd be interesting to see if symNMF still performs well when initialized with the true loadings matrix.
