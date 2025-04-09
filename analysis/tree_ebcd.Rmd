@@ -1,0 +1,188 @@
+---
+title: "tree_ebcd"
+author: "Annie Xie"
+date: "2025-04-09"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+In this analysis, we explore EBCD in the balanced tree setting.
+
+## Questions of Interest
+I'm particularly interested in why EBCD performs so poorly in the tree setting (and a complementary question is why does ebcd perform so well in the tree setting).
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+library(flashier)
+library(ebcd)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+```{r}
+compute_L2_fit <- function(est, dat, with_diag = FALSE){
+  if (with_diag == FALSE){
+    score <- sum((dat - est)^2) - sum((diag(dat) - diag(est))^2)
+  }
+  else{
+    score <- sum((dat - est)^2)
+  }
+  return(score)
+}
+```
+
+# EBCD
+
+```{r}
+baltree_4pop_1 <- readRDS("data/baltree_4pop_1.rds")
+baltree_4pop_1_ebcd_1 <- readRDS("data/baltree_4pop_1_ebcd_1.rds")
+```
+
+## Visualization of Estimate
+This is a heatmap of the true $L$ that we are hoping to recover:
+```{r}
+plot_heatmap(baltree_4pop_1$true_L)
+```
+
+This is a heatmap of $\hat{L}$, the estimate for $L$ from EBCD:
+```{r}
+plot_heatmap(baltree_4pop_1_ebcd_1$est_L, brks = seq(0, max(baltree_4pop_1_ebcd_1$est_L), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}$:
+```{r}
+pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
+plot_loadings(baltree_4pop_1_ebcd_1$est_L, pops_vec)
+```
+
+## Visualizations related to fit
+
+This is the true Gram matrix, $\frac{1}{p}XX'$:
+```{r}
+plot_heatmap(baltree_4pop_1$data$YYt, colors = c('blue','gray96', 'red'), brks = seq(-max(abs(baltree_4pop_1$data$YYt)), max(abs(baltree_4pop_1$data$YYt)), length.out = 50))
+```
+
+This is a heatmap of the estimate of the Gram matrix, $\hat{L}\hat{L}'$ (the $\hat{L}$ used here is scaled):
+```{r}
+plot_heatmap(baltree_4pop_1_ebcd_1$est_LLt, brks = seq(0, max(baltree_4pop_1_ebcd_1$est_LLt), length.out = 50))
+```
+
+This is a scatter plot of the fitted values vs observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt), y = c(baltree_4pop_1_ebcd_1$est_LLt))) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+Let's focus on the off-diagonal elements:
+```{r}
+diag_idx <- seq(1, prod(dim(baltree_4pop_1$data$YYt)), length.out = ncol(baltree_4pop_1$data$YYt))
+off_diag_idx <- setdiff(c(1:prod(dim(baltree_4pop_1$data$YYt))), diag_idx) 
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt)[off_diag_idx], y = c(baltree_4pop_1_ebcd_1$est_LLt)[off_diag_idx])) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+This is the L2-norm of the difference (not including the diagonal entries):
+```{r}
+compute_L2_fit(baltree_4pop_1_ebcd_1$est_LLt, baltree_4pop_1$data$YYt)
+```
+
+The ELBO obtained:
+```{r}
+baltree_4pop_1_ebcd_1$fit_obj$obj
+```
+
+## Observations
+The estimate from EBCD does not properly capture the hierarchical structure of the loadings. The estimate essentially uses four out of the seven factors. Factor 2 does look like a subtype factor. However, the other factors group together samples which do not share any branches in the tree (besides a root branch). However, the fit to the scaled Gram matrix is still good. This is not entirely surprising. We have found the tree case to be difficult to recover without any assumptions of tree structure. There are also identifiability issues in this setting.
+
+# EBCD initialized with the true loadings matrix
+I'm curious if EBCD prefers the solution it found or if it is a convergence issue. Therefore, I initialize EBCD with the true loadings matrix. 
+
+```{r}
+PolarU <- function(A) {
+  svdA <- svd(A)
+  out <- svdA$u %*% t(svdA$v)
+  return(out)
+}
+```
+
+```{r}
+Z.init <- PolarU(baltree_4pop_1_ebcd_1$fit_obj$A%*%baltree_4pop_1$true_L)
+fitted.Y <- Z.init%*%t(baltree_4pop_1$true_L)
+tau.est <- prod(dim(baltree_4pop_1_ebcd_1$fit_obj$A)) / sum((baltree_4pop_1_ebcd_1$fit_obj$A - fitted.Y)^2)
+ebcd_obj_init <- list(
+    A = baltree_4pop_1_ebcd_1$fit_obj$A, N = baltree_4pop_1_ebcd_1$fit_obj$N, nrowA = baltree_4pop_1_ebcd_1$fit_obj$nrowA,
+    tau = tau.est, Z = Z.init, EL = baltree_4pop_1$true_L, ebnm_fn = rep(list(ebnm::ebnm_generalized_binary), 15)
+  )
+```
+
+```{r}
+baltree_4pop_ebcd_true_init <- ebcd_backfit(ebcd_obj_init)
+```
+
+## Visualization of Estimate
+This is a heatmap of the true $L$ that we are hoping to recover:
+```{r}
+plot_heatmap(baltree_4pop_1$true_L)
+```
+
+This is a heatmap of $\hat{L}_{true-init}$, the estimate for $L$ from EBCD initialized with the true loadings:
+```{r}
+plot_heatmap(baltree_4pop_ebcd_true_init$EL, brks = seq(0, max(baltree_4pop_ebcd_true_init$EL), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}_{true-init}$:
+```{r}
+pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
+plot_loadings(baltree_4pop_ebcd_true_init$EL, pops_vec)
+```
+
+## Visualizations related to fit
+
+This is the true Gram matrix, $\frac{1}{p}XX'$:
+```{r}
+plot_heatmap(baltree_4pop_1$data$YYt, colors = c('blue','gray96', 'red'), brks = seq(-max(abs(baltree_4pop_1$data$YYt)), max(abs(baltree_4pop_1$data$YYt)), length.out = 50))
+```
+
+This is a heatmap of the estimate of the Gram matrix, $\hat{L}_{true-init}\hat{L}_{true-init}'$ (the $\hat{L}_{true-init}$ used here is scaled):
+```{r}
+baltree_4pop_ebcd_true_init_est_LLt <- tcrossprod(baltree_4pop_ebcd_true_init$EL)
+plot_heatmap(baltree_4pop_ebcd_true_init_est_LLt, brks = seq(0, max(baltree_4pop_ebcd_true_init_est_LLt), length.out = 50))
+```
+
+This is a scatter plot of the fitted values vs observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt), y = c(baltree_4pop_ebcd_true_init_est_LLt))) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+Let's focus on the off-diagonal elements:
+```{r}
+diag_idx <- seq(1, prod(dim(baltree_4pop_1$data$YYt)), length.out = ncol(baltree_4pop_1$data$YYt))
+off_diag_idx <- setdiff(c(1:prod(dim(baltree_4pop_1$data$YYt))), diag_idx) 
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt)[off_diag_idx], y = c(baltree_4pop_ebcd_true_init_est_LLt)[off_diag_idx])) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+This is the L2-norm of the difference (not including the diagonal entries):
+```{r}
+compute_L2_fit(baltree_4pop_ebcd_true_init_est_LLt, baltree_4pop_1$data$YYt)
+```
+
+The ELBO obtained:
+```{r}
+baltree_4pop_ebcd_true_init$obj
+```
+
+
+## Observations
+When initialized with the true loadings matrix, the EBCD estimate does look like a tree. Furthermore, the fit to the scaled Gram matrix is better and the objective function value is higher. This suggests there may be a convergence issue and/or an issue with the initialization procedure in this setting. This is something we've seen before with other methods, e.g. for EBMFcov, we found that the greedy initialization from flash performed really poorly in the tree setting.
