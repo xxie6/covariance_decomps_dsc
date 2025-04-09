@@ -493,6 +493,8 @@ I wonder if changing the tolerance settings would cause these factors to become 
 
 Based off my experimentation, it seems like the KL term is primarily what is changing when a new factor is being added. I find that the KL term associated with the new loadings factor is usually 55.45177 and the KL term associated with the new factor is usually a really small number. As a result, the new factor is able to decrease the magnitude of the negative KL term and increase the elbo. I'm still trying to figure out a narrative for why this is happening.
 
+When I used the point-exponential prior for this fit, it did not have this problem. It only added five factors originally, and then after backfitting removed another factor, with a final fit of four factors. Is the above phenomenon specific to the generalized binary prior?
+
 <!--
 # Notes
 This is a record of other things I've tried. 
