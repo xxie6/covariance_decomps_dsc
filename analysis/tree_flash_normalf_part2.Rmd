@@ -1,0 +1,337 @@
+---
+title: "tree_flash_normalf_part2"
+author: "Annie Xie"
+date: "2025-03-01"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+In this analysis, we are interested in continuing our exploration of flash with normal prior on F in the tree setting.
+
+## Questions of Interest
+Something that we've seen with flash (with a normal prior on F) in the tree setting is the method usually prefers to find the "cluster" representation where there is one factor for each population. This representation is not inherently bad, but it misses the hierarchical structure in the data. Furthermore, we have a result which suggests that the objective function for $L$ only depends on the data through the Gram matrix. Therefore, we would expect $L$ to use the information from the Gram matrix.
+
+Let
+$$R_k = \Big(X - \sum_{h \neq k} \ell_h f_h' \Big).$$
+
+I have a result that suggests under the mean-field approximation, for $\ell_k$ we have
+$$
+\frac{1}{p}R_k R_k' \approx d \ell_k \ell_k'
+$$
+Therefore, in a coordinate ascent framework where we update one factor at a time, we may see this type of decomposition at each step. I want to check if this tracks empirically.
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+library(flashier)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+```{r}
+compute_L2_fit <- function(est, dat, with_diag = FALSE){
+  if (with_diag == FALSE){
+    score <- sum((dat - est)^2) - sum((diag(dat) - diag(est))^2)
+  }
+  else{
+    score <- sum((dat - est)^2)
+  }
+  return(score)
+}
+```
+
+# Flash with normal prior on F (with backfitting)
+
+```{r}
+baltree_4pop_1 <- readRDS("data/baltree_4pop_1.rds")
+baltree_4pop_1_flash_normalf_1 <- readRDS("data/baltree_4pop_1_flash_normalf_1.rds")
+```
+
+## Visualization of Estimate
+This is a heatmap of the true $L$ that we are hoping to recover:
+```{r}
+plot_heatmap(baltree_4pop_1$true_L)
+```
+
+This is a heatmap of $\hat{L}$, the estimate for $L$ from Flashier with normal prior on $F$ (this estimate is not scaled):
+```{r}
+plot_heatmap(baltree_4pop_1_flash_normalf_1$est_L, brks = seq(0, max(baltree_4pop_1_flash_normalf_1$est_L), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}$:
+```{r}
+pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
+plot_loadings(baltree_4pop_1_flash_normalf_1$est_L, pops_vec)
+```
+
+These are the entries of the first column, sixth column, and seventh column of $\hat{L}$, which appear to be zero in the scatter plot:
+```{r}
+baltree_4pop_1_flash_normalf_1$est_L[1,1]
+baltree_4pop_1_flash_normalf_1$est_L[1,6]
+baltree_4pop_1_flash_normalf_1$est_L[1,7]
+```
+
+## Visualizations related to fit
+
+This is the true Gram matrix, $\frac{1}{p}XX'$:
+```{r}
+plot_heatmap(baltree_4pop_1$data$YYt, colors = c('blue','gray96', 'red'), brks = seq(-max(abs(baltree_4pop_1$data$YYt)), max(abs(baltree_4pop_1$data$YYt)), length.out = 50))
+```
+
+This is a heatmap of the estimate of the Gram matrix, $\hat{L}\hat{L}'$ (the $\hat{L}$ used here is scaled):
+```{r}
+plot_heatmap(baltree_4pop_1_flash_normalf_1$est_LLt, brks = seq(0, max(baltree_4pop_1_flash_normalf_1$est_LLt), length.out = 50))
+```
+
+This is a scatter plot of the fitted values vs observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt), y = c(baltree_4pop_1_flash_normalf_1$est_LLt))) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+Let's focus on the off-diagonal elements:
+```{r}
+diag_idx <- seq(1, prod(dim(baltree_4pop_1$data$YYt)), length.out = ncol(baltree_4pop_1$data$YYt))
+off_diag_idx <- setdiff(c(1:prod(dim(baltree_4pop_1$data$YYt))), diag_idx) 
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(baltree_4pop_1$data$YYt)[off_diag_idx], y = c(baltree_4pop_1_flash_normalf_1$est_LLt)[off_diag_idx])) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+# Focusing on the second factor and loadings
+
+We scale the factorization such that $\hat{L} \hat{L}'$ is on the same scale as $\frac{1}{p}XX'$:
+```{r}
+scaled_flash_normalf_fit <- ldf(baltree_4pop_1_flash_normalf_1$fit_obj)
+scaled_flash_normalf_L <- sqrt(1/ncol(baltree_4pop_1$data$Y))*scaled_flash_normalf_fit$L %*% diag(scaled_flash_normalf_fit$D)
+scaled_flash_normalf_F <- scaled_flash_normalf_fit$F
+```
+
+This is a heatmap of $R_2 R_2'$:
+```{r}
+k <- 2
+```
+
+```{r}
+R_2 <- baltree_4pop_1$data$Y - (baltree_4pop_1_flash_normalf_1$fit_obj$L_pm[,c(-k)] %*% t(baltree_4pop_1_flash_normalf_1$fit_obj$F_pm[,c(-k)]))
+```
+
+```{r}
+RR_2t <- (1/ncol(baltree_4pop_1$data$Y))*tcrossprod(R_2)
+```
+
+```{r}
+plot_heatmap(RR_2t, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(RR_2t)), max(abs(RR_2t)), length.out = 50))
+```
+
+This is a heatmap of $\hat{\ell_2}\hat{\ell_2}'$:
+```{r}
+ll_2t <- tcrossprod(scaled_flash_normalf_L[,k])
+```
+
+```{r}
+plot_heatmap(ll_2t, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(ll_2t)), max(abs(ll_2t)), length.out = 50))
+```
+
+This is a scatter plot of the fitted values vs observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(RR_2t), y = c(ll_2t))) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+Let's focus on the off-diagonal elements:
+```{r, eval = FALSE}
+diag_idx <- seq(1, prod(dim(baltree_4pop_1$data$YYt)), length.out = ncol(baltree_4pop_1$data$YYt))
+off_diag_idx <- setdiff(c(1:prod(dim(baltree_4pop_1$data$YYt))), diag_idx) 
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(RR_2t)[off_diag_idx], y = c(ll_2t)[off_diag_idx])) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+# Focusing on the third factor and loadings
+
+This is a heatmap of $R_3 R_3'$:
+```{r}
+k <- 3
+```
+
+```{r}
+R_3 <- baltree_4pop_1$data$Y - (baltree_4pop_1_flash_normalf_1$fit_obj$L_pm[,c(-k)] %*% t(baltree_4pop_1_flash_normalf_1$fit_obj$F_pm[,c(-k)]))
+```
+
+```{r}
+RR_3t <- (1/ncol(baltree_4pop_1$data$Y))*tcrossprod(R_3)
+```
+
+```{r}
+plot_heatmap(RR_3t, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(RR_3t)), max(abs(RR_3t)), length.out = 50))
+```
+
+This is a heatmap of $\hat{\ell_3}\hat{\ell_3}'$:
+```{r}
+ll_3t <- tcrossprod(scaled_flash_normalf_L[,k])
+```
+
+```{r}
+plot_heatmap(ll_3t, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(ll_3t)), max(abs(ll_3t)), length.out = 50))
+```
+
+This is a scatter plot of the fitted values vs observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(RR_3t), y = c(ll_3t))) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+Let's focus on the off-diagonal elements:
+```{r, eval = FALSE}
+diag_idx <- seq(1, prod(dim(baltree_4pop_1$data$YYt)), length.out = ncol(baltree_4pop_1$data$YYt))
+off_diag_idx <- setdiff(c(1:prod(dim(baltree_4pop_1$data$YYt))), diag_idx) 
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(RR_3t)[off_diag_idx], y = c(ll_3t)[off_diag_idx])) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+# Focusing on the fourth factor and loadings
+
+This is a heatmap of $R_4 R_4'$:
+```{r}
+k <- 4
+```
+
+```{r}
+R_4 <- baltree_4pop_1$data$Y - (baltree_4pop_1_flash_normalf_1$fit_obj$L_pm[,c(-k)] %*% t(baltree_4pop_1_flash_normalf_1$fit_obj$F_pm[,c(-k)]))
+```
+
+```{r}
+RR_4t <- (1/ncol(baltree_4pop_1$data$Y))*tcrossprod(R_4)
+```
+
+```{r}
+plot_heatmap(RR_4t, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(RR_4t)), max(abs(RR_4t)), length.out = 50))
+```
+
+This is a heatmap of $\hat{\ell_4}\hat{\ell_4}'$:
+```{r}
+ll_4t <- tcrossprod(scaled_flash_normalf_L[,k])
+```
+
+```{r}
+plot_heatmap(ll_4t, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(ll_4t)), max(abs(ll_4t)), length.out = 50))
+```
+
+This is a scatter plot of the fitted values vs observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(RR_4t), y = c(ll_4t))) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+Let's focus on the off-diagonal elements:
+```{r, eval = FALSE}
+diag_idx <- seq(1, prod(dim(baltree_4pop_1$data$YYt)), length.out = ncol(baltree_4pop_1$data$YYt))
+off_diag_idx <- setdiff(c(1:prod(dim(baltree_4pop_1$data$YYt))), diag_idx) 
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(RR_4t)[off_diag_idx], y = c(ll_4t)[off_diag_idx])) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+# Focusing on the fifth factor and loadings
+
+This is a heatmap of $R_5 R_5'$:
+```{r}
+k <- 5
+```
+
+```{r}
+R_5 <- baltree_4pop_1$data$Y - (baltree_4pop_1_flash_normalf_1$fit_obj$L_pm[,c(-k)] %*% t(baltree_4pop_1_flash_normalf_1$fit_obj$F_pm[,c(-k)]))
+```
+
+```{r}
+RR_5t <- (1/ncol(baltree_4pop_1$data$Y))*tcrossprod(R_5)
+```
+
+```{r}
+plot_heatmap(RR_5t, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(RR_5t)), max(abs(RR_5t)), length.out = 50))
+```
+
+This is a heatmap of $\hat{\ell_5}\hat{\ell_5}'$:
+```{r}
+ll_5t <- tcrossprod(scaled_flash_normalf_L[,k])
+```
+
+```{r}
+plot_heatmap(ll_5t, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(ll_5t)), max(abs(ll_5t)), length.out = 50))
+```
+
+This is a scatter plot of the fitted values vs observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(RR_5t), y = c(ll_5t))) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+Let's focus on the off-diagonal elements:
+```{r, eval = FALSE}
+diag_idx <- seq(1, prod(dim(baltree_4pop_1$data$YYt)), length.out = ncol(baltree_4pop_1$data$YYt))
+off_diag_idx <- setdiff(c(1:prod(dim(baltree_4pop_1$data$YYt))), diag_idx) 
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(RR_5t)[off_diag_idx], y = c(ll_5t)[off_diag_idx])) + geom_point() + ylim(-1, 18) + xlim(-1,18) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+# Comparison
+We hope that 
+$$XX' \approx LL' = \sum_{k} \ell_k \ell_k'.$$
+Therefore, we would want
+$$XX' - \sum_{k \neq k'} \ell_k \ell_k' \approx \ell_{k'} \ell_{k'}'$$
+
+However, what we see in practice is
+$$\Big(X - \sum_{k \neq k'} \ell_k f_k'\Big)\Big(X - \sum_{k \neq k'} \ell_k f_k'\Big)' 
+\approx \ell_{k'} \ell_{k'}'.$$
+
+For the left-hand-side, we have
+$$ \text{LHS} = XX' - X \Big( \sum_{k \neq k'} \ell_{k} f_k' \Big)' - X'\Big( \sum_{k \neq k'} \ell_{k} f_k' \Big) +  \Big( \sum_{k \neq k'} \ell_{k} f_k' \Big) \Big( \sum_{k \neq k'} \ell_{k} f_k' \Big)'$$
+
+Let's consider the second factor. This is a heatmap of $XX' - \sum_{h \neq 2} \ell_h \ell_h'$:
+```{r}
+XXt_resid2 <- baltree_4pop_1$data$YYt - tcrossprod(scaled_flash_normalf_L[,c(-2)])
+```
+
+```{r}
+plot_heatmap(XXt_resid2, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(XXt_resid2)), max(abs(XXt_resid2)), length.out = 50))
+```
+
+This is a heatmap of $R_2 R_2'$:
+```{r}
+plot_heatmap(RR_2t, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(RR_2t)), max(abs(RR_2t)), length.out = 50))
+```
+
+This is a heatmap of $\ell_2 \ell_2'$:
+```{r}
+plot_heatmap(ll_2t, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(ll_2t)), max(abs(ll_2t)), length.out = 50))
+```
+
+## Comparison with flashier on residualized Gram matrix
+
+```{r}
+flash_cov_fit <- flash_init(XXt_resid2) %>%
+  flash_greedy(Kmax = 1, ebnm_fn = ebnm::ebnm_generalized_binary)
+```
+
+```{r}
+flash_cov_fit_scaled <- ldf(flash_cov_fit)
+flash_cov_fit_L_scaled <- flash_cov_fit_scaled$L * (sqrt(flash_cov_fit_scaled$D))
+```
+
+This is a heatmap of $\tilde{\ell}\tilde{\ell}'$, where $\tilde{\ell}$ is the estimate from running flash on $XX' - \sum_{h \neq 2} \ell_h \ell_h'$:
+```{r}
+plot_heatmap(tcrossprod(flash_cov_fit_L_scaled), colors_range = c('blue','gray96','red'), brks = seq(-max(abs(tcrossprod(flash_cov_fit_L_scaled))), max(abs(tcrossprod(flash_cov_fit_L_scaled))), length.out = 50))
+```
+
+## Observations
+We see that $\ell_2 \ell_2'$ matches more closely with $R_2 R_2'$ than $XX' - \sum_{h \neq 2} \ell_h \ell_h'$, which makes sense given our result. For comparison, I try fitting one factor to $XX' - \sum_{h \neq 2} \ell_h \ell_h'$ using flash, and the fitted result looks like $XX' - \sum_{h \neq 2} \ell_h \ell_h'$. This speaks to the difference between running flash directly on the Gram matrix vs. running flash with a normal prior on $F$ on the data matrix.
