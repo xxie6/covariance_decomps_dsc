@@ -100,6 +100,11 @@ The ELBO obtained:
 baltree_4pop_1_ebcd_1$fit_obj$obj
 ```
 
+This is a heatmap of $\hat{Z}_{untransformed}$:
+```{r}
+plot_heatmap(baltree_4pop_1_ebcd_1$fit_obj$Z, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(baltree_4pop_1_ebcd_1$fit_obj$Z)), max(abs(baltree_4pop_1_ebcd_1$fit_obj$Z)), length.out = 50))
+```
+
 ## Observations
 The estimate from EBCD does not properly capture the hierarchical structure of the loadings. The estimate essentially uses four out of the seven factors. Factor 2 does look like a subtype factor. However, the other factors group together samples which do not share any branches in the tree (besides a root branch). However, the fit to the scaled Gram matrix is still good. This is not entirely surprising. We have found the tree case to be difficult to recover without any assumptions of tree structure. There are also identifiability issues in this setting.
 
@@ -183,6 +188,10 @@ The ELBO obtained:
 baltree_4pop_ebcd_true_init$obj
 ```
 
+This is a heatmap of $\hat{Z}_{true-init-untransformed}$:
+```{r}
+plot_heatmap(baltree_4pop_ebcd_true_init$Z, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(baltree_4pop_ebcd_true_init$Z)), max(abs(baltree_4pop_ebcd_true_init$Z)), length.out = 50))
+```
 
 ## Observations
 When initialized with the true loadings matrix, the EBCD estimate does look like a tree. Furthermore, the fit to the scaled Gram matrix is better and the objective function value is higher. This suggests there may be a convergence issue and/or an issue with the initialization procedure in this setting. This is something we've seen before with other methods, e.g. for EBMFcov, we found that the greedy initialization from flash performed really poorly in the tree setting.
