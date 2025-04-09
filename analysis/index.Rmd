@@ -14,6 +14,7 @@ Main takeways thus far:
 * For flash with normal prior on F in the balanced, nonoverlapping setting, when I set Kmax to a large number, I find flash will add a bunch of factors whose loadings are a really small number. I'm still trying to figure out why it does that. Results [here](balanced_nonoverlapping_flash_normalf.html).  
 * Flash's greedy method with gb priors does not do well in the tree setting. It always stops prematurely at 3 factors. Results [here](tree_ebmfcov_diag.html) and [here](tree_ebmfcov_greedy.html).  
 * Flash with normal prior on F also struggles to find trees. When initialized with the true values, the method finds the factorization which clusters the samples by population. Perhaps it prefers that representation because it is more sparse? Results [here](tree_flash_normalf.html).  
+* EBCD also struggles to find trees. However, when initialized with the true values, the method does yield an estimate that looks like a tree. So perhaps it is a convergence issue? My results are [here](tree_ebcd.html) and [here](tree_ebcd_part2.html).  
 
 All analyses:    
 * Exploration of [EBMFcov in Balanced, nonoverlapping setting](balanced_nonoverlapping_ebmfcov_diag.html)  
@@ -23,3 +24,5 @@ All analyses:
 * Exploration of [EBMFcov in tree setting](tree_ebmfcov_diag.html)  
 * Exploration of [Flashier's greedy method in tree setting](tree_ebmfcov_greedy.html)  
 * Exploration of [symNMF in tree setting](tree_symnmf.html)  
+* Exploration of [EBCD in tree setting](tree_ebcd.html)  
+* Further exploration of [EBCD in tree setting](tree_ebcd_part2.html) 
