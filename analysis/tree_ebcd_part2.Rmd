@@ -1,0 +1,103 @@
+---
+title: "tree_ebcd_part2"
+author: "Annie Xie"
+date: "2025-04-09"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+In this analysis, we explore the greedy EBCD procedure in the tree setting. This is based off of my previous exploration of EBCD in the tree setting.
+
+## Questions of Interest
+I wonder if EBCD's greedy initialization procedure is the reason why the method performs poorly in the tree setting. If so, why does the procedure fail to find a tree?
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+library(flashier)
+library(ebcd)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+```{r}
+compute_L2_fit <- function(est, dat, with_diag = FALSE){
+  if (with_diag == FALSE){
+    score <- sum((dat - est)^2) - sum((diag(dat) - diag(est))^2)
+  }
+  else{
+    score <- sum((dat - est)^2)
+  }
+  return(score)
+}
+```
+
+```{r}
+transform_ebcd_Z <- function(Y, ebcd_obj){
+  Y.svd <- svd(Y)
+  Y.UV <- Y.svd$u %*% t(Y.svd$v)
+  Z_transformed <- Y.UV %*% ebcd_obj$Z
+  return(Z_transformed)
+}
+```
+
+# Looking into EBCD initialization
+
+```{r}
+baltree_4pop_1 <- readRDS("data/baltree_4pop_1.rds")
+```
+
+```{r}
+ebcd_init_obj <- ebcd_init(X = t(baltree_4pop_1$data$Y))
+```
+
+```{r}
+ebcd_greedy_fit <- ebcd_greedy(ebcd_init_obj, Kmax = 7, ebnm_fn = ebnm::ebnm_generalized_binary)
+```
+
+This is a scatterplot of the entries of $\hat{L}_{greedy}$:
+```{r}
+pops_vec <- c(rep('A', 40), rep('B', 40), rep('C', 40), rep('D', 40))
+plot_loadings(ebcd_greedy_fit$EL, pops_vec)
+```
+
+This is a heatmap of $\hat{Z}_{greedy-untransformed}$:
+```{r}
+plot_heatmap(ebcd_greedy_fit$Z, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(ebcd_greedy_fit$Z)), max(abs(ebcd_greedy_fit$Z)), length.out = 50))
+```
+
+This is a heatmap of $\hat{Z}_{greedy-transformed}$:
+```{r}
+ebcd_greedy_fit_Z <- transform_ebcd_Z(t(baltree_4pop_1$data$Y), ebcd_greedy_fit)
+plot_heatmap(ebcd_greedy_fit_Z, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(ebcd_greedy_fit_Z)), max(abs(ebcd_greedy_fit_Z)), length.out = 50))
+```
+
+Something that struck me was how the un-transformed estimate for $Z$ and the estimate for $L$ have similar structure. 
+
+This is a heatmap of the matrix $C$ which is used instead of $Y$:
+```{r}
+plot_heatmap(ebcd_greedy_fit$A, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(ebcd_greedy_fit$A)), max(abs(ebcd_greedy_fit$A)), length.out = 50))
+```
+
+```{r}
+ebcd_greedy_fit$A[1:10, 1:10]
+```
+
+```{r, eval = FALSE, include = FALSE}
+plot_heatmap(baltree_4pop_1$data$YYt, colors = c('blue','gray96', 'red'), brks = seq(-max(abs(baltree_4pop_1$data$YYt)), max(abs(baltree_4pop_1$data$YYt)), length.out = 50))
+```
+
+```{r, eval = FALSE, include = FALSE}
+plot_heatmap((1/160)*crossprod(ebcd_greedy_fit$A), colors_range = c('blue','gray96','red'), brks = seq(-max(abs((1/160)*crossprod(ebcd_greedy_fit$A))), max(abs((1/160)*crossprod(ebcd_greedy_fit$A))), length.out = 50))
+```
+
+To me, the matrix $C$ looks like the Gram matrix for tree-structured data. To the naked eye, the matrix $A$ also looks pretty close to symmetric. Therefore, I wonder if the un-transformed estimate for $Z$ and the estimate for $L$ look similar because the method is trying to find something close to a symmetric matrix factorization that still satisfies the orthogonality constraint on $Z$ and constraints induced by the prior on $L$. I guess a general follow up question is how does EBCD behave when the input data matrix is a square symmetric matrix?
+
+Maybe this could partially explain why the greedy procedure struggles to find a tree-structured matrix with seven factors? Because the loadings matrix we are looking for has linearly dependent columns.
