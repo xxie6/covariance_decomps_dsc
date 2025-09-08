@@ -1,0 +1,149 @@
+---
+title: "input_K_comparison_pt2"
+author: "Annie Xie"
+date: "2025-09-05"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+In this analysis, we include visualizations for one simulation from the DSC.
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+```{r}
+data_files <- list.files(path = 'data/adclus_cov_comp_dsc_2k_ex')
+```
+
+```{r}
+codesymnmf_files <- grep('codesymnmf', 
+                         list.files(path ='data/symnmf_cov_comp_dsc_2k_ex'),
+                         value = TRUE)
+```
+
+# Unbalanced Non-overlapping
+
+```{r}
+group_nonoverlap_files <- grep('group_nonoverlap', data_files, value = TRUE)
+unbal_nonoverlap_files <- grep('2_', group_nonoverlap_files, value = TRUE)
+length(unbal_nonoverlap_files)
+```
+
+```{r}
+#par(mfrow = c(4, 2))
+#par(mar = c(4, 4, 2, 1)) 
+for (i in unbal_nonoverlap_files){
+  #extract method
+  method <- sub("^(?:[^_]*_){3}(.*)_.*$", "\\1", i)
+  
+  est <- readRDS(paste0('data/adclus_cov_comp_dsc_2k_ex/',i))$est_L
+  plot_heatmap(est, title = method, 
+               colors_range = c('blue','gray96','red'),
+               brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
+}
+#par(mfrow = c(1, 1))
+```
+
+```{r}
+est <- readRDS(paste0('data/symnmf_cov_comp_dsc_2k_ex/', codesymnmf_files[3]))$est_L
+plot_heatmap(est, title = 'codesymnmf', 
+               colors_range = c('blue','gray96','red'),
+               brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
+```
+
+# Balanced Non-overlapping
+
+```{r}
+# group_nonoverlap_files <- grep('group_nonoverlap', data_files, value = TRUE)
+bal_nonoverlap_files <- grep('1_', group_nonoverlap_files, value = TRUE)
+length(bal_nonoverlap_files)
+```
+
+```{r}
+#par(mfrow = c(4, 2))
+#par(mar = c(4, 4, 2, 1)) 
+for (i in bal_nonoverlap_files){
+  #extract method
+  method <- sub("^(?:[^_]*_){3}(.*)_.*$", "\\1", i)
+  
+  est <- readRDS(paste0('data/adclus_cov_comp_dsc_2k_ex/',i))$est_L
+  plot_heatmap(est, title = method, 
+               colors_range = c('blue','gray96','red'),
+               brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
+}
+#par(mfrow = c(1, 1))
+```
+
+```{r}
+est <- readRDS(paste0('data/symnmf_cov_comp_dsc_2k_ex/', codesymnmf_files[2]))$est_L
+plot_heatmap(est, title = 'codesymnmf', 
+               colors_range = c('blue','gray96','red'),
+               brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
+```
+
+# Balanced Tree
+
+```{r}
+baltree_files <- grep('baltree_4pop', data_files, value = TRUE)
+length(baltree_files)
+```
+
+```{r}
+#par(mfrow = c(4, 2))
+#par(mar = c(4, 4, 2, 1)) 
+for (i in baltree_files){
+  #extract method
+  method <- sub("^(?:[^_]*_){3}(.*)_.*$", "\\1", i)
+  
+  est <- readRDS(paste0('data/adclus_cov_comp_dsc_2k_ex/',i))$est_L
+  plot_heatmap(est, title = method, 
+               colors_range = c('blue','gray96','red'),
+               brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
+}
+#par(mfrow = c(1, 1))
+```
+
+```{r}
+est <- readRDS(paste0('data/symnmf_cov_comp_dsc_2k_ex/', codesymnmf_files[1]))$est_L
+plot_heatmap(est, title = 'codesymnmf', 
+               colors_range = c('blue','gray96','red'),
+               brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
+```
+
+# Sparse Overlapping
+
+```{r}
+overlap_files <- grep('group_overlap', data_files, value = TRUE)
+length(overlap_files)
+```
+
+```{r}
+#par(mfrow = c(4, 2))
+#par(mar = c(4, 4, 2, 1)) 
+for (i in overlap_files){
+  #extract method
+  method <- sub("^(?:[^_]*_){3}(.*)_.*$", "\\1", i)
+  
+  est <- readRDS(paste0('data/adclus_cov_comp_dsc_2k_ex/',i))$est_L
+  plot_heatmap(est, title = method, 
+               colors_range = c('blue','gray96','red'),
+               brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
+}
+#par(mfrow = c(1, 1))
+```
+
+```{r}
+est <- readRDS(paste0('data/symnmf_cov_comp_dsc_2k_ex/', codesymnmf_files[4]))$est_L
+plot_heatmap(est, title = 'codesymnmf', 
+               colors_range = c('blue','gray96','red'),
+               brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
+```

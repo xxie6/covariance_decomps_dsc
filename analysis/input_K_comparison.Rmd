@@ -1,0 +1,263 @@
+---
+title: "input_K_comparison"
+author: "Annie Xie"
+date: "2025-09-04"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+In this analysis, I am interested in exploring how well the methods perform when the number of components, $K$, is misspecified. `Kmax_factor = 1` corresponds to the method being given the correct number of components. `Kmax_factor = 2` corresponds to inputting double the correct number of components.
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+# Prepare the DSC data
+
+```{r}
+dscout <- readRDS("data/dsc_results_df.rds")
+dim(dscout)
+```
+
+I decided to focus on the backfit variant of the empirical Bayes matrix factorization methods. I also decided to focus on the variant of SINDCLUS and SYMPRES that does not explicitly model an intercept. So I clean the data to only include these variants.
+```{r}
+dscout <- dscout %>% filter((is.na(analyze.additive_term) == TRUE & is.na(analyze.backfit) == TRUE) | (analyze.additive_term == 'FALSE' | analyze.backfit == 'TRUE')) %>% select(!(analyze.off_diagonal))
+```
+
+# Balanced Tree Setting
+I will first consider the balanced tree setting. This setting is the hardest of the four settings due to the non-identifiability of the representation.
+
+## Additive Clustering Methods
+In this section, I will focus on the additive-clustering style methods
+
+### Crossproduct Similarity
+
+```{r}
+dscout %>% filter(simulate == 'baltree_4pop', score == 'crossprod_similarity', (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+Note that this metric does not penalize a method for adding too many factors. Most of the methods have comparable performance. Flash with a normal prior on F has improved performance with larger $K$, suggesting the extra factors allowed it to pick up more of the true factors. SINDCLUS had worse performance with larger $K$; this could suggest that factors which were correctly recovered with the correct $K$ are now being split among multiple factors?
+
+### Proportion of estimated factors that are highly similar to a true factor
+
+```{r}
+dscout %>% filter(simulate == 'baltree_4pop', score == 'prop_est_high_cos_sim', (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+For many methods, the proportion decreases with larger $K$, suggesting the larger $K$ leads these methods to return more factors that are not capturing true structure. The proportion stays the same for GBCD and point-Laplace intialized EBMFcov, suggesting these methods do not return extraneous factors -- this is consistent with what I've seen in my experiments. In my experiments, I often found that GBCD would find the correct number of factors for this setting even when given a larger $K$. For Flash with normal prior on F, the proportion increases with larger $K$; this is consistent with the previous metric, which showed performance improved with larger $K$.
+
+### Proportion of true factors that are highly similar to at least one estimated factor
+
+```{r}
+dscout %>% filter(simulate == 'baltree_4pop', score == 'prop_true_high_cos_sim', (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+For many methods, the proportion is comparable between the two $K$ inputs. For SINDCLUS, the proportion decreased; this is consistent with the decreased performance we saw with the crossproduct similarity. The proportion also decreased for SYMPRES.
+
+## symmetric NMF Methods
+In this section, I will focus on the sparse symmetric NMF style methods
+
+### Crossproduct Similarity
+
+```{r}
+dscout %>% filter(simulate == 'baltree_4pop', score == 'crossprod_similarity', (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+Recall this metric does not penalize a method for adding too many factors. Most of the methods have comparable performance. Again, SINDCLUS had worse performance with larger $K$; this could suggest that factors which were correctly recovered with the correct $K$ are now being split among multiple factors?
+
+### Proportion of estimated factors that are highly similar to a true factor
+
+```{r}
+dscout %>% filter(simulate == 'baltree_4pop', score == 'prop_est_high_cos_sim', (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+Again, for many methods, the proportion decreases with larger $K$, suggesting the larger $K$ leads these methods to return more factors that are not capturing true structure. The proportion stays the same for GBCD, point-Laplace intialized EBMFcov, EBMFcov, and Flash with normal prior on F, suggesting these methods do not return extraneous factors. EBMFcov prematurely stops adding factors when given the correct $K$, so it is expected that larger $K$ would lead to the same result. Given that Flash with normal prior on F prefers the clustered represented, I'm guessing the method is only returning four factors corresponding to the clusters? In that case, being given a larger $K$ would also not lead to a change in results.
+
+### Proportion of true factors that are highly similar to at least one estimated factor
+
+```{r}
+dscout %>% filter(simulate == 'baltree_4pop', score == 'prop_true_high_cos_sim', (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+We see similar trends to the additive-clustering style methods.
+
+# Unbalanced Non-overlapping
+I will now consider the unbalanced non-overlapping setting. This setting should be the easiest of the four settings.
+
+## Additive Clustering Methods
+In this section, I will focus on the additive-clustering style methods
+
+### Crossproduct Similarity
+
+```{r}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40, 4)', score == 'crossprod_similarity', (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+All of the methods either have the same or improved performance with larger $K$. (Recall this metric does not penalize extra factors.)
+
+### Proportion of estimated factors that are highly similar to a true factor
+
+```{r}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40, 4)', score == 'prop_est_high_cos_sim', (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+For all the methods, the proportion decreases with larger $K$. One explanation is the larger $K$ leads methods to return more factors that are not capturing true structure. Alternatively, the methods could be splitting the true signal meant to be captured in one single factor across multiple factors.
+
+### Proportion of true factors that are highly similar to at least one estimated factor
+
+```{r}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40, 4)', score == 'prop_true_high_cos_sim', (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+For all the methods, the proportion is either the same or larger with the larger $K$ input.
+
+## symmetric NMF Methods
+In this section, I will focus on the sparse symmetric NMF style methods
+
+### Crossproduct Similarity
+
+```{r}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40, 4)', score == 'crossprod_similarity', (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+Again, for all the methods, the crossproduct similarity is either the same or better with larger $K$.
+
+### Proportion of estimated factors that are highly similar to a true factor
+
+```{r}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40, 4)', score == 'prop_est_high_cos_sim', (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+For most of the methods, the proportion decreases with larger $K$. The only method where this is not the case is Flash with normal prior on F -- the proportion stays the same across the $K$ values. This suggests this method is not returning extraneous factors.
+
+### Proportion of true factors that are highly similar to at least one estimated factor
+
+```{r}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40, 4)', score == 'prop_true_high_cos_sim', (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+Again, for all the methods, the proportion is either the same or improved with larger $K$. Flash with normal prior on F has a proportion of 1 for both $K$ inputs. Paired with the previous metric, this suggests that the method is finding the correct number of factors and is not returning extraneous factors (though I guess it could possibly return duplicate factors, but I don't think flashier would opt to add duplicate factors).
+
+# Balanced Non-overlapping
+I will now consider the balanced non-overlapping setting. This setting should be harder than the unbalanced non-overlapping setting.
+
+## Additive Clustering Methods
+In this section, I will focus on the additive-clustering style methods
+
+### Crossproduct Similarity
+
+```{r}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes == 'rep(40, 4)', score == 'crossprod_similarity', (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+All of the methods either have the same or improved performance with larger $K$. (Recall this metric does not penalize extra factors.)
+
+### Proportion of estimated factors that are highly similar to a true factor
+
+```{r}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes == 'rep(40, 4)', score == 'prop_est_high_cos_sim', (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+For most of the methods, the proportion decreases with larger $K$. One explanation is the larger $K$ leads methods to return more factors that are not capturing true structure. The only method that sees an increase in the proportion is SYMPRES.
+
+### Proportion of true factors that are highly similar to at least one estimated factor
+
+```{r}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes == 'rep(40, 4)', score == 'prop_true_high_cos_sim', (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+For all the methods, the proportion is either the same or larger with the larger $K$ input. Paired with the previous metric which for most methods decreased with larger $K$, this could suggest that the larger $K$ allows the methods to find more of the true factors, but also results in the methods returning factors which are just noise.
+
+## symmetric NMF Methods
+In this section, I will focus on the sparse symmetric NMF style methods
+
+### Crossproduct Similarity
+
+```{r}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes == 'rep(40, 4)', score == 'crossprod_similarity', (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+For most of the methods, the crossproduct similarity is either the same or better with larger $K$. GBCD does see a small decrease in the proportion with larger $K$ -- perhaps one or a couple of factors that were "correct" in the original fit got split across numerous factors in the fit with larger $K$.
+
+### Proportion of estimated factors that are highly similar to a true factor
+
+```{r}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes == 'rep(40, 4)', score == 'prop_est_high_cos_sim', (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+For CoDesymNMF, EBCD, PCA, and SINDCLUS, the proportion decreases with larger $K$. For GBCD and point-Laplace initialized EBMFcov, the methods see a very slight decrease with larger $K$. For, Flash with normal prior on $F$, the proportion stays the same. SYMPRES is the only method that sees an increase.
+
+### Proportion of true factors that are highly similar to at least one estimated factor
+
+```{r}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes == 'rep(40, 4)', score == 'prop_true_high_cos_sim', (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+Flash with normal prior on $F$ has a proportion of 1 for both $K$ values. Paired with the previous metric, this suggests that the method can recover the correct number of components. CoDesymNMF and EBCD also have a proportion of 1 for both $K$ values. Paired with the previous metric, this suggests that the methods are not prone to returning extra factors when a larger $K$ is used. This makes sense for CoDesymNMF since it assumes a given $K$ in its optimization. However, EBCD theoretically should be able to stop adding factors when a new factor doesn't increase the objective function.
+
+# Sparse Overlapping
+I will now consider the sparse, overlapping setting.
+
+## Additive Clustering Methods
+In this section, I will focus on the additive-clustering style methods
+
+### Crossproduct Similarity
+
+```{r}
+dscout %>% filter(simulate == 'group_overlap', score == 'crossprod_similarity', (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+Most of the methods have comparable or improved performance. Point-Laplace initialized EBMFcov sees a slight decrease in performance.
+
+### Proportion of estimated factors that are highly similar to a true factor
+
+```{r}
+dscout %>% filter(simulate == 'group_overlap', score == 'prop_est_high_cos_sim', (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+For most of the methods, the proportion decreases with larger $K$. The only methods for which the proportion increases with larger $K$ are GBCD and SINDCLUS.
+
+### Proportion of true factors that are highly similar to at least one estimated factor
+
+```{r}
+dscout %>% filter(simulate == 'group_overlap', score == 'prop_true_high_cos_sim', (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+EBCD sees a very slight decrease in proportion, which is interesting but ultimately may not be very meaningful -- the proportion of recovery is still very high. Flash with normal prior on $F$ sees an increase. Paired with the previous metric, this suggests that the higher $K$ does allow for recovery of more factors, but it also leads to extra factors that are noise. GBCD also sees a small increase, and saw an increase in the previous metric. This suggests the larger $K$ was beneficial for GBCD. Point-Laplace initialized EBMFcov sees a slight decrease, and also saw a decrease in the previous metric. This may suggest the larger $K$ is causing the method to split the effects across multiple factors?
+
+## symmetric NMF Methods
+In this section, I will focus on the sparse symmetric NMF style methods
+
+### Crossproduct Similarity
+
+```{r}
+dscout %>% filter(simulate == 'group_overlap', score == 'crossprod_similarity', (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+Most of the methods have comparable performance. However, SINDCLUS and SYMPRES have improved performance with larger $K$.
+
+### Proportion of estimated factors that are highly similar to a true factor
+
+```{r}
+dscout %>% filter(simulate == 'group_overlap', score == 'prop_est_high_cos_sim', (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+For most of the methods, the proportion decreases with larger $K$. The only method that sees an increase in proportion is SINDCLUS.
+
+### Proportion of true factors that are highly similar to at least one estimated factor
+
+```{r}
+dscout %>% filter(simulate == 'group_overlap', score == 'prop_true_high_cos_sim', (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.Kmax_factor)
+```
+
+Most of the methods have comparable performance. Though SINDCLUS and SYMPRES do see notable improvements. Also considering the previous metric, it seems like SINDCLUS benefited from the larger $K$ input.
