@@ -16,6 +16,12 @@ Main takeways thus far:
 * Flash with normal prior on F also struggles to find trees. When initialized with the true values, the method finds the factorization which clusters the samples by population. Perhaps it prefers that representation because it is more sparse? Results [here](tree_flash_normalf.html).  
 * EBCD also struggles to find trees. However, when initialized with the true values, the method does yield an estimate that looks like a tree. So perhaps it is a convergence issue? My results are [here](tree_ebcd.html) and [here](tree_ebcd_part2.html).  
 
+DSC analyses (9/8/2025):  
+* [Results from the DSC](additive_clustering_comparison.html) (EB methods use generalized binary prior, the methods are given the correct number of components) and an [example of results](additive_clustering_comparison_pt2.html)    
+* [Results comparing generalized binary prior and point-exponential prior](gb_vs_ptexp.html) and an [example of results using point exponential prior](gb_vs_ptexp_pt2.html)  
+* [Results comparing different K inputs](input_K_comparison.html) and an [example of results using larger K](input_K_comparison_pt2.html)  
+* [Results comparing methods from the same initialization](pt_laplace_split_init_comparison.html) and an [example of results](pt_laplace_split_init_comparison_pt2.html)
+
 All analyses:    
 * Exploration of [EBMFcov in Balanced, nonoverlapping setting](balanced_nonoverlapping_ebmfcov_diag.html)  
 * Exploration of [EBMF with normal prior on F in Balanced, nonoverlapping setting](balanced_nonoverlapping_flash_normalf.html)  
