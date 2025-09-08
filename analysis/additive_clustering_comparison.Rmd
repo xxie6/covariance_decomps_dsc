@@ -1,0 +1,230 @@
+---
+title: "additive_clustering_comparison"
+author: "Annie Xie"
+date: "2025-09-04"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+In this analysis, I am interested in comparing the additive-clustering-style methods from the DSC. These methods include empirical Bayes methods with the generalized-binary prior and SINDCLUS and SYMPRES. For each method, we give it the true number of components for the maximum number of factors to fit. 
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+# Prepare the DSC data
+
+```{r}
+dscout <- readRDS("data/dsc_results_df.rds")
+dim(dscout)
+```
+
+I decided to focus on the backfit variant of the empirical Bayes matrix factorization methods. I also decided to focus on the variant of SINDCLUS and SYMPRES that does not explicitly model an intercept. So I clean the data to only include these variants.
+```{r}
+dscout <- dscout %>% filter((is.na(analyze.additive_term) == TRUE & is.na(analyze.backfit) == TRUE) | (analyze.additive_term == 'FALSE' | analyze.backfit == 'TRUE')) %>% select(!(analyze.off_diagonal))
+```
+
+I also filter the methods to only include the ADCLUS methods, CoDesymNMF, and the empirical Bayes methods which use the generalized-binary prior. Since this analysis focuses on the comparison of the additive clustering methods, I wanted to only consider the generalized-binary prior. I will consider the point-exponential prior in another analysis.
+
+```{r}
+dscout <- dscout %>% filter((is.na(analyze.ebnm_fn) == TRUE) | (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary'))
+```
+
+I also filter out other settings we're not interested in (e.g. the input $K$ being misspecified).
+```{r}
+dscout <- dscout %>% filter(analyze.Kmax_factor == 1)
+```
+
+# Balanced Tree Setting
+I will first consider the balanced tree setting. This setting is the hardest of the four settings due to the non-identifiability of the representation.
+
+## Crossproduct Similarity
+
+This is the average crossproduct similarity for each method in the balanced tree setting:
+```{r}
+dscout %>% filter(simulate == 'baltree_4pop', score == 'crossprod_similarity') %>% group_by(analyze) %>% summarise(avg_result = mean(score.result)) %>% arrange(desc(avg_result))
+```
+
+GBCD and point-Laplace initialized EBMFcov perform the best, with average crossproduct similarities exceeding 0.99. We hypothesize that the point-Laplace initialization is the reason why these two methods perform so well. SINDCLUS, CoDesymNMF, and SYMPRES also perform quite well, yielding similarities exceeding 0.90. The other empirical Bayes methods struggle in this setting. The fact that EBCD struggles is a little unexpected since EBCD is essentially solving the same problem as GBCD. If I recall correctly, Flash with normal prior on F does not prefer the tree representation to the clustered representation, so it makes sense that it would perform poorly. EBMFcov performs poorly because it prematurely stops adding factors. The greedy initialization struggles in the tree setting while the point-Laplace plus splitting initialization performs really well.
+
+These are histograms of the crossproduct similarity measurements for each methods:
+```{r}
+plot_crossprod_hist <- function(df, method){
+  hist(df[df$analyze == method,]$score.result, main = method, xlab = 'Crossproduct Similarity')
+}
+```
+
+```{r}
+dscout_baltree <- dscout %>% filter(simulate == 'baltree_4pop', score == 'crossprod_similarity')
+```
+
+```{r}
+all_methods <- unique(dscout$analyze)
+
+par(mfrow = c(3, 3))
+par(mar = c(4, 4, 2, 1)) 
+for (i in all_methods){
+  plot_crossprod_hist(dscout_baltree, i)
+}
+par(mfrow = c(1, 1))
+```
+
+SINDCLUS, SYMPRES, and Flash with a normal prior on F have crossproduct similarity values which span a considerable range. In my experience playing around with SINDCLUS and SYMPRES, it is possible to get very different estimates by chance due to the random steps in their fitting processes. EBCD performs poorly in all simulations. GBCD attains nearly perfect recovery in all simulations.
+
+## Proportions
+
+In this section, we consider two metrics: 1) the proportion of the estimated factors which are highly similar to a true factor 2) the proportion of true factors that are highly similar to at least one estimated factor. Note that in the first proportion, it is possible that multiple estimates are similar to the same true factor -- perhaps to avoid this, the threshold for "highly similar" should be really high, e.g. 0.99.
+
+```{r}
+dscout %>% filter(simulate == 'baltree_4pop', score %in% c('prop_est_high_cos_sim', 'prop_true_high_cos_sim')) %>% group_by(analyze, score) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, score)
+```
+
+For SINDCLUS and SYMPRES, prop_est_high_cos_sim is higher than prop_true_high_cos_sim. In this case, the methods were given the correct number of components, so this could suggest that the methods are finding duplicate (or highly similar) factors. For EBMFcov, prop_est_high_cos_sim = 1 while prop_true_high_cos_sim = 0.443. This is because EBMFcov usually only finds three factors, but the three factors it does find are correlated with three true factors.
+
+# Unbalanced Non-overlapping
+I will now consider the unbalanced non-overlapping setting. This setting should be the easiest of the four settings.
+
+## Crossproduct Similarity
+
+This is the average crossproduct similarity for each method:
+```{r}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40, 4)', score == 'crossprod_similarity') %>% group_by(analyze) %>% summarise(avg_result = mean(score.result)) %>% arrange(desc(avg_result))
+```
+
+Most of the methods have perfect or near perfect recovery of the structure. However, SINDCLUS and SYMPRES seem to struggle a bit in this setting.
+
+These are histograms of the crossproduct similarity measurements for each methods:
+```{r, eval = FALSE}
+plot_crossprod_hist <- function(df, method){
+  hist(df[df$analyze == method,]$score.result, main = method, xlab = 'Crossproduct Similarity')
+}
+```
+
+```{r}
+dscout_unbal_nonoverlap <- dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40, 4)', score == 'crossprod_similarity')
+```
+
+```{r}
+# all_methods <- unique(dscout$analyze)
+
+par(mfrow = c(3, 3))
+par(mar = c(4, 4, 2, 1)) 
+for (i in all_methods){
+  plot_crossprod_hist(dscout_unbal_nonoverlap, i)
+}
+par(mfrow = c(1, 1))
+```
+
+We again see that SINDCLUS and SYMPRES have crossproduct similarity values which span a considerable range. This explains why they have lower average crossproduct similarity values.
+
+## Proportions
+
+In this section, we consider two metrics: 1) the proportion of the estimated factors which are highly similar to a true factor 2) the proportion of true factors that are highly similar to at least one estimated factor. Note that in the first proportion, it is possible that multiple estimates are similar to the same true factor -- perhaps to avoid this, the threshold for "highly similar" should be really high, e.g. 0.99.
+
+```{r}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40, 4)', score %in% c('prop_est_high_cos_sim', 'prop_true_high_cos_sim')) %>% group_by(analyze, score) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, score)
+```
+
+In this case, GBCD and point-Laplace initialized EBMFcov have prop_est_high_cos_sim less than prop_true_high_cos_sim and prop_true_high_cos_sim = 1. This suggests that these methods are returning additional factors that are just capturing noise.
+
+# Balanced Non-overlapping
+I will now consider the balanced non-overlapping setting. This setting should be harder than the unbalanced non-overlapping setting.
+
+## Crossproduct Similarity
+
+This is the average crossproduct similarity for each method:
+```{r}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes == 'rep(40, 4)', score == 'crossprod_similarity') %>% group_by(analyze) %>% summarise(avg_result = mean(score.result)) %>% arrange(desc(avg_result))
+```
+
+All the methods outperform the baseline, PCA. SYMPRES, and Flash with a normal prior on F have the lowest performance (besides PCA).
+
+These are histograms of the crossproduct similarity measurements for each methods:
+```{r, eval = FALSE}
+plot_crossprod_hist <- function(df, method){
+  hist(df[df$analyze == method,]$score.result, main = method, xlab = 'Crossproduct Similarity')
+}
+```
+
+```{r}
+dscout_bal_nonoverlap <- dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes == 'rep(40, 4)', score == 'crossprod_similarity')
+```
+
+```{r}
+# all_methods <- unique(dscout$analyze)
+
+par(mfrow = c(3, 3))
+par(mar = c(4, 4, 2, 1)) 
+for (i in all_methods){
+  plot_crossprod_hist(dscout_bal_nonoverlap, i)
+}
+par(mfrow = c(1, 1))
+```
+
+We again see that SINDCLUS, SYMPRES, and Flash with a normal prior on F have crossproduct similarity values which span a considerable range. EBMFcov has very strong performance except for one instance where the method performs quite poorly.
+
+## Proportions
+
+In this section, we consider two metrics: 1) the proportion of the estimated factors which are highly similar to a true factor 2) the proportion of true factors that are highly similar to at least one estimated factor. Note that in the first proportion, it is possible that multiple estimates are similar to the same true factor -- perhaps to avoid this, the threshold for "highly similar" should be really high, e.g. 0.99.
+
+```{r}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes == 'rep(40, 4)', score %in% c('prop_est_high_cos_sim', 'prop_true_high_cos_sim')) %>% group_by(analyze, score) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, score)
+```
+
+Again, GBCD and point-Laplace initialized EBMFcov have prop_est_high_cos_sim less than prop_true_high_cos_sim and prop_true_high_cos_sim = 1.
+
+# Sparse Overlapping
+I will now consider the sparse, overlapping setting.
+
+## Crossproduct Similarity
+
+This is the average crossproduct similarity for each method:
+```{r}
+dscout %>% filter(simulate == 'group_overlap', score == 'crossprod_similarity') %>% group_by(analyze) %>% summarise(avg_result = mean(score.result)) %>% arrange(desc(avg_result))
+```
+
+All the methods outperform the baseline, PCA. SINDCLUS performs noticeably worse than the other methods.
+
+These are histograms of the crossproduct similarity measurements for each methods:
+```{r, eval = FALSE}
+plot_crossprod_hist <- function(df, method){
+  hist(df[df$analyze == method,]$score.result, main = method, xlab = 'Crossproduct Similarity')
+}
+```
+
+```{r}
+dscout_overlap <- dscout %>% filter(simulate == 'group_overlap', score == 'crossprod_similarity')
+```
+
+```{r}
+# all_methods <- unique(dscout$analyze)
+
+par(mfrow = c(3, 3))
+par(mar = c(4, 4, 2, 1)) 
+for (i in all_methods){
+  plot_crossprod_hist(dscout_overlap, i)
+}
+par(mfrow = c(1, 1))
+```
+
+Overall, there's a little more variability in these values than in the previous sections. The most consistent methods are EBCD and EBMFcov, which obtain high crossproduct similarity scores nine out of ten times. CoDesymNMF also has strong performance, obtaining high crossproduct similarity scores eight out of ten times.
+
+## Proportions
+
+In this section, we consider two metrics: 1) the proportion of the estimated factors which are highly similar to a true factor 2) the proportion of true factors that are highly similar to at least one estimated factor. Note that in the first proportion, it is possible that multiple estimates are similar to the same true factor -- perhaps to avoid this, the threshold for "highly similar" should be really high, e.g. 0.99.
+
+```{r}
+dscout %>% filter(simulate == 'group_overlap', score %in% c('prop_est_high_cos_sim', 'prop_true_high_cos_sim')) %>% group_by(analyze, score) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, score)
+```
+
+Again, GBCD and point-Laplace initialized EBMFcov have prop_est_high_cos_sim less than prop_true_high_cos_sim. This could suggest that these methods are returning factors containing noise (I should double check how many factors these methods end up fitting).
