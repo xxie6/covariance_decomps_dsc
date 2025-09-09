@@ -533,15 +533,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreebdf9fd32e219145edb2861fc87393e55052f67c0targetblankbdf9fd3a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreea9eb410c087ab0bc532bde315cc8f393153bb0f0targetblanka9eb410a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/bdf9fd32e219145edb2861fc87393e55052f67c0" target="_blank">bdf9fd3</a>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/a9eb410c087ab0bc532bde315cc8f393153bb0f0" target="_blank">a9eb410</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreebdf9fd32e219145edb2861fc87393e55052f67c0targetblankbdf9fd3a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreea9eb410c087ab0bc532bde315cc8f393153bb0f0targetblanka9eb410a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -551,7 +551,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/bdf9fd32e219145edb2861fc87393e55052f67c0" target="_blank">bdf9fd3</a>.
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/a9eb410c087ab0bc532bde315cc8f393153bb0f0" target="_blank">a9eb410</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -573,14 +573,11 @@ Ignored files:
     Ignored:    data/adclus_same_init_dsc_ex/.DS_Store
 
 Untracked files:
-    Untracked:  analysis/gb_vs_ptexp.Rmd
-    Untracked:  analysis/gb_vs_ptexp_pt2.Rmd
-    Untracked:  analysis/input_K_comparison.Rmd
-    Untracked:  analysis/input_K_comparison_pt2.Rmd
-    Untracked:  analysis/pt_laplace_split_init_comparison.Rmd
-    Untracked:  analysis/pt_laplace_split_init_comparison_pt2.Rmd
     Untracked:  analysis/unbalanced_tree_analysis.Rmd
-    Untracked:  data/unbaltree_ex/
+
+Unstaged changes:
+    Modified:   analysis/input_K_comparison_pt2.Rmd
+    Modified:   analysis/pt_laplace_split_init_comparison_pt2.Rmd
 
 </code></pre>
 <p>
@@ -632,6 +629,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/a9eb410c087ab0bc532bde315cc8f393153bb0f0/analysis/additive_clustering_comparison_pt2.Rmd" target="_blank">a9eb410</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+<td>
+Add unbalanced tree example to DSC example
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/xxie6/covariance_decomps_dsc/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/additive_clustering_comparison_pt2.html" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/xxie6/covariance_decomps_dsc/blob/bdf9fd32e219145edb2861fc87393e55052f67c0/analysis/additive_clustering_comparison_pt2.Rmd" target="_blank">bdf9fd3</a>
 </td>
 <td>
@@ -663,10 +694,61 @@ library(pheatmap)</code></pre>
 </div>
 <div id="unbalanced-non-overlapping" class="section level1">
 <h1>Unbalanced Non-overlapping</h1>
+<p>This is a heatmap of the true loadings matrix:</p>
+<pre class="r"><code>unbal_nonoverlap_sim_ex &lt;- readRDS(&#39;data/group_nonoverlap_2.rds&#39;)
+L_mat &lt;- unbal_nonoverlap_sim_ex$true_L
+plot_heatmap(L_mat, title = &#39;True Loadings&#39;, 
+               colors_range = c(&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(0, max(abs(L_mat)), length.out = 50))</code></pre>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a heatmap of the scaled Gram matrix:</p>
+<pre class="r"><code>cov_mat &lt;- unbal_nonoverlap_sim_ex$data$YYt
+plot_heatmap(cov_mat, title = &#39;Scaled Gram Matrix&#39;, 
+               colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(-max(abs(cov_mat)), max(abs(cov_mat)), length.out = 50))</code></pre>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-5-1.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>group_nonoverlap_files &lt;- grep(&#39;group_nonoverlap&#39;, data_files, value = TRUE)
 unbal_nonoverlap_files &lt;- grep(&#39;2_&#39;, group_nonoverlap_files, value = TRUE)
 length(unbal_nonoverlap_files)</code></pre>
 <pre><code>[1] 8</code></pre>
+<p>These are heatmaps of the estimated loadings:</p>
 <pre class="r"><code>#par(mfrow = c(4, 2))
 #par(mar = c(4, 4, 2, 1)) 
 for (i in unbal_nonoverlap_files){
@@ -678,15 +760,369 @@ for (i in unbal_nonoverlap_files){
                colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
                brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
 }</code></pre>
-<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-5-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-5-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-5-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-5-8.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-1.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-2">
+Past versions of unnamed-chunk-7-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-2.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-3">
+Past versions of unnamed-chunk-7-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-3.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-4">
+Past versions of unnamed-chunk-7-4.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-4.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-5">
+Past versions of unnamed-chunk-7-5.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-5.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-6">
+Past versions of unnamed-chunk-7-6.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-6.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-7.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-7">
+Past versions of unnamed-chunk-7-7.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-7" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-7.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-8.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-8">
+Past versions of unnamed-chunk-7-8.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-8" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-8.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#par(mfrow = c(1, 1))</code></pre>
 </div>
 <div id="balanced-non-overlapping" class="section level1">
 <h1>Balanced Non-overlapping</h1>
+<p>This is a heatmap of the true loadings matrix:</p>
+<pre class="r"><code>bal_nonoverlap_sim_ex &lt;- readRDS(&#39;data/group_nonoverlap_1.rds&#39;)
+L_mat &lt;- bal_nonoverlap_sim_ex$true_L
+plot_heatmap(L_mat, title = &#39;True Loadings&#39;, 
+               colors_range = c(&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(0, max(abs(L_mat)), length.out = 50))</code></pre>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a heatmap of the scaled Gram matrix:</p>
+<pre class="r"><code>cov_mat &lt;- bal_nonoverlap_sim_ex$data$YYt
+plot_heatmap(cov_mat, title = &#39;Scaled Gram Matrix&#39;, 
+               colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(-max(abs(cov_mat)), max(abs(cov_mat)), length.out = 50))</code></pre>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-9-1.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># group_nonoverlap_files &lt;- grep(&#39;group_nonoverlap&#39;, data_files, value = TRUE)
 bal_nonoverlap_files &lt;- grep(&#39;1_&#39;, group_nonoverlap_files, value = TRUE)
 length(bal_nonoverlap_files)</code></pre>
 <pre><code>[1] 8</code></pre>
+<p>These are heatmaps of the estimated loadings:</p>
 <pre class="r"><code>#par(mfrow = c(4, 2))
 #par(mar = c(4, 4, 2, 1)) 
 for (i in bal_nonoverlap_files){
@@ -698,14 +1134,331 @@ for (i in bal_nonoverlap_files){
                colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
                brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
 }</code></pre>
-<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-7-8.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-1.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-2">
+Past versions of unnamed-chunk-11-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-2.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-3">
+Past versions of unnamed-chunk-11-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-3.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-4">
+Past versions of unnamed-chunk-11-4.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-4.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-5">
+Past versions of unnamed-chunk-11-5.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-5.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-6">
+Past versions of unnamed-chunk-11-6.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-6.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-7.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-7">
+Past versions of unnamed-chunk-11-7.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-7" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-7.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-8.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-8">
+Past versions of unnamed-chunk-11-8.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-8" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-8.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#par(mfrow = c(1, 1))</code></pre>
 </div>
 <div id="balanced-tree" class="section level1">
 <h1>Balanced Tree</h1>
+<p>This is a heatmap of the true loadings matrix:</p>
+<pre class="r"><code>baltree_sim_ex &lt;- readRDS(&#39;data/baltree_4pop_1.rds&#39;)
+L_mat &lt;- baltree_sim_ex$true_L
+plot_heatmap(L_mat, title = &#39;True Loadings&#39;, 
+               colors_range = c(&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(0, max(abs(L_mat)), length.out = 50))</code></pre>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a heatmap of the scaled Gram matrix:</p>
+<pre class="r"><code>cov_mat &lt;- baltree_sim_ex$data$YYt
+plot_heatmap(cov_mat, title = &#39;Scaled Gram Matrix&#39;, 
+               colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(-max(abs(cov_mat)), max(abs(cov_mat)), length.out = 50))</code></pre>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>baltree_files &lt;- grep(&#39;baltree_4pop&#39;, data_files, value = TRUE)
 length(baltree_files)</code></pre>
-<pre><code>[1] 8</code></pre>
+<pre><code>[1] 15</code></pre>
+<p>These are heatmaps of the estimated loadings:</p>
 <pre class="r"><code>#par(mfrow = c(4, 2))
 #par(mar = c(4, 4, 2, 1)) 
 for (i in baltree_files){
@@ -717,14 +1470,28 @@ for (i in baltree_files){
                colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
                brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
 }</code></pre>
-<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-9-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-9-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-9-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-9-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-9-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-9-8.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-15-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-15-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-15-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-15-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-15-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-15-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-15-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-15-9.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-15-10.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-15-11.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-15-12.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-15-13.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-15-14.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-15-15.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>#par(mfrow = c(1, 1))</code></pre>
 </div>
 <div id="sparse-overlapping" class="section level1">
 <h1>Sparse Overlapping</h1>
+<p>This is a heatmap of the true loadings matrix:</p>
+<pre class="r"><code>overlap_sim_ex &lt;- readRDS(&#39;data/group_overlap_1.rds&#39;)
+L_mat &lt;- overlap_sim_ex$true_L
+plot_heatmap(L_mat, title = &#39;True Loadings&#39;, 
+               colors_range = c(&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(0, max(abs(L_mat)), length.out = 50))</code></pre>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a heatmap of the scaled Gram matrix:</p>
+<pre class="r"><code>cov_mat &lt;- overlap_sim_ex$data$YYt
+plot_heatmap(cov_mat, title = &#39;Scaled Gram Matrix&#39;, 
+               colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(-max(abs(cov_mat)), max(abs(cov_mat)), length.out = 50))</code></pre>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>overlap_files &lt;- grep(&#39;group_overlap&#39;, data_files, value = TRUE)
 length(overlap_files)</code></pre>
 <pre><code>[1] 8</code></pre>
+<p>These are heatmaps of the estimated loadings:</p>
 <pre class="r"><code>#par(mfrow = c(4, 2))
 #par(mar = c(4, 4, 2, 1)) 
 for (i in overlap_files){
@@ -736,7 +1503,40 @@ for (i in overlap_files){
                colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
                brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
 }</code></pre>
-<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-11-8.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-19-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-19-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-19-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-19-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-19-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-19-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-19-8.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#par(mfrow = c(1, 1))</code></pre>
+</div>
+<div id="unbalanced-tree" class="section level1">
+<h1>Unbalanced Tree</h1>
+<p>This is a heatmap of the true loadings matrix:</p>
+<pre class="r"><code>unbaltree_sim_ex &lt;- readRDS(&#39;data/unbaltree_4pop_1.rds&#39;)
+L_mat &lt;- unbaltree_sim_ex$true_L
+plot_heatmap(L_mat, title = &#39;True Loadings&#39;, 
+               colors_range = c(&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(0, max(abs(L_mat)), length.out = 50))</code></pre>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a heatmap of the scaled Gram matrix:</p>
+<pre class="r"><code>cov_mat &lt;- unbaltree_sim_ex$data$YYt
+plot_heatmap(cov_mat, title = &#39;Scaled Gram Matrix&#39;, 
+               colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(-max(abs(cov_mat)), max(abs(cov_mat)), length.out = 50))</code></pre>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>unbaltree_files &lt;- grep(&#39;unbaltree&#39;, data_files, value = TRUE)
+length(unbaltree_files)</code></pre>
+<pre><code>[1] 7</code></pre>
+<p>These are heatmaps of the estimated loadings:</p>
+<pre class="r"><code>#par(mfrow = c(4, 2))
+#par(mar = c(4, 4, 2, 1)) 
+for (i in unbaltree_files){
+  #extract method
+  method &lt;- sub(&quot;^(?:[^_]*_){3}(.*)_.*$&quot;, &quot;\\1&quot;, i)
+  
+  est &lt;- readRDS(paste0(&#39;data/adclus_cov_comp_dsc_ex/&#39;,i))$est_L
+  plot_heatmap(est, title = method, 
+               colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
+}</code></pre>
+<p><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-23-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-23-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-23-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-23-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-23-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/additive_clustering_comparison_pt2.Rmd/unnamed-chunk-23-7.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>#par(mfrow = c(1, 1))</code></pre>
 <br>
 <p>
