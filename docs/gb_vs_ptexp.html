@@ -533,15 +533,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreed19fb9497f954c6e2f9908bd6a40d9a292d77332targetblankd19fb94a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreeaf05184e4928f7dee8a42d53d7a8c31cd0997fc4targetblankaf05184a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/d19fb9497f954c6e2f9908bd6a40d9a292d77332" target="_blank">d19fb94</a>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/af05184e4928f7dee8a42d53d7a8c31cd0997fc4" target="_blank">af05184</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreed19fb9497f954c6e2f9908bd6a40d9a292d77332targetblankd19fb94a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreeaf05184e4928f7dee8a42d53d7a8c31cd0997fc4targetblankaf05184a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -551,7 +551,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/d19fb9497f954c6e2f9908bd6a40d9a292d77332" target="_blank">d19fb94</a>.
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/af05184e4928f7dee8a42d53d7a8c31cd0997fc4" target="_blank">af05184</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -573,12 +573,12 @@ Ignored files:
     Ignored:    data/adclus_same_init_dsc_ex/.DS_Store
 
 Untracked files:
-    Untracked:  analysis/input_K_comparison.Rmd
-    Untracked:  analysis/input_K_comparison_pt2.Rmd
-    Untracked:  analysis/pt_laplace_split_init_comparison.Rmd
-    Untracked:  analysis/pt_laplace_split_init_comparison_pt2.Rmd
     Untracked:  analysis/unbalanced_tree_analysis.Rmd
-    Untracked:  data/unbaltree_ex/
+
+Unstaged changes:
+    Modified:   analysis/additive_clustering_comparison_pt2.Rmd
+    Modified:   analysis/input_K_comparison_pt2.Rmd
+    Modified:   analysis/pt_laplace_split_init_comparison_pt2.Rmd
 
 </code></pre>
 <p>
@@ -624,6 +624,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/af05184e4928f7dee8a42d53d7a8c31cd0997fc4/analysis/gb_vs_ptexp.Rmd" target="_blank">af05184</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+<td>
+Add unbalanced tree setting to comparisons
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/xxie6/covariance_decomps_dsc/105ca5e559edb29f4082fcfdc39c72c52e5a0d3c/docs/gb_vs_ptexp.html" target="_blank">105ca5e</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -675,8 +709,8 @@ input <span class="math inline">\(K\)</span> being misspecified).</p>
 </div>
 <div id="balanced-tree-setting" class="section level1">
 <h1>Balanced Tree Setting</h1>
-<p>I will first consider the balanced tree setting. This setting is the
-hardest of the four settings due to the non-identifiability of the
+<p>I will first consider the balanced tree setting. This setting is one
+of the hardest settings due to the non-identifiability of the
 representation.</p>
 <div id="crossproduct-similarity" class="section level2">
 <h2>Crossproduct Similarity</h2>
@@ -933,10 +967,73 @@ factor</h2>
 12 pca                        &lt;NA&gt;                                0.01
 13 sindclus                   &lt;NA&gt;                                0.5 
 14 sympres                    &lt;NA&gt;                                0.81</code></pre>
-<p>We see a similar trend to what we saw with the crossproduct
-similarity in this case – for many of the EB methods, the
-point-exponential prior has better performance (in terms of proportion
-of recovery).</p>
+</div>
+</div>
+<div id="unbalanced-tree-setting" class="section level1">
+<h1>Unbalanced Tree Setting</h1>
+<p>I will now consider the unbalanced tree setting. This setting also is
+one of the hardest settings.</p>
+<div id="crossproduct-similarity-4" class="section level2">
+<h2>Crossproduct Similarity</h2>
+<p>This is the average crossproduct similarity for each method in the
+balanced tree setting:</p>
+<pre class="r"><code>dscout %&gt;% filter(simulate == &#39;unbaltree_4pop&#39;, score == &#39;crossprod_similarity&#39;) %&gt;% group_by(analyze, analyze.ebnm_fn) %&gt;% summarise(avg_result = mean(score.result)) %&gt;% arrange(analyze, analyze.ebnm_fn)</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;analyze&#39;. You can override using the
+`.groups` argument.</code></pre>
+<pre><code># A tibble: 14 × 3
+# Groups:   analyze [9]
+   analyze                    analyze.ebnm_fn               avg_result
+   &lt;chr&gt;                      &lt;chr&gt;                              &lt;dbl&gt;
+ 1 codesymnmf                 &lt;NA&gt;                               0.866
+ 2 ebcd                       ebnm::ebnm_generalized_binary      0.642
+ 3 ebcd                       ebnm::ebnm_point_exponential       0.668
+ 4 ebmfcov_diag               ebnm::ebnm_generalized_binary      0.405
+ 5 ebmfcov_diag               ebnm::ebnm_point_exponential       0.400
+ 6 flash_normalf              ebnm::ebnm_generalized_binary      0.856
+ 7 flash_normalf              ebnm::ebnm_point_exponential       0.558
+ 8 gbcd                       ebnm::ebnm_generalized_binary      0.864
+ 9 gbcd                       ebnm::ebnm_point_exponential       0.890
+10 laplace_split_ebmfcov_diag ebnm::ebnm_generalized_binary      0.828
+11 laplace_split_ebmfcov_diag ebnm::ebnm_point_exponential       0.797
+12 pca                        &lt;NA&gt;                               0.444
+13 sindclus                   &lt;NA&gt;                               0.838
+14 sympres                    &lt;NA&gt;                               0.839</code></pre>
+<p>In this setting, we see mixed performance. For EBMFcov, Flash with
+normal prior on F, and the point-Laplace initialized EBMFcov, the
+point-exponential variants performed worse than the generalized-binary
+variants (though in some cases it is only slightly worse). For EBCD and
+GBCD, the point-exponential variant performed slightly better.</p>
+</div>
+<div
+id="proportion-of-true-factors-that-are-highly-similar-to-an-estimated-factor-4"
+class="section level2">
+<h2>Proportion of true factors that are highly similar to an estimated
+factor</h2>
+<pre class="r"><code>dscout %&gt;% filter(simulate == &#39;unbaltree_4pop&#39;, score == &#39;prop_true_high_cos_sim&#39;) %&gt;% group_by(analyze, analyze.ebnm_fn) %&gt;% summarise(avg_result = mean(score.result)) %&gt;% arrange(analyze, analyze.ebnm_fn)</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;analyze&#39;. You can override using the
+`.groups` argument.</code></pre>
+<pre><code># A tibble: 14 × 3
+# Groups:   analyze [9]
+   analyze                    analyze.ebnm_fn               avg_result
+   &lt;chr&gt;                      &lt;chr&gt;                              &lt;dbl&gt;
+ 1 codesymnmf                 &lt;NA&gt;                               0.743
+ 2 ebcd                       ebnm::ebnm_generalized_binary      0.771
+ 3 ebcd                       ebnm::ebnm_point_exponential       0.8  
+ 4 ebmfcov_diag               ebnm::ebnm_generalized_binary      0.671
+ 5 ebmfcov_diag               ebnm::ebnm_point_exponential       0.671
+ 6 flash_normalf              ebnm::ebnm_generalized_binary      0.6  
+ 7 flash_normalf              ebnm::ebnm_point_exponential       0.643
+ 8 gbcd                       ebnm::ebnm_generalized_binary      0.871
+ 9 gbcd                       ebnm::ebnm_point_exponential       0.929
+10 laplace_split_ebmfcov_diag ebnm::ebnm_generalized_binary      0.957
+11 laplace_split_ebmfcov_diag ebnm::ebnm_point_exponential       0.914
+12 pca                        &lt;NA&gt;                               0.286
+13 sindclus                   &lt;NA&gt;                               0.529
+14 sympres                    &lt;NA&gt;                               0.514</code></pre>
+<p>Again, for Flash with normal prior on F, using the previous metric it
+looked like point-exponential performed worse than generalized binary.
+But in this metric, it looks like the reverse is true. The same holds
+true for GBCD.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">

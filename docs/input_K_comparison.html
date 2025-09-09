@@ -533,15 +533,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreeb7a2f0d1f0acb51c62223cd9814751cae2213a8atargetblankb7a2f0da">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreeaf05184e4928f7dee8a42d53d7a8c31cd0997fc4targetblankaf05184a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/b7a2f0d1f0acb51c62223cd9814751cae2213a8a" target="_blank">b7a2f0d</a>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/af05184e4928f7dee8a42d53d7a8c31cd0997fc4" target="_blank">af05184</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreeb7a2f0d1f0acb51c62223cd9814751cae2213a8atargetblankb7a2f0da"
+id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreeaf05184e4928f7dee8a42d53d7a8c31cd0997fc4targetblankaf05184a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -551,7 +551,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/b7a2f0d1f0acb51c62223cd9814751cae2213a8a" target="_blank">b7a2f0d</a>.
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/af05184e4928f7dee8a42d53d7a8c31cd0997fc4" target="_blank">af05184</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -573,10 +573,12 @@ Ignored files:
     Ignored:    data/adclus_same_init_dsc_ex/.DS_Store
 
 Untracked files:
-    Untracked:  analysis/pt_laplace_split_init_comparison.Rmd
-    Untracked:  analysis/pt_laplace_split_init_comparison_pt2.Rmd
     Untracked:  analysis/unbalanced_tree_analysis.Rmd
-    Untracked:  data/unbaltree_ex/
+
+Unstaged changes:
+    Modified:   analysis/additive_clustering_comparison_pt2.Rmd
+    Modified:   analysis/input_K_comparison_pt2.Rmd
+    Modified:   analysis/pt_laplace_split_init_comparison_pt2.Rmd
 
 </code></pre>
 <p>
@@ -627,6 +629,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/af05184e4928f7dee8a42d53d7a8c31cd0997fc4/analysis/input_K_comparison.Rmd" target="_blank">af05184</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+<td>
+Add unbalanced tree setting to comparisons
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/xxie6/covariance_decomps_dsc/bfa6dd358eb49591dd09ba140e554961524d11a7/docs/input_K_comparison.html" target="_blank">bfa6dd3</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/xxie6/covariance_decomps_dsc/blob/b7a2f0d1f0acb51c62223cd9814751cae2213a8a/analysis/input_K_comparison.Rmd" target="_blank">b7a2f0d</a>
 </td>
 <td>
@@ -672,8 +708,8 @@ clean the data to only include these variants.</p>
 </div>
 <div id="balanced-tree-setting" class="section level1">
 <h1>Balanced Tree Setting</h1>
-<p>I will first consider the balanced tree setting. This setting is the
-hardest of the four settings due to the non-identifiability of the
+<p>I will first consider the balanced tree setting. This setting is one
+of the hardest settings due to the non-identifiability of the
 representation.</p>
 <div id="additive-clustering-methods" class="section level2">
 <h2>Additive Clustering Methods</h2>
@@ -1594,6 +1630,229 @@ estimated factor</h3>
 SYMPRES do see notable improvements. Also considering the previous
 metric, it seems like SINDCLUS benefited from the larger <span
 class="math inline">\(K\)</span> input.</p>
+</div>
+</div>
+</div>
+<div id="unbalanced-tree-setting" class="section level1">
+<h1>Unbalanced Tree Setting</h1>
+<p>I will first consider the balanced tree setting. This setting also is
+one of the hardest settings.</p>
+<div id="additive-clustering-methods-4" class="section level2">
+<h2>Additive Clustering Methods</h2>
+<p>In this section, I will focus on the additive-clustering style
+methods</p>
+<div id="crossproduct-similarity-8" class="section level3">
+<h3>Crossproduct Similarity</h3>
+<pre class="r"><code>dscout %&gt;% filter(simulate == &#39;unbaltree_4pop&#39;, score == &#39;crossprod_similarity&#39;, (analyze.ebnm_fn == &#39;ebnm::ebnm_generalized_binary&#39; | is.na(analyze.ebnm_fn) == TRUE)) %&gt;% group_by(analyze, analyze.Kmax_factor) %&gt;% summarise(avg_result = mean(score.result)) %&gt;% arrange(analyze, analyze.Kmax_factor)</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;analyze&#39;. You can override using the
+`.groups` argument.</code></pre>
+<pre><code># A tibble: 18 × 3
+# Groups:   analyze [9]
+   analyze                    analyze.Kmax_factor avg_result
+   &lt;chr&gt;                                    &lt;dbl&gt;      &lt;dbl&gt;
+ 1 codesymnmf                                   1      0.866
+ 2 codesymnmf                                   2      0.877
+ 3 ebcd                                         1      0.642
+ 4 ebcd                                         2      0.685
+ 5 ebmfcov_diag                                 1      0.405
+ 6 ebmfcov_diag                                 2      0.405
+ 7 flash_normalf                                1      0.856
+ 8 flash_normalf                                2      0.888
+ 9 gbcd                                         1      0.864
+10 gbcd                                         2      0.864
+11 laplace_split_ebmfcov_diag                   1      0.828
+12 laplace_split_ebmfcov_diag                   2      0.828
+13 pca                                          1      0.444
+14 pca                                          2      0.445
+15 sindclus                                     1      0.838
+16 sindclus                                     2      0.858
+17 sympres                                      1      0.839
+18 sympres                                      2      0.853</code></pre>
+<p>Again, all of the methods have the same or improved performance with
+larger <span class="math inline">\(K\)</span>.</p>
+</div>
+<div
+id="proportion-of-estimated-factors-that-are-highly-similar-to-a-true-factor-8"
+class="section level3">
+<h3>Proportion of estimated factors that are highly similar to a true
+factor</h3>
+<pre class="r"><code>dscout %&gt;% filter(simulate == &#39;unbaltree_4pop&#39;, score == &#39;prop_est_high_cos_sim&#39;, (analyze.ebnm_fn == &#39;ebnm::ebnm_generalized_binary&#39; | is.na(analyze.ebnm_fn) == TRUE)) %&gt;% group_by(analyze, analyze.Kmax_factor) %&gt;% summarise(avg_result = mean(score.result)) %&gt;% arrange(analyze, analyze.Kmax_factor)</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;analyze&#39;. You can override using the
+`.groups` argument.</code></pre>
+<pre><code># A tibble: 18 × 3
+# Groups:   analyze [9]
+   analyze                    analyze.Kmax_factor avg_result
+   &lt;chr&gt;                                    &lt;dbl&gt;      &lt;dbl&gt;
+ 1 codesymnmf                                   1     0.586 
+ 2 codesymnmf                                   2     0.307 
+ 3 ebcd                                         1     0.571 
+ 4 ebcd                                         2     0.286 
+ 5 ebmfcov_diag                                 1     1     
+ 6 ebmfcov_diag                                 2     1     
+ 7 flash_normalf                                1     1     
+ 8 flash_normalf                                2     1     
+ 9 gbcd                                         1     0.824 
+10 gbcd                                         2     0.824 
+11 laplace_split_ebmfcov_diag                   1     0.910 
+12 laplace_split_ebmfcov_diag                   2     0.910 
+13 pca                                          1     0.143 
+14 pca                                          2     0.0714
+15 sindclus                                     1     0.529 
+16 sindclus                                     2     0.257 
+17 sympres                                      1     0.486 
+18 sympres                                      2     0.264 </code></pre>
+<p>For CoDesymNMF, EBCD, SINDCLUS, and SYMPRES, the proportion decreases
+with larger <span class="math inline">\(K\)</span>, suggesting the
+larger <span class="math inline">\(K\)</span> leads these methods to
+return more factors that are not capturing true structure. The
+proportion stays the same for EBMFcov, GBCD, point-Laplace initialized
+EBMFcov, and Flash with normal prior on F. For Flash with a normal prior
+on F, the previous metric increased with larger <span
+class="math inline">\(K\)</span>. Paired with this metric, this suggests
+the method found an additional true factor without returning additional
+extraneous factors.</p>
+</div>
+<div
+id="proportion-of-true-factors-that-are-highly-similar-to-at-least-one-estimated-factor-8"
+class="section level3">
+<h3>Proportion of true factors that are highly similar to at least one
+estimated factor</h3>
+<pre class="r"><code>dscout %&gt;% filter(simulate == &#39;unbaltree_4pop&#39;, score == &#39;prop_true_high_cos_sim&#39;, (analyze.ebnm_fn == &#39;ebnm::ebnm_generalized_binary&#39; | is.na(analyze.ebnm_fn) == TRUE)) %&gt;% group_by(analyze, analyze.Kmax_factor) %&gt;% summarise(avg_result = mean(score.result)) %&gt;% arrange(analyze, analyze.Kmax_factor)</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;analyze&#39;. You can override using the
+`.groups` argument.</code></pre>
+<pre><code># A tibble: 18 × 3
+# Groups:   analyze [9]
+   analyze                    analyze.Kmax_factor avg_result
+   &lt;chr&gt;                                    &lt;dbl&gt;      &lt;dbl&gt;
+ 1 codesymnmf                                   1      0.743
+ 2 codesymnmf                                   2      0.771
+ 3 ebcd                                         1      0.771
+ 4 ebcd                                         2      0.771
+ 5 ebmfcov_diag                                 1      0.671
+ 6 ebmfcov_diag                                 2      0.671
+ 7 flash_normalf                                1      0.6  
+ 8 flash_normalf                                2      0.6  
+ 9 gbcd                                         1      0.871
+10 gbcd                                         2      0.871
+11 laplace_split_ebmfcov_diag                   1      0.957
+12 laplace_split_ebmfcov_diag                   2      0.957
+13 pca                                          1      0.286
+14 pca                                          2      0.286
+15 sindclus                                     1      0.529
+16 sindclus                                     2      0.529
+17 sympres                                      1      0.514
+18 sympres                                      2      0.471</code></pre>
+<p>For many methods, the proportion is the same between the two <span
+class="math inline">\(K\)</span> inputs. For SYMPRES, the proportion
+decreased, which is not consistent with the small increase in
+crossproduct similarity that we saw. CoDesymNMF saw a small
+increase.</p>
+</div>
+</div>
+<div id="symmetric-nmf-methods-4" class="section level2">
+<h2>symmetric NMF Methods</h2>
+<p>In this section, I will focus on the sparse symmetric NMF style
+methods</p>
+<div id="crossproduct-similarity-9" class="section level3">
+<h3>Crossproduct Similarity</h3>
+<pre class="r"><code>dscout %&gt;% filter(simulate == &#39;unbaltree_4pop&#39;, score == &#39;crossprod_similarity&#39;, (analyze.ebnm_fn == &#39;ebnm::ebnm_point_exponential&#39; | is.na(analyze.ebnm_fn) == TRUE)) %&gt;% group_by(analyze, analyze.Kmax_factor) %&gt;% summarise(avg_result = mean(score.result)) %&gt;% arrange(analyze, analyze.Kmax_factor)</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;analyze&#39;. You can override using the
+`.groups` argument.</code></pre>
+<pre><code># A tibble: 18 × 3
+# Groups:   analyze [9]
+   analyze                    analyze.Kmax_factor avg_result
+   &lt;chr&gt;                                    &lt;dbl&gt;      &lt;dbl&gt;
+ 1 codesymnmf                                   1      0.866
+ 2 codesymnmf                                   2      0.877
+ 3 ebcd                                         1      0.668
+ 4 ebcd                                         2      0.730
+ 5 ebmfcov_diag                                 1      0.400
+ 6 ebmfcov_diag                                 2      0.400
+ 7 flash_normalf                                1      0.558
+ 8 flash_normalf                                2      0.558
+ 9 gbcd                                         1      0.890
+10 gbcd                                         2      0.890
+11 laplace_split_ebmfcov_diag                   1      0.797
+12 laplace_split_ebmfcov_diag                   2      0.797
+13 pca                                          1      0.444
+14 pca                                          2      0.445
+15 sindclus                                     1      0.838
+16 sindclus                                     2      0.858
+17 sympres                                      1      0.839
+18 sympres                                      2      0.853</code></pre>
+<p>We see similar trends to what we see in the additive-clustering-style
+methods.</p>
+</div>
+<div
+id="proportion-of-estimated-factors-that-are-highly-similar-to-a-true-factor-9"
+class="section level3">
+<h3>Proportion of estimated factors that are highly similar to a true
+factor</h3>
+<pre class="r"><code>dscout %&gt;% filter(simulate == &#39;unbaltree_4pop&#39;, score == &#39;prop_est_high_cos_sim&#39;, (analyze.ebnm_fn == &#39;ebnm::ebnm_point_exponential&#39; | is.na(analyze.ebnm_fn) == TRUE)) %&gt;% group_by(analyze, analyze.Kmax_factor) %&gt;% summarise(avg_result = mean(score.result)) %&gt;% arrange(analyze, analyze.Kmax_factor)</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;analyze&#39;. You can override using the
+`.groups` argument.</code></pre>
+<pre><code># A tibble: 18 × 3
+# Groups:   analyze [9]
+   analyze                    analyze.Kmax_factor avg_result
+   &lt;chr&gt;                                    &lt;dbl&gt;      &lt;dbl&gt;
+ 1 codesymnmf                                   1     0.586 
+ 2 codesymnmf                                   2     0.307 
+ 3 ebcd                                         1     0.571 
+ 4 ebcd                                         2     0.286 
+ 5 ebmfcov_diag                                 1     0.95  
+ 6 ebmfcov_diag                                 2     0.95  
+ 7 flash_normalf                                1     1     
+ 8 flash_normalf                                2     1     
+ 9 gbcd                                         1     0.871 
+10 gbcd                                         2     0.871 
+11 laplace_split_ebmfcov_diag                   1     0.926 
+12 laplace_split_ebmfcov_diag                   2     0.926 
+13 pca                                          1     0.143 
+14 pca                                          2     0.0714
+15 sindclus                                     1     0.529 
+16 sindclus                                     2     0.257 
+17 sympres                                      1     0.486 
+18 sympres                                      2     0.264 </code></pre>
+<p>We again see similar trends – for CoDesymNMF, EBCD, SINDCLUS, and
+SYMPRES, the proportion decreases with larger <span
+class="math inline">\(K\)</span>, suggesting the larger <span
+class="math inline">\(K\)</span> leads these methods to return more
+factors that are not capturing true structure. The proportion stays the
+same for EBMFcov, GBCD, point-Laplace initialized EBMFcov, and Flash
+with normal prior on F.</p>
+</div>
+<div
+id="proportion-of-true-factors-that-are-highly-similar-to-at-least-one-estimated-factor-9"
+class="section level3">
+<h3>Proportion of true factors that are highly similar to at least one
+estimated factor</h3>
+<pre class="r"><code>dscout %&gt;% filter(simulate == &#39;unbaltree_4pop&#39;, score == &#39;prop_true_high_cos_sim&#39;, (analyze.ebnm_fn == &#39;ebnm::ebnm_point_exponential&#39; | is.na(analyze.ebnm_fn) == TRUE)) %&gt;% group_by(analyze, analyze.Kmax_factor) %&gt;% summarise(avg_result = mean(score.result)) %&gt;% arrange(analyze, analyze.Kmax_factor)</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;analyze&#39;. You can override using the
+`.groups` argument.</code></pre>
+<pre><code># A tibble: 18 × 3
+# Groups:   analyze [9]
+   analyze                    analyze.Kmax_factor avg_result
+   &lt;chr&gt;                                    &lt;dbl&gt;      &lt;dbl&gt;
+ 1 codesymnmf                                   1      0.743
+ 2 codesymnmf                                   2      0.771
+ 3 ebcd                                         1      0.8  
+ 4 ebcd                                         2      0.8  
+ 5 ebmfcov_diag                                 1      0.671
+ 6 ebmfcov_diag                                 2      0.671
+ 7 flash_normalf                                1      0.643
+ 8 flash_normalf                                2      0.643
+ 9 gbcd                                         1      0.929
+10 gbcd                                         2      0.929
+11 laplace_split_ebmfcov_diag                   1      0.914
+12 laplace_split_ebmfcov_diag                   2      0.914
+13 pca                                          1      0.286
+14 pca                                          2      0.286
+15 sindclus                                     1      0.529
+16 sindclus                                     2      0.529
+17 sympres                                      1      0.514
+18 sympres                                      2      0.471</code></pre>
+<p>Again, we see something similar to what we saw in the
+additive-clustering style methods.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">

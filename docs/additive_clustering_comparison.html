@@ -533,15 +533,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreebdf9fd32e219145edb2861fc87393e55052f67c0targetblankbdf9fd3a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreeaf05184e4928f7dee8a42d53d7a8c31cd0997fc4targetblankaf05184a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/bdf9fd32e219145edb2861fc87393e55052f67c0" target="_blank">bdf9fd3</a>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/af05184e4928f7dee8a42d53d7a8c31cd0997fc4" target="_blank">af05184</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreebdf9fd32e219145edb2861fc87393e55052f67c0targetblankbdf9fd3a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreeaf05184e4928f7dee8a42d53d7a8c31cd0997fc4targetblankaf05184a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -551,7 +551,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/bdf9fd32e219145edb2861fc87393e55052f67c0" target="_blank">bdf9fd3</a>.
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/af05184e4928f7dee8a42d53d7a8c31cd0997fc4" target="_blank">af05184</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -573,14 +573,12 @@ Ignored files:
     Ignored:    data/adclus_same_init_dsc_ex/.DS_Store
 
 Untracked files:
-    Untracked:  analysis/gb_vs_ptexp.Rmd
-    Untracked:  analysis/gb_vs_ptexp_pt2.Rmd
-    Untracked:  analysis/input_K_comparison.Rmd
-    Untracked:  analysis/input_K_comparison_pt2.Rmd
-    Untracked:  analysis/pt_laplace_split_init_comparison.Rmd
-    Untracked:  analysis/pt_laplace_split_init_comparison_pt2.Rmd
     Untracked:  analysis/unbalanced_tree_analysis.Rmd
-    Untracked:  data/unbaltree_ex/
+
+Unstaged changes:
+    Modified:   analysis/additive_clustering_comparison_pt2.Rmd
+    Modified:   analysis/input_K_comparison_pt2.Rmd
+    Modified:   analysis/pt_laplace_split_init_comparison_pt2.Rmd
 
 </code></pre>
 <p>
@@ -632,6 +630,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/af05184e4928f7dee8a42d53d7a8c31cd0997fc4/analysis/additive_clustering_comparison.Rmd" target="_blank">af05184</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+<td>
+Add unbalanced tree setting to comparisons
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/xxie6/covariance_decomps_dsc/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/additive_clustering_comparison.html" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/xxie6/covariance_decomps_dsc/blob/bdf9fd32e219145edb2861fc87393e55052f67c0/analysis/additive_clustering_comparison.Rmd" target="_blank">bdf9fd3</a>
 </td>
 <td>
@@ -661,7 +693,6 @@ for the maximum number of factors to fit.</p>
 <pre class="r"><code>library(dplyr)
 library(ggplot2)
 library(pheatmap)</code></pre>
-<pre class="r"><code>source(&#39;code/visualization_functions.R&#39;)</code></pre>
 </div>
 <div id="prepare-the-dsc-data" class="section level1">
 <h1>Prepare the DSC data</h1>
@@ -686,8 +717,8 @@ input <span class="math inline">\(K\)</span> being misspecified).</p>
 </div>
 <div id="balanced-tree-setting" class="section level1">
 <h1>Balanced Tree Setting</h1>
-<p>I will first consider the balanced tree setting. This setting is the
-hardest of the four settings due to the non-identifiability of the
+<p>I will first consider the balanced tree setting. This setting is one
+of the hardest settings due to the non-identifiability of the
 representation.</p>
 <div id="crossproduct-similarity" class="section level2">
 <h2>Crossproduct Similarity</h2>
@@ -733,6 +764,43 @@ for (i in all_methods){
   plot_crossprod_hist(dscout_baltree, i)
 }</code></pre>
 <p><img src="figure/additive_clustering_comparison.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison.Rmd/unnamed-chunk-10-1.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
 <p>SINDCLUS, SYMPRES, and Flash with a normal prior on F have
 crossproduct similarity values which span a considerable range. In my
@@ -821,6 +889,43 @@ for (i in all_methods){
   plot_crossprod_hist(dscout_unbal_nonoverlap, i)
 }</code></pre>
 <p><img src="figure/additive_clustering_comparison.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
+Past versions of unnamed-chunk-15-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-15-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison.Rmd/unnamed-chunk-15-1.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
 <p>We again see that SINDCLUS and SYMPRES have crossproduct similarity
 values which span a considerable range. This explains why they have
@@ -903,6 +1008,43 @@ for (i in all_methods){
   plot_crossprod_hist(dscout_bal_nonoverlap, i)
 }</code></pre>
 <p><img src="figure/additive_clustering_comparison.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-20-1">
+Past versions of unnamed-chunk-20-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-20-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison.Rmd/unnamed-chunk-20-1.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
 <p>We again see that SINDCLUS, SYMPRES, and Flash with a normal prior on
 F have crossproduct similarity values which span a considerable range.
@@ -983,6 +1125,43 @@ for (i in all_methods){
   plot_crossprod_hist(dscout_overlap, i)
 }</code></pre>
 <p><img src="figure/additive_clustering_comparison.Rmd/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-25-1">
+Past versions of unnamed-chunk-25-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-25-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/e21527d9962a9d7badac61614f15e8940b36d7fc/docs/figure/additive_clustering_comparison.Rmd/unnamed-chunk-25-1.png" target="_blank">e21527d</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
 <p>Overall, there’s a little more variability in these values than in
 the previous sections. The most consistent methods are EBCD and EBMFcov,
@@ -1028,6 +1207,104 @@ e.g. 0.99.</p>
 prop_est_high_cos_sim less than prop_true_high_cos_sim. This could
 suggest that these methods are returning factors containing noise (I
 should double check how many factors these methods end up fitting).</p>
+</div>
+</div>
+<div id="unbalanced-tree-setting" class="section level1">
+<h1>Unbalanced Tree Setting</h1>
+<p>I will now consider the unbalanced tree setting. This setting also is
+one of the hardest settings.</p>
+<div id="crossproduct-similarity-4" class="section level2">
+<h2>Crossproduct Similarity</h2>
+<p>This is the average crossproduct similarity for each method in the
+balanced tree setting:</p>
+<pre class="r"><code>dscout %&gt;% filter(simulate == &#39;unbaltree_4pop&#39;, score == &#39;crossprod_similarity&#39;) %&gt;% group_by(analyze) %&gt;% summarise(avg_result = mean(score.result)) %&gt;% arrange(desc(avg_result))</code></pre>
+<pre><code># A tibble: 9 × 2
+  analyze                    avg_result
+  &lt;chr&gt;                           &lt;dbl&gt;
+1 codesymnmf                      0.866
+2 gbcd                            0.864
+3 flash_normalf                   0.856
+4 sympres                         0.839
+5 sindclus                        0.838
+6 laplace_split_ebmfcov_diag      0.828
+7 ebcd                            0.642
+8 pca                             0.444
+9 ebmfcov_diag                    0.405</code></pre>
+<p>As expected, the unbalanced tree case is harder than the balanced
+tree case. None of the methods have an average crossproduct similarity
+value greater than 0.9. CoDesymNMF has the highest performance in this
+tree setting with an average crossproduct similarity of 0.866. GBCD had
+the second highest performance with a crossproduct similarity of 0.864.
+EBMFcov performs worse than our baseline, PCA. Interestingly, flash with
+normal prior on F also performs relatively well in this setting; we did
+not see this in the balanced tree setting.</p>
+<p>These are histograms of the crossproduct similarity measurements for
+each methods:</p>
+<pre class="r"><code>plot_crossprod_hist &lt;- function(df, method){
+  hist(df[df$analyze == method,]$score.result, main = method, xlab = &#39;Crossproduct Similarity&#39;)
+}</code></pre>
+<pre class="r"><code>dscout_unbaltree &lt;- dscout %&gt;% filter(simulate == &#39;unbaltree_4pop&#39;, score == &#39;crossprod_similarity&#39;)</code></pre>
+<pre class="r"><code>all_methods &lt;- unique(dscout$analyze)
+
+par(mfrow = c(3, 3))
+par(mar = c(4, 4, 2, 1)) 
+for (i in all_methods){
+  plot_crossprod_hist(dscout_unbaltree, i)
+}</code></pre>
+<p><img src="figure/additive_clustering_comparison.Rmd/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+<p>It seems like the only method that was able to attain a crossproduct
+similarity value greater than 0.95 is point-Laplace initialized
+EBMFcov.</p>
+</div>
+<div id="proportions-4" class="section level2">
+<h2>Proportions</h2>
+<p>In this section, we consider two metrics: 1) the proportion of the
+estimated factors which are highly similar to a true factor 2) the
+proportion of true factors that are highly similar to at least one
+estimated factor. Note that in the first proportion, it is possible that
+multiple estimates are similar to the same true factor – perhaps to
+avoid this, the threshold for “highly similar” should be really high,
+e.g. 0.99.</p>
+<pre class="r"><code>dscout %&gt;% filter(simulate == &#39;unbaltree_4pop&#39;, score %in% c(&#39;prop_est_high_cos_sim&#39;, &#39;prop_true_high_cos_sim&#39;)) %&gt;% group_by(analyze, score) %&gt;% summarise(avg_result = mean(score.result)) %&gt;% arrange(analyze, score)</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;analyze&#39;. You can override using the
+`.groups` argument.</code></pre>
+<pre><code># A tibble: 18 × 3
+# Groups:   analyze [9]
+   analyze                    score                  avg_result
+   &lt;chr&gt;                      &lt;chr&gt;                       &lt;dbl&gt;
+ 1 codesymnmf                 prop_est_high_cos_sim       0.586
+ 2 codesymnmf                 prop_true_high_cos_sim      0.743
+ 3 ebcd                       prop_est_high_cos_sim       0.571
+ 4 ebcd                       prop_true_high_cos_sim      0.771
+ 5 ebmfcov_diag               prop_est_high_cos_sim       1    
+ 6 ebmfcov_diag               prop_true_high_cos_sim      0.671
+ 7 flash_normalf              prop_est_high_cos_sim       1    
+ 8 flash_normalf              prop_true_high_cos_sim      0.6  
+ 9 gbcd                       prop_est_high_cos_sim       0.824
+10 gbcd                       prop_true_high_cos_sim      0.871
+11 laplace_split_ebmfcov_diag prop_est_high_cos_sim       0.910
+12 laplace_split_ebmfcov_diag prop_true_high_cos_sim      0.957
+13 pca                        prop_est_high_cos_sim       0.143
+14 pca                        prop_true_high_cos_sim      0.286
+15 sindclus                   prop_est_high_cos_sim       0.529
+16 sindclus                   prop_true_high_cos_sim      0.529
+17 sympres                    prop_est_high_cos_sim       0.486
+18 sympres                    prop_true_high_cos_sim      0.514</code></pre>
+<p>With respect to the metric “proportion of true factors that are
+highly similar with an estimated factor”, point-Laplace initialized
+EBMFcov has the highest performance. We see that EBMFcov and Flash with
+a normal prior on F both have prop_est_high_cos_sim = 1 but
+prop_true_high_cos_sim less than 1. This suggests the methods are not
+returning extra factors, but they are also missing some true factors. We
+also see that for CoDesymNMF, prop_est_high_cos_sim is less than
+prop_true_high_cos_sim. In this setting, the methods are given the
+correct number of components, so this could suggest that multiple true
+factors are highly similar to the same estimated factor (I did set the
+threshold to be 0.9, so it is possible to have two true factors which
+are similar – but not exactly the same – exceed the similarity threshold
+with the same estimated factor. If I set the threshold to 0.99, I would
+expect that at most one factor would exceed the threshold).</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
