@@ -18,7 +18,7 @@ library(ggplot2)
 library(pheatmap)
 ```
 
-```{r}
+```{r, eval = FALSE, include = FALSE}
 source('code/visualization_functions.R')
 ```
 
@@ -46,7 +46,7 @@ dscout <- dscout %>% filter(analyze.Kmax_factor == 1)
 ```
 
 # Balanced Tree Setting
-I will first consider the balanced tree setting. This setting is the hardest of the four settings due to the non-identifiability of the representation.
+I will first consider the balanced tree setting. This setting is one of the hardest settings due to the non-identifiability of the representation.
 
 ## Crossproduct Similarity
 
@@ -228,3 +228,49 @@ dscout %>% filter(simulate == 'group_overlap', score %in% c('prop_est_high_cos_s
 ```
 
 Again, GBCD and point-Laplace initialized EBMFcov have prop_est_high_cos_sim less than prop_true_high_cos_sim. This could suggest that these methods are returning factors containing noise (I should double check how many factors these methods end up fitting).
+
+# Unbalanced Tree Setting
+I will now consider the unbalanced tree setting. This setting also is one of the hardest settings.
+
+## Crossproduct Similarity
+
+This is the average crossproduct similarity for each method in the balanced tree setting:
+```{r}
+dscout %>% filter(simulate == 'unbaltree_4pop', score == 'crossprod_similarity') %>% group_by(analyze) %>% summarise(avg_result = mean(score.result)) %>% arrange(desc(avg_result))
+```
+
+As expected, the unbalanced tree case is harder than the balanced tree case. None of the methods have an average crossproduct similarity value greater than 0.9. CoDesymNMF has the highest performance in this tree setting with an average crossproduct similarity of 0.866. GBCD had the second highest performance with a crossproduct similarity of 0.864. EBMFcov performs worse than our baseline, PCA. Interestingly, flash with normal prior on F also performs relatively well in this setting; we did not see this in the balanced tree setting.
+
+These are histograms of the crossproduct similarity measurements for each methods:
+```{r}
+plot_crossprod_hist <- function(df, method){
+  hist(df[df$analyze == method,]$score.result, main = method, xlab = 'Crossproduct Similarity')
+}
+```
+
+```{r}
+dscout_unbaltree <- dscout %>% filter(simulate == 'unbaltree_4pop', score == 'crossprod_similarity')
+```
+
+```{r}
+all_methods <- unique(dscout$analyze)
+
+par(mfrow = c(3, 3))
+par(mar = c(4, 4, 2, 1)) 
+for (i in all_methods){
+  plot_crossprod_hist(dscout_unbaltree, i)
+}
+par(mfrow = c(1, 1))
+```
+
+It seems like the only method that was able to attain a crossproduct similarity value greater than 0.95 is point-Laplace initialized EBMFcov.
+
+## Proportions
+
+In this section, we consider two metrics: 1) the proportion of the estimated factors which are highly similar to a true factor 2) the proportion of true factors that are highly similar to at least one estimated factor. Note that in the first proportion, it is possible that multiple estimates are similar to the same true factor -- perhaps to avoid this, the threshold for "highly similar" should be really high, e.g. 0.99.
+
+```{r}
+dscout %>% filter(simulate == 'unbaltree_4pop', score %in% c('prop_est_high_cos_sim', 'prop_true_high_cos_sim')) %>% group_by(analyze, score) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, score)
+```
+
+With respect to the metric "proportion of true factors that are highly similar with an estimated factor", point-Laplace initialized EBMFcov has the highest performance. We see that EBMFcov and Flash with a normal prior on F both have prop_est_high_cos_sim = 1 but prop_true_high_cos_sim less than 1. This suggests the methods are not returning extra factors, but they are also missing some true factors. We also see that for CoDesymNMF, prop_est_high_cos_sim is less than prop_true_high_cos_sim. In this setting, the methods are given the correct number of components, so this could suggest that multiple true factors are highly similar to the same estimated factor (I did set the threshold to be 0.9, so it is possible to have two true factors which are similar -- but not exactly the same -- exceed the similarity threshold with the same estimated factor. If I set the threshold to 0.99, I would expect that at most one factor would exceed the threshold).

@@ -35,7 +35,7 @@ dscout <- dscout %>% filter((is.na(analyze.additive_term) == TRUE) | (analyze.ad
 ```
 
 # Balanced Tree Setting
-I will first consider the balanced tree setting. This setting is the hardest of the four settings due to the non-identifiability of the representation.
+I will first consider the balanced tree setting. This setting is one of the hardest settings due to the non-identifiability of the representation.
 
 ## Additive Clustering Methods
 In this section, I will focus on the additive-clustering style methods
@@ -355,3 +355,85 @@ dscout %>% filter(simulate == 'group_overlap', score %in% c('prop_est_high_cos_s
 
 Most of the methods do a good job at recovering most of the factors. However, it seems like most of the methods are also returning extra factors. 
 
+# Unbalanced Tree Setting
+I will now consider the unbalanced tree setting. This setting is also one of the hardest settings.
+
+## Additive Clustering Methods
+In this section, I will focus on the additive-clustering style methods
+
+### Crossproduct Similarity
+
+```{r}
+dscout %>% filter(simulate == 'unbaltree_4pop', score == 'crossprod_similarity', (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze) %>% summarise(avg_result = mean(score.result)) %>% arrange(desc(avg_result))
+```
+
+The initialization helped EBCD and EBMFcov. However, the initialization did not help the other methods, with the greatest impact seen in SINDCLUS, SYMPRES, and Flash with a normal prior on F. These methods with their default initialization had average crossproduct similarities of 0.838, 0.839, and 0.856, respectively.
+
+These are histograms of the crossproduct similarity measurements for each methods:
+```{r}
+plot_crossprod_hist <- function(df, method){
+  hist(df[df$analyze == method,]$score.result, main = method, xlab = 'Crossproduct Similarity')
+}
+```
+
+```{r}
+dscout_unbaltree <- dscout %>% filter(simulate == 'unbaltree_4pop', score == 'crossprod_similarity', (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE))
+```
+
+```{r}
+all_methods <- unique(dscout$analyze)
+
+par(mfrow = c(2, 3))
+par(mar = c(4, 4, 2, 1)) 
+for (i in all_methods){
+  plot_crossprod_hist(dscout_unbaltree, i)
+}
+par(mfrow = c(1, 1))
+```
+
+### Proportions
+
+In this section, we consider two metrics: 1) the proportion of the estimated factors which are highly similar to a true factor 2) the proportion of true factors that are highly similar to at least one estimated factor. Note that in the first proportion, it is possible that multiple estimates are similar to the same true factor -- perhaps to avoid this, the threshold for "highly similar" should be really high, e.g. 0.99.
+
+```{r}
+dscout %>% filter(simulate == 'unbaltree_4pop', score %in% c('prop_est_high_cos_sim', 'prop_true_high_cos_sim'), (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, score) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, score)
+```
+
+For Flash with normal prior on F, prop_est_high_cos_sim is quite a bit higher than prop_true_high_cos_sim, suggesting the method is not returning too many extraneous factors.
+
+## symmetric NMF methods
+In this section, I will focus on the symmetric-NMF-style methods
+
+### Crossproduct Similarity
+
+```{r}
+dscout %>% filter(simulate == 'unbaltree_4pop', score == 'crossprod_similarity', (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze) %>% summarise(avg_result = mean(score.result)) %>% arrange(desc(avg_result))
+```
+
+For all of the EB methods, the point-exponential variant performed worse than the generalized binary prior variant. Similar to what we saw before, the initialization only helped EBCD and EBMFcov. The other methods performed the same or worse with this initialization.
+
+These are histograms of the crossproduct similarity measurements for each methods:
+```{r}
+dscout_unbaltree <- dscout %>% filter(simulate == 'unbaltree_4pop', score == 'crossprod_similarity', (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE))
+```
+
+```{r}
+#all_methods <- unique(dscout$analyze)
+
+par(mfrow = c(2, 3))
+par(mar = c(4, 4, 2, 1)) 
+for (i in all_methods){
+  plot_crossprod_hist(dscout_unbaltree, i)
+}
+par(mfrow = c(1, 1))
+```
+
+### Proportions
+
+In this section, we consider two metrics: 1) the proportion of the estimated factors which are highly similar to a true factor 2) the proportion of true factors that are highly similar to at least one estimated factor. Note that in the first proportion, it is possible that multiple estimates are similar to the same true factor -- perhaps to avoid this, the threshold for "highly similar" should be really high, e.g. 0.99.
+
+```{r}
+dscout %>% filter(simulate == 'unbaltree_4pop', score %in% c('prop_est_high_cos_sim', 'prop_true_high_cos_sim'), (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, score) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, score)
+```
+
+For Flash with normal prior on F, prop_est_high_cos_sim = 1, which suggests it is not returning extra factors.

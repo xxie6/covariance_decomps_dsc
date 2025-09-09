@@ -40,7 +40,7 @@ dscout <- dscout %>% filter(analyze.Kmax_factor == 1)
 ```
 
 # Balanced Tree Setting
-I will first consider the balanced tree setting. This setting is the hardest of the four settings due to the non-identifiability of the representation.
+I will first consider the balanced tree setting. This setting is one of the hardest settings due to the non-identifiability of the representation.
 
 ## Crossproduct Similarity
 
@@ -117,4 +117,22 @@ Interestingly, for many of the empirical Bayes methods, the point-exponential pr
 dscout %>% filter(simulate == 'group_overlap', score == 'prop_true_high_cos_sim') %>% group_by(analyze, analyze.ebnm_fn) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.ebnm_fn)
 ```
 
-We see a similar trend to what we saw with the crossproduct similarity in this case -- for many of the EB methods, the point-exponential prior has better performance (in terms of proportion of recovery).
+# Unbalanced Tree Setting
+I will now consider the unbalanced tree setting. This setting also is one of the hardest settings.
+
+## Crossproduct Similarity
+
+This is the average crossproduct similarity for each method in the balanced tree setting:
+```{r}
+dscout %>% filter(simulate == 'unbaltree_4pop', score == 'crossprod_similarity') %>% group_by(analyze, analyze.ebnm_fn) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.ebnm_fn)
+```
+
+In this setting, we see mixed performance. For EBMFcov, Flash with normal prior on F, and the point-Laplace initialized EBMFcov, the point-exponential variants performed worse than the generalized-binary variants (though in some cases it is only slightly worse). For EBCD and GBCD, the point-exponential variant performed slightly better.
+
+## Proportion of true factors that are highly similar to an estimated factor
+
+```{r}
+dscout %>% filter(simulate == 'unbaltree_4pop', score == 'prop_true_high_cos_sim') %>% group_by(analyze, analyze.ebnm_fn) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, analyze.ebnm_fn)
+```
+
+Again, for Flash with normal prior on F, using the previous metric it looked like point-exponential performed worse than generalized binary. But in this metric, it looks like the reverse is true. The same holds true for GBCD.
