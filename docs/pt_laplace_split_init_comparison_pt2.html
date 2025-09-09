@@ -35,6 +35,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
@@ -233,6 +234,9 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -356,6 +360,14 @@ div.tocify {
 </div><!--/.navbar -->
 
 <div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
 
 
 
@@ -521,15 +533,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree47dfdf31b5ad34c3759d21bcd56188a103ce8d1etargetblank47dfdf3a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree29ca1c9a5f0ea0606a592be1027d1089fc382b1ctargetblank29ca1c9a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/47dfdf31b5ad34c3759d21bcd56188a103ce8d1e" target="_blank">47dfdf3</a>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/29ca1c9a5f0ea0606a592be1027d1089fc382b1c" target="_blank">29ca1c9</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree47dfdf31b5ad34c3759d21bcd56188a103ce8d1etargetblank47dfdf3a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree29ca1c9a5f0ea0606a592be1027d1089fc382b1ctargetblank29ca1c9a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -539,7 +551,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/47dfdf31b5ad34c3759d21bcd56188a103ce8d1e" target="_blank">47dfdf3</a>.
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/29ca1c9a5f0ea0606a592be1027d1089fc382b1c" target="_blank">29ca1c9</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -562,7 +574,6 @@ Ignored files:
 
 Untracked files:
     Untracked:  analysis/unbalanced_tree_analysis.Rmd
-    Untracked:  data/unbaltree_ex/
 
 </code></pre>
 <p>
@@ -614,6 +625,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/29ca1c9a5f0ea0606a592be1027d1089fc382b1c/analysis/pt_laplace_split_init_comparison_pt2.Rmd" target="_blank">29ca1c9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+<td>
+Add unbalanced tree to same initialization example
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/xxie6/covariance_decomps_dsc/f8b66cc7436f8c88afccf342a5a57ea1bae505dc/docs/pt_laplace_split_init_comparison_pt2.html" target="_blank">f8b66cc</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/xxie6/covariance_decomps_dsc/blob/47dfdf31b5ad34c3759d21bcd56188a103ce8d1e/analysis/pt_laplace_split_init_comparison_pt2.Rmd" target="_blank">47dfdf3</a>
 </td>
 <td>
@@ -636,7 +681,8 @@ Add comparison of methods with same laplace-split initialization
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
 <p>In this analysis, we include visualizations for one simulation from
-the DSC.</p>
+the DSC. In this example, all of the EB methods used the generalized
+binary prior.</p>
 <pre class="r"><code>library(dplyr)
 library(ggplot2)
 library(pheatmap)</code></pre>
@@ -649,13 +695,100 @@ library(pheatmap)</code></pre>
 </div>
 <div id="unbalanced-non-overlapping" class="section level1">
 <h1>Unbalanced Non-overlapping</h1>
+<p>This is a heatmap of the true loadings matrix:</p>
+<pre class="r"><code>unbal_nonoverlap_sim_ex &lt;- readRDS(&#39;data/group_nonoverlap_2.rds&#39;)
+L_mat &lt;- unbal_nonoverlap_sim_ex$true_L
+plot_heatmap(L_mat, title = &#39;True Loadings&#39;, 
+               colors_range = c(&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(0, max(abs(L_mat)), length.out = 50))</code></pre>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/f8b66cc7436f8c88afccf342a5a57ea1bae505dc/docs/figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-6-1.png" target="_blank">f8b66cc</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This is a heatmap of the scaled Gram matrix:</p>
+<pre class="r"><code>cov_mat &lt;- unbal_nonoverlap_sim_ex$data$YYt
+plot_heatmap(cov_mat, title = &#39;Scaled Gram Matrix&#39;, 
+               colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(-max(abs(cov_mat)), max(abs(cov_mat)), length.out = 50))</code></pre>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <div id="initialization" class="section level2">
 <h2>Initialization</h2>
 <pre class="r"><code>est &lt;- readRDS(paste0(&#39;data/pt_laplace_split_init_ex/&#39;, init_files[3]))$init_L
 plot_heatmap(est, title = &#39;Initialization&#39;, 
                colors_range = c(&#39;gray96&#39;,&#39;red&#39;),
                brks = seq(0, max(abs(est)), length.out = 50))</code></pre>
-<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/f8b66cc7436f8c88afccf342a5a57ea1bae505dc/docs/figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-8-1.png" target="_blank">f8b66cc</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="estimates" class="section level2">
 <h2>Estimates</h2>
@@ -674,24 +807,186 @@ for (i in unbal_nonoverlap_files){
                colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
                brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
 }</code></pre>
-<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-8-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-8-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-8-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/f8b66cc7436f8c88afccf342a5a57ea1bae505dc/docs/figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-10-1.png" target="_blank">f8b66cc</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-10-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-10-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-10-5.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>#par(mfrow = c(1, 1))</code></pre>
 <pre class="r"><code>est &lt;- readRDS(paste0(&#39;data/symnmf_same_init_dsc_ex/&#39;, codesymnmf_files[3]))$est_L
 plot_heatmap(est, title = &#39;codesymnmf&#39;, 
                colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
                brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))</code></pre>
-<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="balanced-non-overlapping" class="section level1">
 <h1>Balanced Non-overlapping</h1>
+<p>This is a heatmap of the true loadings matrix:</p>
+<pre class="r"><code>bal_nonoverlap_sim_ex &lt;- readRDS(&#39;data/group_nonoverlap_1.rds&#39;)
+L_mat &lt;- bal_nonoverlap_sim_ex$true_L
+plot_heatmap(L_mat, title = &#39;True Loadings&#39;, 
+               colors_range = c(&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(0, max(abs(L_mat)), length.out = 50))</code></pre>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
+Past versions of unnamed-chunk-12-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-12-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/f8b66cc7436f8c88afccf342a5a57ea1bae505dc/docs/figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-12-1.png" target="_blank">f8b66cc</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This is a heatmap of the scaled Gram matrix:</p>
+<pre class="r"><code>cov_mat &lt;- bal_nonoverlap_sim_ex$data$YYt
+plot_heatmap(cov_mat, title = &#39;Scaled Gram Matrix&#39;, 
+               colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(-max(abs(cov_mat)), max(abs(cov_mat)), length.out = 50))</code></pre>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
+Past versions of unnamed-chunk-13-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/f8b66cc7436f8c88afccf342a5a57ea1bae505dc/docs/figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-13-1.png" target="_blank">f8b66cc</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div id="initialization-1" class="section level2">
 <h2>Initialization</h2>
 <pre class="r"><code>est &lt;- readRDS(paste0(&#39;data/pt_laplace_split_init_ex/&#39;, init_files[2]))$init_L
 plot_heatmap(est, title = &#39;Initialization&#39;, 
                colors_range = c(&#39;gray96&#39;,&#39;red&#39;),
                brks = seq(0, max(abs(est)), length.out = 50))</code></pre>
-<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
+Past versions of unnamed-chunk-14-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-14-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/f8b66cc7436f8c88afccf342a5a57ea1bae505dc/docs/figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-14-1.png" target="_blank">f8b66cc</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="estimates-1" class="section level2">
 <h2>Estimates</h2>
@@ -710,30 +1005,343 @@ for (i in bal_nonoverlap_files){
                colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
                brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
 }</code></pre>
-<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-12-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-12-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-12-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-12-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-1">
+Past versions of unnamed-chunk-16-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-16-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/f8b66cc7436f8c88afccf342a5a57ea1bae505dc/docs/figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-16-1.png" target="_blank">f8b66cc</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-16-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-2">
+Past versions of unnamed-chunk-16-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-16-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/f8b66cc7436f8c88afccf342a5a57ea1bae505dc/docs/figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-16-2.png" target="_blank">f8b66cc</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-16-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-3">
+Past versions of unnamed-chunk-16-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-16-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/f8b66cc7436f8c88afccf342a5a57ea1bae505dc/docs/figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-16-3.png" target="_blank">f8b66cc</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-16-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-4">
+Past versions of unnamed-chunk-16-4.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-16-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/f8b66cc7436f8c88afccf342a5a57ea1bae505dc/docs/figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-16-4.png" target="_blank">f8b66cc</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-16-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-5">
+Past versions of unnamed-chunk-16-5.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-16-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/f8b66cc7436f8c88afccf342a5a57ea1bae505dc/docs/figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-16-5.png" target="_blank">f8b66cc</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>#par(mfrow = c(1, 1))</code></pre>
 <pre class="r"><code>est &lt;- readRDS(paste0(&#39;data/symnmf_same_init_dsc_ex/&#39;, codesymnmf_files[2]))$est_L
 plot_heatmap(est, title = &#39;codesymnmf&#39;, 
                colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
                brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))</code></pre>
-<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-1">
+Past versions of unnamed-chunk-17-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-17-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/f8b66cc7436f8c88afccf342a5a57ea1bae505dc/docs/figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-17-1.png" target="_blank">f8b66cc</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="balanced-tree" class="section level1">
 <h1>Balanced Tree</h1>
+<p>This is a heatmap of the true loadings matrix:</p>
+<pre class="r"><code>baltree_sim_ex &lt;- readRDS(&#39;data/baltree_4pop_1.rds&#39;)
+L_mat &lt;- baltree_sim_ex$true_L
+plot_heatmap(L_mat, title = &#39;True Loadings&#39;, 
+               colors_range = c(&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(0, max(abs(L_mat)), length.out = 50))</code></pre>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-18-1">
+Past versions of unnamed-chunk-18-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-18-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/f8b66cc7436f8c88afccf342a5a57ea1bae505dc/docs/figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-18-1.png" target="_blank">f8b66cc</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This is a heatmap of the scaled Gram matrix:</p>
+<pre class="r"><code>cov_mat &lt;- baltree_sim_ex$data$YYt
+plot_heatmap(cov_mat, title = &#39;Scaled Gram Matrix&#39;, 
+               colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(-max(abs(cov_mat)), max(abs(cov_mat)), length.out = 50))</code></pre>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
 <div id="initialization-2" class="section level2">
 <h2>Initialization</h2>
 <pre class="r"><code>est &lt;- readRDS(paste0(&#39;data/pt_laplace_split_init_ex/&#39;, init_files[1]))$init_L
 plot_heatmap(est, title = &#39;Initialization&#39;, 
                colors_range = c(&#39;gray96&#39;,&#39;red&#39;),
                brks = seq(0, max(abs(est)), length.out = 50))</code></pre>
-<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-20-1">
+Past versions of unnamed-chunk-20-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-20-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/f8b66cc7436f8c88afccf342a5a57ea1bae505dc/docs/figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-20-1.png" target="_blank">f8b66cc</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="estimates-2" class="section level2">
 <h2>Estimates</h2>
 <pre class="r"><code>baltree_files &lt;- grep(&#39;baltree_4pop&#39;, data_files, value = TRUE)
 length(baltree_files)</code></pre>
-<pre><code>[1] 5</code></pre>
+<pre><code>[1] 10</code></pre>
 <pre class="r"><code>#par(mfrow = c(4, 2))
 #par(mar = c(4, 4, 2, 1)) 
 for (i in baltree_files){
@@ -745,24 +1353,37 @@ for (i in baltree_files){
                colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
                brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
 }</code></pre>
-<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-16-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-16-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-16-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-16-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-22-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-22-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-22-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-22-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-22-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-22-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-22-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-22-9.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-22-10.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>#par(mfrow = c(1, 1))</code></pre>
 <pre class="r"><code>est &lt;- readRDS(paste0(&#39;data/symnmf_same_init_dsc_ex/&#39;, codesymnmf_files[1]))$est_L
 plot_heatmap(est, title = &#39;codesymnmf&#39;, 
                colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
                brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))</code></pre>
-<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="sparse-overlapping" class="section level1">
 <h1>Sparse Overlapping</h1>
+<p>This is a heatmap of the true loadings matrix:</p>
+<pre class="r"><code>overlap_sim_ex &lt;- readRDS(&#39;data/group_overlap_1.rds&#39;)
+L_mat &lt;- overlap_sim_ex$true_L
+plot_heatmap(L_mat, title = &#39;True Loadings&#39;, 
+               colors_range = c(&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(0, max(abs(L_mat)), length.out = 50))</code></pre>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a heatmap of the scaled Gram matrix:</p>
+<pre class="r"><code>cov_mat &lt;- overlap_sim_ex$data$YYt
+plot_heatmap(cov_mat, title = &#39;Scaled Gram Matrix&#39;, 
+               colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(-max(abs(cov_mat)), max(abs(cov_mat)), length.out = 50))</code></pre>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
 <div id="initialization-3" class="section level2">
 <h2>Initialization</h2>
 <pre class="r"><code>est &lt;- readRDS(paste0(&#39;data/pt_laplace_split_init_ex/&#39;, init_files[4]))$init_L
 plot_heatmap(est, title = &#39;Initialization&#39;, 
                colors_range = c(&#39;gray96&#39;,&#39;red&#39;),
                brks = seq(0, max(abs(est)), length.out = 50))</code></pre>
-<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="estimates-3" class="section level2">
 <h2>Estimates</h2>
@@ -780,13 +1401,61 @@ for (i in overlap_files){
                colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
                brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
 }</code></pre>
-<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-20-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-20-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-20-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-20-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-28-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-28-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-28-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-28-5.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>#par(mfrow = c(1, 1))</code></pre>
 <pre class="r"><code>est &lt;- readRDS(paste0(&#39;data/symnmf_same_init_dsc_ex/&#39;, codesymnmf_files[4]))$est_L
 plot_heatmap(est, title = &#39;codesymnmf&#39;, 
                colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
                brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))</code></pre>
-<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="unbalanced-tree" class="section level1">
+<h1>Unbalanced Tree</h1>
+<p>This is a heatmap of the true loadings matrix:</p>
+<pre class="r"><code>unbaltree_sim_ex &lt;- readRDS(&#39;data/unbaltree_4pop_1.rds&#39;)
+L_mat &lt;- unbaltree_sim_ex$true_L
+plot_heatmap(L_mat, title = &#39;True Loadings&#39;, 
+               colors_range = c(&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(0, max(abs(L_mat)), length.out = 50))</code></pre>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a heatmap of the scaled Gram matrix:</p>
+<pre class="r"><code>cov_mat &lt;- unbaltree_sim_ex$data$YYt
+plot_heatmap(cov_mat, title = &#39;Scaled Gram Matrix&#39;, 
+               colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(-max(abs(cov_mat)), max(abs(cov_mat)), length.out = 50))</code></pre>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div id="initialization-4" class="section level2">
+<h2>Initialization</h2>
+<pre class="r"><code>est &lt;- readRDS(paste0(&#39;data/pt_laplace_split_init_ex/&#39;, init_files[5]))$init_L
+plot_heatmap(est, title = &#39;Initialization&#39;, 
+               colors_range = c(&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(0, max(abs(est)), length.out = 50))</code></pre>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-32-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="estimates-4" class="section level2">
+<h2>Estimates</h2>
+<pre class="r"><code>unbaltree_files &lt;- grep(&#39;unbaltree_4pop&#39;, data_files, value = TRUE)
+length(unbaltree_files)</code></pre>
+<pre><code>[1] 5</code></pre>
+<pre class="r"><code>#par(mfrow = c(4, 2))
+#par(mar = c(4, 4, 2, 1)) 
+for (i in unbaltree_files){
+  #extract method
+  method &lt;- sub(&quot;^(?:[^_]*_){7}(.*)_.*$&quot;, &quot;\\1&quot;, i)
+  
+  est &lt;- readRDS(paste0(&#39;data/adclus_same_init_dsc_ex/&#39;,i))$est_L
+  plot_heatmap(est, title = method, 
+               colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
+}</code></pre>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-34-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-34-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-34-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-34-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-34-5.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#par(mfrow = c(1, 1))</code></pre>
+<pre class="r"><code>est &lt;- readRDS(paste0(&#39;data/symnmf_same_init_dsc_ex/&#39;, codesymnmf_files[5]))$est_L
+plot_heatmap(est, title = &#39;codesymnmf&#39;, 
+               colors_range = c(&#39;blue&#39;,&#39;gray96&#39;,&#39;red&#39;),
+               brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))</code></pre>
+<p><img src="figure/pt_laplace_split_init_comparison_pt2.Rmd/unnamed-chunk-35-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -900,6 +1569,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 <script>
 $(document).ready(function ()  {
