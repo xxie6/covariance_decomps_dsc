@@ -402,7 +402,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-09-08
+<strong>Last updated:</strong> 2025-09-10
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -533,15 +533,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreeaf05184e4928f7dee8a42d53d7a8c31cd0997fc4targetblankaf05184a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreea63ff568dcbe01656dd8f2ec484efa499fcc20cbtargetblanka63ff56a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/af05184e4928f7dee8a42d53d7a8c31cd0997fc4" target="_blank">af05184</a>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/a63ff568dcbe01656dd8f2ec484efa499fcc20cb" target="_blank">a63ff56</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreeaf05184e4928f7dee8a42d53d7a8c31cd0997fc4targetblankaf05184a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreea63ff568dcbe01656dd8f2ec484efa499fcc20cbtargetblanka63ff56a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -551,7 +551,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/af05184e4928f7dee8a42d53d7a8c31cd0997fc4" target="_blank">af05184</a>.
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/a63ff568dcbe01656dd8f2ec484efa499fcc20cb" target="_blank">a63ff56</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -573,12 +573,7 @@ Ignored files:
     Ignored:    data/adclus_same_init_dsc_ex/.DS_Store
 
 Untracked files:
-    Untracked:  analysis/unbalanced_tree_analysis.Rmd
-
-Unstaged changes:
-    Modified:   analysis/additive_clustering_comparison_pt2.Rmd
-    Modified:   analysis/input_K_comparison_pt2.Rmd
-    Modified:   analysis/pt_laplace_split_init_comparison_pt2.Rmd
+    Untracked:  data/flash_seminmf_dsc_ex/
 
 </code></pre>
 <p>
@@ -624,6 +619,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/a63ff568dcbe01656dd8f2ec484efa499fcc20cb/analysis/gb_vs_ptexp.Rmd" target="_blank">a63ff56</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-10
+</td>
+<td>
+Update DSC comparison analyses
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/xxie6/covariance_decomps_dsc/c308933783c97808492734c2fa3d78f98197461d/docs/gb_vs_ptexp.html" target="_blank">c308933</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -697,7 +726,7 @@ library(pheatmap)</code></pre>
 <h1>Prepare the DSC data</h1>
 <pre class="r"><code>dscout &lt;- readRDS(&quot;data/dsc_results_df.rds&quot;)
 dim(dscout)</code></pre>
-<pre><code>[1] 8000   11</code></pre>
+<pre><code>[1] 13200    12</code></pre>
 <p>I decided to focus on the backfit variant of the empirical Bayes
 matrix factorization methods. I also decided to focus on the variant of
 SINDCLUS and SYMPRES that does not explicitly model an intercept. So I
@@ -705,7 +734,7 @@ clean the data to only include these variants.</p>
 <pre class="r"><code>dscout &lt;- dscout %&gt;% filter((is.na(analyze.additive_term) == TRUE &amp; is.na(analyze.backfit) == TRUE) | (analyze.additive_term == &#39;FALSE&#39; | analyze.backfit == &#39;TRUE&#39;)) %&gt;% select(!(analyze.off_diagonal))</code></pre>
 <p>I also filter out other settings we’re not interested in (e.g. the
 input <span class="math inline">\(K\)</span> being misspecified).</p>
-<pre class="r"><code>dscout &lt;- dscout %&gt;% filter(analyze.Kmax_factor == 1)</code></pre>
+<pre class="r"><code>dscout &lt;- dscout %&gt;% filter(analyze.Kmax_factor == 1, (is.na(score.threshold) == TRUE | score.threshold == 0.9), !(analyze == &#39;flash_seminmf&#39;))</code></pre>
 </div>
 <div id="balanced-tree-setting" class="section level1">
 <h1>Balanced Tree Setting</h1>
