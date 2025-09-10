@@ -1,0 +1,300 @@
+---
+title: "unbalanced_tree_analysis"
+author: "Annie Xie"
+date: "2025-09-05"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+
+Something that I noticed in my unbalanced tree experiments is many methods missed the 3 vs 1 factor, and it seems like many methods actually modeled this via the baseline factor instead of two separate factors. In particular, the baseline factor would all be non-negative, but the loading values for the first group would be lower than the loading values for the other three groups. This is not entirely surprising as the generalized binary prior is made to be flexible and model more continuous types of variation. However, in this case, by modeling the data in that way, we miss some of the hierarchical structure.
+
+So I wanted to try using a more strictly binary prior in this setting. My hope is that the strictly binary nature of the prior will cause the method to find the 3 vs 1 factor separately from the baseline factor. However, I can also imagine there are non-identifiability issues in this case as well, so we still may not get the desired factorization. Another piece of evidence for this problem being hard is the fact that SINDCLUS and SYMPRES struggled to find the correct factorization in this setting (and these methods do have the strict binary requirement). I'm also curious if methods designed to find trees, e.g. neighbor-joining perform better in this setting.
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+library(flashier)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+# Data Generation
+
+# Unbalanced Tree Example
+
+```{r}
+sim_4pops_unbal_tree <- function(args) {
+  set.seed(args$seed)
+  
+  n <- sum(args$pop_sizes)
+  p <- args$n_genes
+  
+  FF <- matrix(rnorm(7 * p, sd = rep(args$branch_sds, each = p)), ncol = 7)
+  # if (args$constrain_F) {
+  #   FF_svd <- svd(FF)
+  #   FF <- FF_svd$u
+  #   FF <- t(t(FF) * branch_sds * sqrt(p))
+  # }
+  
+  # check if this is right!
+  LL <- matrix(0, nrow = n, ncol = 7)
+  LL[, 1] <- 1
+  LL[, 2] <- rep(c(1, 0, 0, 0), times = args$pop_sizes)
+  LL[, 3] <- rep(c(0, 1, 1, 1), times = args$pop_sizes)
+  LL[, 4] <- rep(c(0, 1, 0, 0), times = args$pop_sizes)
+  LL[, 5] <- rep(c(0, 0, 1, 1), times = args$pop_sizes)
+  LL[, 6] <- rep(c(0, 0, 1, 0), times = args$pop_sizes)
+  LL[, 7] <- rep(c(0, 0, 0, 1), times = args$pop_sizes)
+  
+  E <- matrix(rnorm(n * p, sd = args$indiv_sd), nrow = n)
+  Y <- LL %*% t(FF) + E
+  YYt <- (1/p)*tcrossprod(Y)
+  return(list(Y = Y, YYt = YYt, LL = LL, FF = FF, K = ncol(LL)))
+}
+```
+
+```{r}
+sim_args = list(pop_sizes = rep(40, 4), n_genes = 1000, branch_sds = rep(2,7), indiv_sd = 1, seed = 1)
+sim_data <- sim_4pops_unbal_tree(sim_args)
+```
+
+This is a heatmap of the true loadings matrix:
+```{r}
+plot_heatmap(sim_data$LL)
+```
+
+# GBCD
+
+The first thing I will try is changing the `scale` parameter in the generalized binary prior. The scale parameter refers to the ratio $\sigma/\mu$. If the ratio is small, then the prior will be closer to a strictly binary prior. 
+
+```{r}
+ebnm_generalized_binary_fix_scale <- function(x, s, mode = 'estimate', g_init = NULL, fix_g = FALSE, output = ebnm_output_default(), control = NULL){
+  ebnm_gb_output <- ebnm::ebnm_generalized_binary(x = x, s = s, 
+                                                  mode = mode, 
+                                                  scale = 0.01, 
+                                                  g_init = g_init, 
+                                                  fix_g = fix_g, 
+                                                  output = output, 
+                                                  control = control)
+  return(ebnm_gb_output)
+}
+```
+
+```{r, warning = FALSE}
+unbal_tree_gbcd_fit <- gbcd::fit_gbcd(sim_data$Y, Kmax = 7,
+                                      prior = ebnm_generalized_binary_fix_scale, ldf_type = 'cov')
+```
+
+This is a heatmap of the estimated loadings:
+```{r}
+plot_heatmap(unbal_tree_gbcd_fit$L)
+```
+
+This is a heatmap of the estimated Gram matrix:
+```{r}
+est_gram <- tcrossprod(unbal_tree_gbcd_fit$L %*% diag(unbal_tree_gbcd_fit$D))
+plot_heatmap(est_gram)
+```
+
+This is a heatmap of the observed Gram matrix:
+```{r}
+plot_heatmap(sim_data$YYt)
+```
+
+```{r}
+compute_L2_fit <- function(est, dat){
+  score <- sum((dat - est)^2) - sum((diag(dat) - diag(est))^2)
+  return(score)
+}
+```
+
+This is the squared difference of the (off-diagonal elements of the) estimated and observed gram matrix:
+```{r}
+compute_L2_fit(est_gram, sim_data$YYt)
+```
+
+This is a plot of the (off-diagonal values of the) observed values and the fitted values:
+```{r}
+diag_idx <- seq(1, prod(dim(sim_data$YYt)), length.out = ncol(sim_data$YYt))
+off_diag_idx <- setdiff(c(1:prod(dim(sim_data$YYt))), diag_idx) 
+
+ggplot(data = NULL, aes(x = c(sim_data$YYt)[off_diag_idx], y = c(est_gram)[off_diag_idx])) + geom_point() + ylim(2, 20) + xlim(2,20) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+The method still does not find the 3 vs 1 component as a separate component. Furthermore, it finds another 3 vs 1 component which is not part of the true data-generating process. It also finds a 2 vs 2 component which is not part of the true data-generating process (the other 2 vs 2 component is). However, we see that the estimated loadings still has a good fit to the observed Gram matrix.
+
+I wonder if the point-Laplace initialization is able to find the tree in this case. Given the results of GBCD, I suspect that this merging of the baseline and the 3 vs 1 factor may stem from there since the point-Laplace fit is not encouraged to be trinary.
+
+# point-Laplace fit
+
+```{r}
+flash_laplace_fit <- flash_init(sim_data$YYt) %>%
+  flash_greedy(Kmax = 7, ebnm_fn = ebnm::ebnm_point_laplace) %>%
+  flash_backfit() %>%
+  flash_nullcheck()
+```
+
+```{r}
+flash_laplace_fit_scaled <- ldf(flash_laplace_fit)
+flash_laplace_fit_scaled_L <- flash_laplace_fit_scaled$L %*% diag(sqrt(flash_laplace_fit_scaled$D))
+```
+
+This is a heatmap of the estimated loadings:
+```{r}
+plot_heatmap(flash_laplace_fit_scaled_L, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(flash_laplace_fit_scaled_L)), max(abs(flash_laplace_fit_scaled_L)), length.out = 50))
+```
+
+This is the ELBO:
+```{r}
+flash_laplace_fit$elbo
+```
+
+The point-Laplace fit finds the 2 vs 2 split and the corresponding 1 vs 1 split. It seems like the baseline factor and the 3 vs 1 split are being captured by two factors: the first is a baseline-like factor that has higher loading for three of the four groups and the second is a 1 vs 1 factor. This representation is sparser than the tree representation, so I suspect the method may prefer this over the tree. I also wonder if the point-Laplace fit finds this representation because the leaves are not equidistant from the root (the baseline).
+
+To test if the point-Laplace prior prefers this representation, I try initializing the point-Laplace fit from the "true representation" (translated into the point-Laplace space).
+
+# point-Laplace fit initialized with true values
+
+```{r}
+n <- ncol(sim_data$YYt)
+true_L <- cbind(rep(1, n),
+           rep(c(1, -1), times = c(n/4, 3*n/4)),
+           rep(c(0, 1, -1), times = c(n/4, n/4, n/2)),
+           rep(c(0, 1, -1), times = c(n/2, n/4, n/4))
+           )
+true_L_scaled <- true_L %*% diag(rep(2, 4))
+```
+
+This is a heatmap of the loadings we are trying to recover:
+```{r}
+plot_heatmap(true_L_scaled, colors_range = c('blue','gray96','red'))
+```
+
+```{r}
+flash_laplace_fit_true_init <- flash_init(sim_data$YYt) %>%
+  flash_factors_init(list(true_L_scaled, true_L_scaled), ebnm_fn = ebnm::ebnm_point_laplace) %>%
+  flash_backfit() %>%
+  flash_nullcheck()
+```
+
+```{r}
+flash_laplace_fit_true_init_scaled <- ldf(flash_laplace_fit_true_init)
+flash_laplace_fit_true_init_scaled_L <- flash_laplace_fit_true_init_scaled$L %*% diag(sqrt(flash_laplace_fit_true_init_scaled$D))
+```
+
+This is a heatmap of the estimated loadings:
+```{r}
+plot_heatmap(flash_laplace_fit_true_init_scaled_L, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(flash_laplace_fit_true_init_scaled_L)), max(abs(flash_laplace_fit_true_init_scaled_L)), length.out = 50))
+```
+
+This is the ELBO:
+```{r}
+flash_laplace_fit_true_init$elbo
+```
+
+It doesn't move too far from the initial values. However, the ELBO for this solution is lower than the ELBO for the previous solution. So there appears to be a convergence issue with this solution. Let's try more backfitting.
+
+## Try more backfitting
+
+```{r}
+flash_laplace_fit_true_init <- flash_backfit(flash_laplace_fit_true_init, 
+                                             maxiter = 1000,
+                                             tol = 10^(-10))
+```
+
+```{r}
+flash_laplace_fit_true_init_scaled <- ldf(flash_laplace_fit_true_init)
+flash_laplace_fit_true_init_scaled_L <- flash_laplace_fit_true_init_scaled$L %*% diag(sqrt(flash_laplace_fit_true_init_scaled$D))
+```
+
+This is heatmap of the estimated loadings:
+```{r}
+plot_heatmap(flash_laplace_fit_true_init_scaled_L, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(flash_laplace_fit_true_init_scaled_L)), max(abs(flash_laplace_fit_true_init_scaled_L)), length.out = 50))
+```
+
+This is the ELBO:
+```{r}
+flash_laplace_fit_true_init$elbo
+```
+
+We see that with more backfitting, the method moves away from this unbalanced tree solution. I'm guessing the method prefers this representation because it is more sparse.
+
+# Divergence prior fit
+
+I was curious how a more strict prior would work in this setting. In Jason's thesis, he presented what he called the "divergence prior": a prior that was a negative number, zero, and a positive number.
+
+Note that in Jason's thesis, he cautioned against using this prior because it is more prone to getting stuck in local optima. Given the non-identifiability issues in the tree setting, I think it's possible we may not get the desired tree representation.
+
+```{r}
+# Jason's code from his thesis chapter on trees
+ebnm_div <- function(x, s, g_init, fix_g, output, admix = FALSE) {
+  if (!fix_g) {
+    opt_fn <- function(par) {
+      lambda <- exp(par[1])
+      nu <- exp(par[2])
+      if (admix) {
+        g <- ashr::unimix(rep(1/4, 4), c(0, -nu, -nu, lambda), c(0, -nu, lambda, lambda))
+      } else {
+        g <- ashr::unimix(rep(1/3, 3), c(0, -nu, lambda), c(0, -nu, lambda))
+      }
+
+      ebnm_res <- ebnm::ebnm_ash(
+        x,
+        s,
+        g_init = g,
+        fix_g = FALSE,
+        output = "log_likelihood"
+      )
+      return(-ebnm_res$log_likelihood)
+    }
+    opt_res <- optim(
+      par = c(log(max(c(1, x))), log(max(c(1, -x)))),
+      fn = opt_fn,
+      method = "L-BFGS-B"
+    )
+
+    lambda <- exp(opt_res$par[1])
+    nu <- exp(opt_res$par[2])
+    if (admix) {
+      g_init <- ashr::unimix(rep(1/4, 4), c(0, -nu, -nu, lambda), c(0, -nu, lambda, lambda))
+    } else {
+      g_init <- ashr::unimix(rep(1/3, 3), c(0, -nu, lambda), c(0, -nu, lambda))
+    }
+  }
+
+  return(ebnm::ebnm_ash(x, s, g_init = g_init, fix_g = fix_g, output = output))
+}
+
+```
+
+```{r}
+flash_div_fit <- flash_init(sim_data$YYt) %>%
+  flash_greedy(Kmax = 4, ebnm_fn = ebnm_div) %>%
+  flash_backfit() %>%
+  flash_nullcheck()
+```
+
+```{r}
+flash_div_fit_scaled <- ldf(flash_div_fit)
+flash_div_fit_scaled_L <- flash_div_fit_scaled$L %*% diag(sqrt(flash_div_fit_scaled$D))
+```
+
+This is a heatmap of the estimated loadings:
+```{r}
+plot_heatmap(flash_div_fit_scaled_L, colors_range = c('blue','gray96','red'), brks = seq(-max(abs(flash_div_fit_scaled_L)), max(abs(flash_div_fit_scaled_L)), length.out = 50))
+```
+
+This is the ELBO:
+```{r}
+flash_div_fit$elbo
+```
+
+The method does not find the desired tree representation. As I mentioned before, I do not find this result entirely surprising due to convergence issues with the prior and non-identifiability issues with the tree setting.
