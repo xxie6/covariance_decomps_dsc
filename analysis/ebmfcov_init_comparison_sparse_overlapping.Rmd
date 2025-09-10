@@ -1,0 +1,466 @@
+---
+title: "ebmfcov_init_comparison_sparse_overlapping"
+author: "Annie Xie"
+date: "2025-09-09"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+
+In this analysis, I am interested in comparing EBMFcov with the greedy initialization and EBMFcov with the point-Laplace plus splitting initialization in the sparse, overlapping setting. From the DSC results, I found that the point-Laplace plus splitting initialization performed worse (a different trend from what we saw in the other simulation settings). I want to better understand why this occurs. Ideally, the point-Laplace initialization would not result in worse performance.
+
+## Takeaways
+
+These are my main takeaways from this analysis:  
+  
+*  Part of the reason why the point-Laplace initialization performs worse is it adds extra factors. When given the correct number of components, the method does recover the loadings matrix. But when given more, the method returns extra factors. In the example I explored, one of the true factors was split across two of the estimated factors.  
+*  The greedy-based initialization does a better job at picking out the number of components. When given a larger $K$, the method will add essentially trivial factors. This contributes to the method's better performance. This initialization strategy also seems to do a better job at obtaining close estimates to most of the true factors.
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+library(flashier)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+```{r}
+permute_L <- function(est, truth){
+  K_est <- ncol(est)
+  K_truth <- ncol(truth)
+  n <- nrow(est)
+
+  #if estimates don't have same number of columns, try padding the estimate with zeros and make cosine similarity zero
+  if (K_est < K_truth){
+    est <- cbind(est, matrix(rep(0, n*(K_truth-K_est)), nrow = n))
+  }
+
+  if (K_est > K_truth){
+    truth <- cbind(truth, matrix(rep(0, n*(K_est - K_truth)), nrow = n))
+  }
+
+  #normalize est and truth
+  norms_est <- apply(est, 2, function(x){sqrt(sum(x^2))})
+  norms_est[norms_est == 0] <- Inf
+
+  norms_truth <- apply(truth, 2, function(x){sqrt(sum(x^2))})
+  norms_truth[norms_truth == 0] <- Inf
+
+  est_normalized <- t(t(est)/norms_est)
+  truth_normalized <- t(t(truth)/norms_truth)
+
+  #compute matrix of cosine similarities
+  cosine_sim_matrix <- abs(crossprod(est_normalized, truth_normalized))
+  assignment_problem <- lpSolve::lp.assign(t(cosine_sim_matrix), direction = "max")
+
+  perm <- apply(assignment_problem$solution, 1, which.max)
+  return(est[,perm])
+}
+```
+
+# True Loadings
+```{r}
+group_overlap_1 <- readRDS('data/group_overlap_1.rds')
+```
+
+This is a heatmap of the true loadings matrix:
+```{r}
+plot_heatmap(group_overlap_1$true_L)
+```
+
+# EBMFcov with Greedy-based Initialization
+```{r}
+group_overlap_1_ebmfcov_diag_1 <- readRDS("data/adclus_cov_comp_dsc_ex/group_overlap_1_ebmfcov_diag_1.rds")
+```
+
+```{r}
+ebmfcov_L_permuted <- permute_L(group_overlap_1_ebmfcov_diag_1$est_L, group_overlap_1$true_L)
+```
+
+This is a heatmap of the estimated loadings matrix:
+```{r}
+plot_heatmap(ebmfcov_L_permuted)
+```
+
+This is the correlation matrix:
+```{r}
+ebmfcov_corr_mat <- cor(ebmfcov_L_permuted, group_overlap_1$true_L)
+ebmfcov_corr_mat
+```
+
+```{r}
+diag(ebmfcov_corr_mat)
+```
+
+We see that all of the estimated factors are highly correlated with one of the true factors (note the mapping of estimated to true factors is 1-1, so we do not have two estimated factors mapping to the same true factor).
+
+I also want to note that in visualization, some of the factors appear to have lower loading value than the others. The loadings matrix has not been rescaled such that $\frac{1}{p}YY' \approx LL'$. So my guess is this factor has a higher loading value in the other matrix (the other estimate of L), and if you were to rescale the matrix, then you wouldn't see the difference.
+
+# EBMFcov with point-Laplace fit Initialization
+```{r}
+group_overlap_1_laplace_split_ebmfcov_diag_1 <- readRDS("data/adclus_cov_comp_dsc_ex/group_overlap_1_laplace_split_ebmfcov_diag_1.rds")
+```
+
+```{r}
+laplace_init_ebmfcov_L_permuted <- permute_L(group_overlap_1_laplace_split_ebmfcov_diag_1$est_L, group_overlap_1$true_L)
+```
+
+This is a heatmap of the estimated loadings matrix:
+```{r}
+plot_heatmap(laplace_init_ebmfcov_L_permuted)
+```
+
+This is the correlation matrix between the estimated loadings and true loadings:
+```{r}
+laplace_ebmfcov_corr_mat <- cor(laplace_init_ebmfcov_L_permuted, group_overlap_1$true_L)
+laplace_ebmfcov_corr_mat
+```
+
+```{r}
+diag(laplace_ebmfcov_corr_mat)
+```
+
+We see that the 8th factor has the lowest correlation, with a correlation of 0.906. It seems like the effect of the true 8th factor was split between the estimated 8th factor and 12th factor.
+
+```{r}
+plot(group_overlap_1$true_L[,8], laplace_init_ebmfcov_L_permuted[,8], xlab = 'True Factor', ylab = 'Estimated Factor')
+```
+
+```{r}
+plot(group_overlap_1$true_L[,8], laplace_init_ebmfcov_L_permuted[,8] + laplace_init_ebmfcov_L_permuted[,12], xlab = 'True Factor', ylab = '8th + 12th Estimated Factors')
+```
+
+Perhaps the point-Laplace prior led to shrinkage of that factor and an additional factor was needed to capture the larger effects (that were shrunk)?
+
+# Investigating the point-Laplace Fit
+
+```{r}
+flash_laplace_fit <- flash_init(group_overlap_1$data$YYt) |>
+  flash_greedy(Kmax = 10, ebnm_fn = ebnm::ebnm_point_laplace) |>
+  flash_backfit() |>
+  flash_nullcheck()
+```
+
+```{r}
+flash_laplace_fit_scaled <- ldf(flash_laplace_fit)
+flash_laplace_fit_scaled_L <- flash_laplace_fit_scaled$L %*% diag(sqrt(flash_laplace_fit_scaled$D))
+```
+
+This is a heatmap of the estimated loadings:
+```{r}
+plot_heatmap(flash_laplace_fit_scaled_L, colors_range = c('blue','gray96','red'),
+             brks = seq(-max(abs(flash_laplace_fit_scaled_L)), max(abs(flash_laplace_fit_scaled_L)), length.out = 50))
+```
+
+The point-Laplace fit is able to pick out some of the structures. In particular, it identified true factors 1, 2, 3, and 5. However, the other estimated factors seem to contain combinations of effects.
+
+Note: I was curious if more backfitting would help the point-Laplace fit find the sparser representation (since it does prefer sparser representations). I tried it, and additional backfitting did not lead to a drastically different representation. 
+
+# Initialization for point-Laplace plus splitting EBMFcov
+
+Splitting the point-Laplace fit from the previous section gives us the initialization.
+
+```{r}
+group_overlap_1_pt_laplace_split_1 <- readRDS("data/pt_laplace_split_init_ex/group_overlap_1_pt_laplace_split_1.rds")
+```
+
+```{r}
+init_L_permuted <- permute_L(group_overlap_1_pt_laplace_split_1$init_L, group_overlap_1$true_L)
+```
+
+This is a heatmap of the initialization:
+```{r}
+plot_heatmap(init_L_permuted)
+```
+
+This is the correlation matrix between the estimated loadings and true loadings:
+```{r}
+laplace_split_ebmfcov_init_corr_mat <- cor(init_L_permuted, group_overlap_1$true_L)
+laplace_split_ebmfcov_init_corr_mat
+```
+
+```{r}
+diag(laplace_split_ebmfcov_init_corr_mat)
+```
+
+Paying special attention to true factor 8, we see that the best matching estimate does not exactly look like the true factor 8. Some entries which should be zero instead have small loadings values. Furthermore, one of the entries which should have 1 instead has a relatively small loading value.
+
+```{r}
+plot(group_overlap_1$true_L[,8], init_L_permuted[,8], xlab = 'True Factor', ylab = 'Estimated Factor')
+```
+
+Overall, many of the estimated factors have additional non-zero entries that we would want to be shrunk to zero. In addition, some of the estimated factors are missing a couple non-zero entries. I'm guessing these entries got captured in another factor instead.
+
+# Give point-Laplace Initialized EBMFcov K/2
+
+This is effectively giving the method the true number of components. I am curious to see if this is able to recover the true loadings. Since the issue before seemed to be that the effect was split among multiple factors and in this case, the method is being told the correct number of factors, I think it should do a better job in this case.
+
+```{r}
+laplace_split_initialization <- function(S, Kmax, verbose = 2, backfit_maxiter = 500, backfit_tol = NULL){
+  # change backfit_tol = NULL as default setting
+  # backfitting is important in the tree setting
+  
+  # fit point-laplace fit with flash
+  flash_laplace_fit <- flash_init(data = S, var_type = 0) |>
+    flash_set_verbose(verbose = verbose) |>
+    flash_greedy(Kmax = Kmax, ebnm_fn = ebnm::ebnm_point_laplace) |>
+    flash_backfit(maxiter = backfit_maxiter, tol = backfit_tol) |>
+    flash_nullcheck()
+  
+  # rescale fit so that L and F are of the same scale
+  flash_laplace_fit_scaled <- ldf(flash_laplace_fit, 'i')
+  LL <- flash_laplace_fit_scaled$L
+  ##FF <- flash_laplace_fit_scaled$F
+  
+  # split into positive and negative components
+  LL <- cbind(pmax(LL, 0), pmax(-LL, 0))
+  ##FF <- cbind(pmax(FF, 0), pmax(-FF, 0))
+  
+  # remove columns of zeros
+  idx.nonzero <- apply(LL, 2, function(x){return(sum(x^2))}) > 10^(-10)
+  LL <- LL[, idx.nonzero]
+  
+  # refit weights by least squares
+  n <- nrow(S)
+  llt_vec <- matrix(rep(0, ncol(LL)*n*n), ncol = ncol(LL))
+  for (i in 1:ncol(LL)){
+    llt_vec[,i] <- c(LL[,i]%*%t(LL[,i])) 
+  }
+  
+  nnlm_fit <- NNLM::nnlm(llt_vec, as.matrix(c(S), ncol = 1), alpha = c(0,0,0))
+  
+  indices_keep <- (nnlm_fit$coefficients > 0)
+  LL_scaled <- LL[,indices_keep] %*% diag(sqrt(nnlm_fit$coefficients[indices_keep]))
+  return(LL_scaled)
+}
+
+laplace_split_cov_fit <- function(covmat, ebnm_fn = ebnm::ebnm_point_laplace, Kmax = 1000, 
+                    verbose.lvl = 0, backfit_maxiter = 500, 
+                    backfit_tol = 3.81e-04) {
+  # laplace-split initialization
+  init_L <- laplace_split_initialization(covmat, Kmax = Kmax)
+
+  # ebmfcov_diag fit
+  fl <- flash_init(covmat, var_type = 0) |>
+    flash_set_verbose(verbose.lvl) |>
+    flash_factors_init(list(init_L, init_L), ebnm_fn = ebnm_fn)
+  s2 <- max(0, mean(diag(covmat) - diag(fitted(fl))))
+  s2_diff <- Inf
+  while(s2 > 0 && abs(s2_diff - 1) > 1e-4) {
+    covmat_minuss2 <- covmat - diag(rep(s2, ncol(covmat)))
+    fl <- fl |>
+      flash_update_data(covmat_minuss2) |>
+      flash_set_verbose(verbose.lvl) |>
+      flash_backfit(maxiter = backfit_maxiter, tol = backfit_tol) |>
+      flash_nullcheck()
+    old_s2 <- s2
+    s2 <- max(0, mean(diag(covmat) - diag(fitted(fl))))
+    s2_diff <- s2 / old_s2
+  }
+  
+  return(list(fl=fl, s2 = s2))
+}
+```
+
+```{r}
+laplace_init_ebmfcov_halfK_fit <- laplace_split_cov_fit(covmat = group_overlap_1$data$YYt,
+                                                        ebnm_fn = ebnm::ebnm_generalized_binary,
+                                                        Kmax = 5)
+```
+
+```{r}
+laplace_init_ebmfcov_halfK_fit_scaled <- ldf(laplace_init_ebmfcov_halfK_fit$fl)
+laplace_init_ebmfcov_halfK_fit_scaled_L <- laplace_init_ebmfcov_halfK_fit_scaled$L %*% diag(sqrt(laplace_init_ebmfcov_halfK_fit_scaled$D))
+```
+
+```{r}
+laplace_init_ebmfcov_halfK_fit_scaled_L_permuted <- permute_L(laplace_init_ebmfcov_halfK_fit_scaled_L, group_overlap_1$true_L)
+```
+
+This is a heatmap of the estimated loadings:
+```{r}
+plot_heatmap(laplace_init_ebmfcov_halfK_fit_scaled_L_permuted, colors_range = c('blue','gray96','red'),
+             brks = seq(-max(abs(laplace_init_ebmfcov_halfK_fit_scaled_L_permuted)), max(abs(laplace_init_ebmfcov_halfK_fit_scaled_L_permuted)), length.out = 50))
+```
+
+This is the correlation matrix between the estimated loadings and true loadings:
+```{r}
+laplace_init_ebmfcov_halfK_corr_mat <- cor(laplace_init_ebmfcov_halfK_fit_scaled_L_permuted, group_overlap_1$true_L)
+laplace_init_ebmfcov_halfK_corr_mat
+```
+
+```{r}
+diag(laplace_init_ebmfcov_halfK_corr_mat)
+```
+
+When given the correct number of components, the method is able to recover the loadings matrix. So perhaps the issue is the fact that the point-Laplace plus initialization yields a greater number of factors than the greedy initialization (which was given the correct number of components).
+
+# Investigating the EBMFcov Initialization
+
+In this section, I investigate EBMFcov's initialization to see if it yields a better initialization for fitting $LL' + D$.
+```{r}
+flash_gb_fit <- flash_init(group_overlap_1$data$YYt) |>
+  flash_greedy(Kmax = 10, ebnm_fn = ebnm::ebnm_generalized_binary) |>
+  flash_backfit()
+```
+
+```{r}
+flash_gb_fit_scaled <- ldf(flash_gb_fit)
+flash_gb_fit_scaled_L <- flash_gb_fit_scaled$L %*% diag(sqrt(flash_gb_fit_scaled$D))
+```
+
+```{r}
+flash_gb_fit_scaled_L_permuted <- permute_L(flash_gb_fit_scaled_L, group_overlap_1$true_L)
+```
+
+This is a heatmap of the initialization:
+```{r}
+plot_heatmap(flash_gb_fit_scaled_L_permuted)
+```
+
+This is the correlation matrix between the estimated loadings and true loadings:
+```{r}
+ebmfcov_init_corr_mat <- cor(flash_gb_fit_scaled_L_permuted, group_overlap_1$true_L)
+ebmfcov_init_corr_mat
+```
+
+```{r}
+diag(ebmfcov_init_corr_mat)
+```
+
+We see that factors 3 and 6 are not recovered that well. However, there are many factors that are better recovered in this initialization compared to the initialization from the point-Laplace plus splitting procedure.
+
+# Give EBMFcov a larger K
+
+I try running EBMFcov with $K$ equal to the number of factors in the point-Laplace plus splitting initialization. Theoretically, we expect the method to zero-out extra factors. However, in my experience, this method does not always zero-out extra factors (perhaps the method wants to include these extra factors due to model misspecification). So I'm guessing the method will retain at least some extra factors, which could potentially cause the true effects to be split up among many factors.
+
+```{r}
+cov_fit <- function(covmat, ebnm_fn = ebnm::ebnm_point_laplace, Kmax = 1000, verbose.lvl = 0, backfit = TRUE) {
+  fl <- flash_init(covmat, var_type = 0) %>%
+    flash_set_verbose(verbose.lvl) %>%
+    flash_greedy(ebnm_fn = ebnm_fn, Kmax = Kmax)
+  if (backfit == TRUE){
+    fl <- flash_backfit(fl)
+  }
+  s2 <- max(0, mean(diag(covmat) - diag(fitted(fl))))
+  s2_diff <- Inf
+  while(s2 > 0 && abs(s2_diff - 1) > 1e-4) {
+    covmat_minuss2 <- covmat - diag(rep(s2, ncol(covmat)))
+    fl <- flash_init(covmat_minuss2, var_type = 0) %>%
+      flash_set_verbose(verbose.lvl) %>%
+      flash_greedy(ebnm_fn = ebnm_fn, Kmax = Kmax)
+    if (backfit == TRUE){
+      fl <- flash_backfit(fl)
+    }
+    old_s2 <- s2
+    s2 <- max(0, mean(diag(covmat) - diag(fitted(fl))))
+    s2_diff <- s2 / old_s2
+  }
+  
+  return(list(fl=fl, s2 = s2))
+}
+```
+
+```{r}
+laplace_init_K <- ncol(group_overlap_1_pt_laplace_split_1$init_L)
+ebmfcov_larger_K_fit <- cov_fit(covmat = group_overlap_1$data$YYt, ebnm_fn = ebnm::ebnm_generalized_binary,
+                            Kmax = laplace_init_K)
+```
+
+```{r}
+ebmfcov_larger_K_fit_scaled <- ldf(ebmfcov_larger_K_fit$fl)
+ebmfcov_larger_K_fit_scaled_L <- ebmfcov_larger_K_fit_scaled$L %*% diag(sqrt(ebmfcov_larger_K_fit_scaled$D))
+```
+
+```{r}
+ebmfcov_larger_K_fit_scaled_L_permuted <- permute_L(ebmfcov_larger_K_fit_scaled_L, group_overlap_1$true_L)
+```
+
+This is a heatmap of the estimated loadings:
+```{r}
+plot_heatmap(ebmfcov_larger_K_fit_scaled_L_permuted)
+```
+
+This is the correlation matrix between the estimated loadings and true loadings:
+```{r}
+ebmfcov_larger_K_cor_mat <- cor(ebmfcov_larger_K_fit_scaled_L_permuted, group_overlap_1$true_L)
+ebmfcov_larger_K_cor_mat
+```
+
+```{r}
+diag(ebmfcov_larger_K_cor_mat)
+```
+
+In this case, the method was able to recover the loadings matrix and it also zeroed-out the extra factors. Since the method was able to zero-out extraneous factors in this example, this may suggest that there is something different in the initialization. Perhaps the greedy-based initialization for EBMFcov was able to zero-out some of the extra factors.
+
+## Investigating the Initialization
+
+Note that in the EBMFcov method, the initialization procedure also includes a `flash_backfit`. But for now, I am only considering the greedy procedure.
+
+```{r}
+flash_gb_larger_K_fit <- flash_init(group_overlap_1$data$YYt) |>
+  flash_greedy(Kmax = 19, ebnm_fn = ebnm::ebnm_generalized_binary)
+# flash_gb_larger_K_fit <- flash_backfit(flash_gb_larger_K_fit)
+```
+
+```{r}
+flash_gb_larger_K_fit_scaled <- ldf(flash_gb_larger_K_fit)
+flash_gb_larger_K_fit_scaled_L <- flash_gb_larger_K_fit_scaled$L %*% diag(sqrt(flash_gb_larger_K_fit_scaled$D))
+```
+
+```{r}
+flash_gb_larger_K_fit_scaled_L_permuted <- permute_L(flash_gb_larger_K_fit_scaled_L, group_overlap_1$true_L)
+```
+
+This is a heatmap of the initializaiton:
+```{r}
+plot_heatmap(flash_gb_larger_K_fit_scaled_L_permuted)
+```
+
+This is the correlation matrix between the estimated loadings and true loadings:
+```{r}
+ebmfcov_init_larger_K_corr_mat <- cor(flash_gb_larger_K_fit_scaled_L_permuted, group_overlap_1$true_L)
+ebmfcov_init_larger_K_corr_mat
+```
+
+```{r}
+diag(ebmfcov_init_corr_mat)
+```
+
+We can see that the greedy procedure adds a lot of factors that are already close to zero. It only added 11 non-trivial factors, which is pretty close to the true number of 10. This behavior is something I've seen with the generalized binary prior before. So this suggests that for larger $K$, the greedy-based initialization does perform better than the point-Laplace plus splitting initialization.
+
+## Trying to get rid of extra factors
+
+This is the number of factors before the nullcheck:
+```{r}
+ebmfcov_larger_K_fit$fl$n_factors
+```
+
+These are the norms of the estimated factors:
+```{r}
+apply(ebmfcov_larger_K_fit_scaled_L_permuted, 2, function(x){return(sqrt(sum(x^2)))})
+```
+
+This is a heatmap of the extra factors in the estimated loadings matrix:
+```{r}
+plot_heatmap(ebmfcov_larger_K_fit_scaled_L_permuted[,-c(1:10)])
+```
+
+I want to try applying `flash_nullcheck` to the fit to see if it gets rid of the zeroed-out factors.
+```{r}
+ebmfcov_larger_K_fit_nullcheck <- flash_nullcheck(ebmfcov_larger_K_fit$fl, verbose = 2)
+```
+
+This is the number of factors after the nullcheck:
+```{r}
+ebmfcov_larger_K_fit_nullcheck$n_factors
+```
+
+The nullcheck does not remove the extra factors.
