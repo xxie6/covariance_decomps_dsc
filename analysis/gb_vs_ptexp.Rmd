@@ -36,7 +36,7 @@ dscout <- dscout %>% filter((is.na(analyze.additive_term) == TRUE & is.na(analyz
 
 I also filter out other settings we're not interested in (e.g. the input $K$ being misspecified).
 ```{r}
-dscout <- dscout %>% filter(analyze.Kmax_factor == 1)
+dscout <- dscout %>% filter(analyze.Kmax_factor == 1, (is.na(score.threshold) == TRUE | score.threshold == 0.9), !(analyze == 'flash_seminmf'))
 ```
 
 # Balanced Tree Setting

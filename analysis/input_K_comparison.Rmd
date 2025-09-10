@@ -34,6 +34,11 @@ I decided to focus on the backfit variant of the empirical Bayes matrix factoriz
 dscout <- dscout %>% filter((is.na(analyze.additive_term) == TRUE & is.na(analyze.backfit) == TRUE) | (analyze.additive_term == 'FALSE' | analyze.backfit == 'TRUE')) %>% select(!(analyze.off_diagonal))
 ```
 
+I also filter out other settings we are not interested in.
+```{r}
+dscout <- dscout %>% filter((is.na(score.threshold) == TRUE | score.threshold == 0.9), !(analyze == 'flash_seminmf'))
+```
+
 # Balanced Tree Setting
 I will first consider the balanced tree setting. This setting is one of the hardest settings due to the non-identifiability of the representation.
 
