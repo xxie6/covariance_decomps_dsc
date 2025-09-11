@@ -1,0 +1,139 @@
+---
+title: "flash_seminmf_analysis"
+author: "Annie Xie"
+date: "2025-09-10"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+In this analysis, I am exploring the flash semi-nonnegative matrix factorization method. We apply flash to the data matrix with the generalized binary prior over the loadings matrix and the point-Laplace prior over the factor matrix.
+
+Semi-nonnegative matrix factorization is an alternative approach to covariance decomposition (and of course, nonnegative matrix factorization), e.g. there is a paper that suggests using binary semi-nonnegative matrix factorization for overlapping community detection. One way to get a semiNMF is to apply flashier with a non-negative prior over the loadings $L$ and a point-Laplace prior over $F$ (I will refer to this as flash-semiNMF). If the factors are independent, we suspect that flash-semiNMF could get something that looks like a covariance decomposition. In addition, we suspect that flash-semiNMF could perform better if the factors are, in fact, sparse. However, we don't have any theory that connects flash-semiNMF with a factorization of the distance matrix or the covariance matrix. For flash with a non-negative prior over $L$ and a normal prior over $F$, we do have theory which suggests it is a covariance decomposition. However, the mean-field variational approximation encourages $L$ to be orthogonal. So I wonder if flash-semiNMF would also prefer representations with orthogonal $L$.
+
+Furthermore, we have found that some covariance decomposition methods which work in the covariance space have a tendency to add extra factors. Our intuition is flash-semiNMF should be better at avoiding extra factors due to the the sparsity inducing priors on the loadings and factors.
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+# Prepare the DSC data
+
+```{r}
+dscout <- readRDS("data/dsc_results_df.rds")
+dim(dscout)
+```
+
+In this analysis, I focus on the flash semi-nonnegative matrix factorization method. In particular, I focus on the variant which uses backfitting and the generalized binary prior over the loadings. I also am interested in comparing it to flash with a normal prior on $F$.
+
+```{r}
+dscout <- dscout %>% filter(analyze %in% c('flash_seminmf', 'flash_normalf'), analyze.backfit == TRUE, analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary')
+```
+
+# Comparing K input
+
+In this section, we compare flash-semiNMF with different inputs for `Kmax`.
+
+## Crossprod Similarity
+
+This is the average crossproduct similarity for the method in each setting:
+```{r}
+dscout %>% filter(score == 'crossprod_similarity', analyze == 'flash_seminmf') %>% group_by(simulate, simulate.pop_sizes, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(simulate, simulate.pop_sizes, analyze.Kmax_factor)
+```
+
+The method performs best in the non-overlapping settings. Interestingly, there are some settings in which the method performs worse with larger $K$. Taking a closer look at the scores, I found that for larger $K$, there were simulations where the method returned a zero matrix for the loadings estimate. In the other simulations, the performance is comparable. As a result, the average crossproduct similarity for larger $K$ is lower.
+
+## Proportions
+
+In this section, we consider two metrics: 1) the proportion of the estimated factors which are highly similar to a true factor 2) the proportion of true factors that are highly similar to at least one estimated factor. Note that in the first proportion, it is possible that multiple estimates are similar to the same true factor -- perhaps to avoid this, the threshold for "highly similar" should be really high, e.g. 0.99.
+
+```{r}
+dscout %>% filter(score == 'prop_true_high_cos_sim', score.threshold == 0.99, analyze == 'flash_seminmf') %>% group_by(simulate, simulate.pop_sizes, score, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(simulate, simulate.pop_sizes, score, analyze.Kmax_factor)
+```
+
+The proportion of true factors recovered paints a similar story.
+
+```{r}
+dscout %>% filter(score == 'prop_est_high_cos_sim', score.threshold == 0.99, analyze == 'flash_seminmf') %>% group_by(simulate, simulate.pop_sizes, score, analyze.Kmax_factor) %>% summarise(avg_result = mean(score.result)) %>% arrange(simulate, simulate.pop_sizes, score, analyze.Kmax_factor)
+```
+
+For most of the methods, the proportion of estimated factors which are highly similar to a true factor does not change that much between the two `Kmax` inputs. The setting with the most significant change is the balanced tree setting, where the proportion drops from 0.65 to 0.46 with larger $K$.
+
+# Comparing semiNMF Methods
+
+In this section, I compare flash with (generalized binary prior on $L$ and) normal prior on $F$ with flash with point-Laplace prior on $F$. I am interested in the method's ability to avoid redundant or extraneous factors. So I will focus on the setting where the methods are given double the correct number of components.
+
+## Crossprod Similarity
+
+This is the average crossproduct similarity for the method in each setting:
+```{r}
+dscout %>% filter(score == 'crossprod_similarity', analyze.Kmax_factor == 2) %>% group_by(simulate, simulate.pop_sizes, analyze) %>% summarise(avg_result = mean(score.result)) %>% arrange(simulate, simulate.pop_sizes, analyze)
+```
+
+In all of the settings, flash with a normal prior on $F$ performs better. Recall, this method does not penalize extra factors.
+
+## Proportions
+
+In this section, we consider two metrics: 1) the proportion of the estimated factors which are highly similar to a true factor 2) the proportion of true factors that are highly similar to at least one estimated factor. Note that in the first proportion, it is possible that multiple estimates are similar to the same true factor -- perhaps to avoid this, the threshold for "highly similar" should be really high, e.g. 0.99.
+
+```{r}
+dscout %>% filter(score == 'prop_true_high_cos_sim', score.threshold == 0.99, analyze.Kmax_factor == 2) %>% group_by(simulate, simulate.pop_sizes, score, analyze) %>% summarise(avg_result = mean(score.result)) %>% arrange(simulate, simulate.pop_sizes, score, analyze)
+```
+
+With regards to the proportion of true factors recovered, we again see that flash with a normal prior on $F$ has the same or better performance than flash with a point-Laplace prior on $F$.
+
+```{r}
+dscout %>% filter(score == 'prop_est_high_cos_sim', score.threshold == 0.99, analyze.Kmax_factor == 2) %>% group_by(simulate, simulate.pop_sizes, score, analyze) %>% summarise(avg_result = mean(score.result)) %>% arrange(simulate, simulate.pop_sizes, score, analyze)
+```
+
+For the tree settings, flash with normal prior on $F$ has a higher proportion; perhaps this method does a better job at recovering some of the components of the tree. For the other settings, flash with point-Laplace prior on $F$ has a higher proportion, suggesting it is better at avoiding extra or redundant factors.
+
+# Visualizations for correct K input
+
+In this section, we visualize an example of estimates from flash-semiNMF. For these estimates, the method was given the correct number of components. 
+```{r}
+data_files <- list.files(path = 'data/flash_seminmf_dsc_ex')
+```
+
+These are heatmaps of the estimated loadings:
+```{r}
+for (i in data_files){
+  #extract method
+  setting <- sub("^([^_]*_[^_]*).*", "\\1", i)
+  
+  est <- readRDS(paste0('data/flash_seminmf_dsc_ex/',i))$est_L
+  plot_heatmap(est, title = setting, 
+               colors_range = c('blue','gray96','red'),
+               brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
+}
+```
+
+# Visualizations for larger K input
+
+In this section, we visualize another set of estimates -- for these estimates, the method was given double the correct number of components. 
+```{r}
+data_files_2k <- list.files(path = 'data/flash_seminmf_dsc_2k_ex')
+```
+
+These are heatmaps of the estimated loadings:
+```{r}
+for (i in data_files_2k){
+  #extract method
+  setting <- sub("^([^_]*_[^_]*).*", "\\1", i)
+  
+  est <- readRDS(paste0('data/flash_seminmf_dsc_2k_ex/',i))$est_L
+  plot_heatmap(est, title = setting, 
+               colors_range = c('blue','gray96','red'),
+               brks = seq(-max(abs(est)), max(abs(est)), length.out = 50))
+}
+```
+
