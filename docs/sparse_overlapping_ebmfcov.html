@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Annie Xie" />
+
+<meta name="date" content="2025-09-17" />
+
+<title>sparse_overlapping_ebmfcov</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">covariance_decomps_dsc</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/xxie6/covariance_decomps_dsc">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">sparse_overlapping_ebmfcov</h1>
+<h4 class="author">Annie Xie</h4>
+<h4 class="date">2025-09-17</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2025-09-17
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>covariance_decomps_dsc/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20250203code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20250203)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20250203code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20250203)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree19357c975b651fff388801f67dc3b3056b9e14e5targetblank19357c9a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/19357c975b651fff388801f67dc3b3056b9e14e5" target="_blank">19357c9</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree19357c975b651fff388801f67dc3b3056b9e14e5targetblank19357c9a"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/19357c975b651fff388801f67dc3b3056b9e14e5" target="_blank">19357c9</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    data/.DS_Store
+    Ignored:    data/adclus_cov_comp_dsc_ex/.DS_Store
+    Ignored:    data/adclus_same_init_dsc_ex/.DS_Store
+    Ignored:    data/pt_laplace_split_init_ex/.DS_Store
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown
+(<code>analysis/sparse_overlapping_ebmfcov.Rmd</code>) and HTML
+(<code>docs/sparse_overlapping_ebmfcov.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/19357c975b651fff388801f67dc3b3056b9e14e5/analysis/sparse_overlapping_ebmfcov.Rmd" target="_blank">19357c9</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-17
+</td>
+<td>
+Add exploration of EBMFcov with large K in overlap setting
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>In previous analyses, I observed that the estimate from EBMFcov in
+the sparse overlapping setting would have extra factors which are
+essentially trivial, especially when EBMFcov was given a larger
+<code>Kmax</code> value. So this analysis is dedicated to investigating
+why that happens.</p>
+<pre class="r"><code>library(dplyr)
+library(ggplot2)
+library(pheatmap)
+library(flashier)</code></pre>
+<pre class="r"><code>source(&#39;code/visualization_functions.R&#39;)</code></pre>
+<pre class="r"><code>compute_L2_fit &lt;- function(est, dat, with_diag = FALSE){
+  if (with_diag == FALSE){
+    score &lt;- sum((dat - est)^2) - sum((diag(dat) - diag(est))^2)
+  }
+  else{
+    score &lt;- sum((dat - est)^2)
+  }
+  return(score)
+}</code></pre>
+<pre class="r"><code>permute_L &lt;- function(est, truth){
+  K_est &lt;- ncol(est)
+  K_truth &lt;- ncol(truth)
+  n &lt;- nrow(est)
+
+  #if estimates don&#39;t have same number of columns, try padding the estimate with zeros and make cosine similarity zero
+  if (K_est &lt; K_truth){
+    est &lt;- cbind(est, matrix(rep(0, n*(K_truth-K_est)), nrow = n))
+  }
+
+  if (K_est &gt; K_truth){
+    truth &lt;- cbind(truth, matrix(rep(0, n*(K_est - K_truth)), nrow = n))
+  }
+
+  #normalize est and truth
+  norms_est &lt;- apply(est, 2, function(x){sqrt(sum(x^2))})
+  norms_est[norms_est == 0] &lt;- Inf
+
+  norms_truth &lt;- apply(truth, 2, function(x){sqrt(sum(x^2))})
+  norms_truth[norms_truth == 0] &lt;- Inf
+
+  est_normalized &lt;- t(t(est)/norms_est)
+  truth_normalized &lt;- t(t(truth)/norms_truth)
+
+  #compute matrix of cosine similarities
+  cosine_sim_matrix &lt;- abs(crossprod(est_normalized, truth_normalized))
+  assignment_problem &lt;- lpSolve::lp.assign(t(cosine_sim_matrix), direction = &quot;max&quot;)
+
+  perm &lt;- apply(assignment_problem$solution, 1, which.max)
+  return(est[,perm])
+}</code></pre>
+</div>
+<div id="true-loadings" class="section level1">
+<h1>True Loadings</h1>
+<pre class="r"><code>group_overlap_1 &lt;- readRDS(&#39;data/group_overlap_1.rds&#39;)</code></pre>
+<p>This is a heatmap of the true loadings matrix:</p>
+<pre class="r"><code>plot_heatmap(group_overlap_1$true_L)</code></pre>
+<p><img src="figure/sparse_overlapping_ebmfcov.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ebmfcov-given-2k" class="section level1">
+<h1>EBMFcov given 2K</h1>
+<pre class="r"><code>group_overlap_1_ebmfcov_diag_3 &lt;- readRDS(&quot;data/adclus_cov_comp_dsc_2k_ex/group_overlap_1_ebmfcov_diag_3.rds&quot;)</code></pre>
+<pre class="r"><code>ebmfcov_L_permuted &lt;- permute_L(group_overlap_1_ebmfcov_diag_3$est_L, group_overlap_1$true_L)</code></pre>
+<p>This is a heatmap of the estimated loadings matrix:</p>
+<pre class="r"><code>plot_heatmap(ebmfcov_L_permuted)</code></pre>
+<p><img src="figure/sparse_overlapping_ebmfcov.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation matrix:</p>
+<pre class="r"><code>ebmfcov_corr_mat &lt;- cor(ebmfcov_L_permuted, group_overlap_1$true_L)
+ebmfcov_corr_mat</code></pre>
+<pre><code>             [,1]        [,2]          [,3]         [,4]        [,5]
+ [1,]  0.99838488 -0.04675366 -0.0559113424  0.115133708 -0.04159937
+ [2,] -0.04678197  0.99898951 -0.0628769798 -0.076394637 -0.04678197
+ [3,] -0.05597965 -0.06291569  0.9996045513 -0.091414380  0.13803629
+ [4,]  0.09657288 -0.07640333 -0.0913685232  0.999103118  0.08959747
+ [5,] -0.04163366 -0.04679219  0.1435050701  0.103457465  0.99920781
+ [6,] -0.06795098 -0.07637030  0.1845557482 -0.010976655  0.08512196
+ [7,] -0.07531008 -0.08464123 -0.1012199929  0.190775533 -0.07531008
+ [8,]  0.10373386  0.07165588 -0.0913776735 -0.003360644 -0.06798716
+ [9,]  0.14855811  0.10055224 -0.0807713647  0.022933988 -0.06009582
+[10,]  0.08666148  0.06269616 -0.0008835456  0.174611883 -0.07876133
+[11,]  0.24952777  0.18615820 -0.3679372421 -0.099223284 -0.26769852
+[12,]  0.24995533  0.18604164 -0.3674221704 -0.099464528 -0.26726609
+[13,]  0.25033623  0.18593677 -0.3669602657 -0.099679758 -0.26687845
+[14,]  0.25071084  0.18583168 -0.3665041548 -0.099890173 -0.26649650
+[15,]  0.25229936  0.18523310 -0.3646909969 -0.100561753 -0.26507485
+[16,]  0.25104594  0.18573589 -0.3660947499 -0.100077127 -0.26615445
+[17,]  0.25140835  0.18563050 -0.3656504053 -0.100278116 -0.26578397
+[18,]  0.25298375  0.18502409 -0.3638412246 -0.100936093 -0.26436882
+[19,]  0.25172766  0.18553572 -0.3652579443 -0.100453586 -0.26545764
+[20,]  0.25221496  0.18538905 -0.3646558002 -0.100720677 -0.26495761
+              [,6]        [,7]         [,8]        [,9]       [,10]
+ [1,] -0.067931487 -0.07525609  0.088355700  0.11272896  0.08452569
+ [2,] -0.076394637 -0.08463177  0.063506138  0.10322838  0.04954426
+ [3,]  0.171979368 -0.10127099 -0.091414380 -0.08086989  0.01268033
+ [4,] -0.008082055  0.18845065  0.007456802  0.02308907  0.16077309
+ [5,]  0.103457465 -0.07531812 -0.067987480 -0.06014524 -0.07884284
+ [6,]  0.998671325 -0.02047142 -0.110963481 -0.09816404  0.07955763
+ [7,] -0.025321848  0.99910118  0.082985535 -0.10879523 -0.04696601
+ [8,] -0.111022575  0.07647173  0.999203175  0.02582038  0.07996350
+ [9,] -0.098136061 -0.10871743  0.038156114  0.99838672 -0.11380515
+[10,]  0.051883521 -0.05412207  0.070945206 -0.11378100  0.99813820
+[11,] -0.318968292 -0.03528806  0.062644948 -0.08422397 -0.02097220
+[12,] -0.318517595 -0.03562005  0.062344859 -0.08435256 -0.02127183
+[13,] -0.318113411 -0.03591664  0.062076420 -0.08446716 -0.02153953
+[14,] -0.317715161 -0.03620764  0.061811882 -0.08457884 -0.02180264
+[15,] -0.316252047 -0.03723703  0.060752779 -0.08490092 -0.02279500
+[16,] -0.317358523 -0.03646717  0.061574864 -0.08467773 -0.02203772
+[17,] -0.316972238 -0.03674715  0.061318085 -0.08478370 -0.02229176
+[18,] -0.315515068 -0.03776330  0.060264759 -0.08509705 -0.02327421
+[19,] -0.316632042 -0.03699269  0.061091650 -0.08487585 -0.02251507
+[20,] -0.316110645 -0.03736743  0.060745021 -0.08501578 -0.02285621</code></pre>
+<p>This is the diagonal of the correlation matrix:</p>
+<pre class="r"><code>diag(ebmfcov_corr_mat)</code></pre>
+<pre><code> [1] 0.9983849 0.9989895 0.9996046 0.9991031 0.9992078 0.9986713 0.9991012
+ [8] 0.9992032 0.9983867 0.9981382</code></pre>
+<p>These are plots of the factors which appear to be trivial:</p>
+<pre class="r"><code>par(mfrow = c(5, 2), mar = c(2, 2, 2, 2))
+for (i in c(11:20)){
+  plot(ebmfcov_L_permuted[,i])
+}</code></pre>
+<p><img src="figure/sparse_overlapping_ebmfcov.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1, 1))</code></pre>
+<p>Interestingly, all of these factors appear to be essentially the
+same; they are just on different scales.</p>
+<p>This is the correlation matrix of these factors:</p>
+<pre class="r"><code>cor(ebmfcov_L_permuted[,c(11:20)])</code></pre>
+<pre><code>           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
+ [1,] 1.0000000 0.9999974 0.9999908 0.9999803 0.9999016 0.9999676 0.9999503
+ [2,] 0.9999974 1.0000000 0.9999980 0.9999920 0.9999307 0.9999833 0.9999703
+ [3,] 0.9999908 0.9999980 1.0000000 0.9999980 0.9999524 0.9999929 0.9999838
+ [4,] 0.9999803 0.9999920 0.9999980 1.0000000 0.9999697 0.9999984 0.9999931
+ [5,] 0.9999016 0.9999307 0.9999524 0.9999697 1.0000000 0.9999818 0.9999914
+ [6,] 0.9999676 0.9999833 0.9999929 0.9999984 0.9999818 1.0000000 0.9999982
+ [7,] 0.9999503 0.9999703 0.9999838 0.9999931 0.9999914 0.9999982 1.0000000
+ [8,] 0.9998440 0.9998813 0.9999103 0.9999349 0.9999934 0.9999535 0.9999701
+ [9,] 0.9999320 0.9999558 0.9999727 0.9999854 0.9999968 0.9999935 0.9999986
+[10,] 0.9998984 0.9999281 0.9999503 0.9999681 0.9999995 0.9999808 0.9999908
+           [,8]      [,9]     [,10]
+ [1,] 0.9998440 0.9999320 0.9998984
+ [2,] 0.9998813 0.9999558 0.9999281
+ [3,] 0.9999103 0.9999727 0.9999503
+ [4,] 0.9999349 0.9999854 0.9999681
+ [5,] 0.9999934 0.9999968 0.9999995
+ [6,] 0.9999535 0.9999935 0.9999808
+ [7,] 0.9999701 0.9999986 0.9999908
+ [8,] 1.0000000 0.9999817 0.9999938
+ [9,] 0.9999817 1.0000000 0.9999967
+[10,] 0.9999938 0.9999967 1.0000000</code></pre>
+<p>This is the ELBO:</p>
+<pre class="r"><code>group_overlap_1_ebmfcov_diag_3$fit_obj$fl$elbo</code></pre>
+<pre><code>[1] 15263.48</code></pre>
+<p>This is the L2 norm of the difference between the observed Gram
+matrix and estimated Gram matrix (not including diagonal entries):</p>
+<pre class="r"><code>compute_L2_fit(group_overlap_1_ebmfcov_diag_3$est_LLt, group_overlap_1$data$YYt)</code></pre>
+<pre><code>[1] 30.50358</code></pre>
+<p>This is the L2 norm of the difference between the observed Gram
+matrix and estimated Gram matrix (including diagonal entries):</p>
+<pre class="r"><code>compute_L2_fit(group_overlap_1_ebmfcov_diag_3$est_LLt, group_overlap_1$data$YYt, with_diag = TRUE)</code></pre>
+<pre><code>[1] 131.7679</code></pre>
+<p>These are the KL divergences for the factors:</p>
+<pre class="r"><code>group_overlap_1_ebmfcov_diag_3$fit_obj$fl$flash_fit$KL</code></pre>
+<pre><code>[[1]]
+ [1] -19.939557 -11.249433  -3.677941 -23.479015 -11.672688 -11.626732
+ [7]  14.406079  13.422158   9.245255   1.156878  34.657354  34.657353
+[13]  34.597726  34.598163  34.598174  34.598270  34.598495  34.598832
+[19]  34.599393  34.600050
+
+[[2]]
+ [1] -19.939969 -11.249503  -3.678080 -23.477784 -11.672666 -11.626947
+ [7]  14.406082  13.422061   9.245261   1.156900  34.657359  34.657359
+[13]  34.629869  34.628398  34.630394  34.630684  34.630535  34.630840
+[19]  34.630910  34.631031</code></pre>
+</div>
+<div id="test-different-numbers-of-factors" class="section level1">
+<h1>Test different numbers of factors</h1>
+<pre class="r"><code>cov_fit &lt;- function(covmat, ebnm_fn = ebnm::ebnm_point_laplace, Kmax = 1000, verbose.lvl = 0, backfit = TRUE) {
+  fl &lt;- flash_init(covmat, var_type = 0) %&gt;%
+    flash_set_verbose(verbose.lvl) %&gt;%
+    flash_greedy(ebnm_fn = ebnm_fn, Kmax = Kmax)
+  if (backfit == TRUE){
+    fl &lt;- flash_backfit(fl)
+  }
+  s2 &lt;- max(0, mean(diag(covmat) - diag(fitted(fl))))
+  s2_diff &lt;- Inf
+  while(s2 &gt; 0 &amp;&amp; abs(s2_diff - 1) &gt; 1e-4) {
+    covmat_minuss2 &lt;- covmat - diag(rep(s2, ncol(covmat)))
+    fl &lt;- flash_init(covmat_minuss2, var_type = 0) %&gt;%
+      flash_set_verbose(verbose.lvl) %&gt;%
+      flash_greedy(ebnm_fn = ebnm_fn, Kmax = Kmax)
+    if (backfit == TRUE){
+      fl &lt;- flash_backfit(fl)
+    }
+    old_s2 &lt;- s2
+    s2 &lt;- max(0, mean(diag(covmat) - diag(fitted(fl))))
+    s2_diff &lt;- s2 / old_s2
+  }
+  
+  return(list(fl=fl, s2 = s2))
+}</code></pre>
+<div id="k21" class="section level2">
+<h2>K=21</h2>
+<p>In this section, I try fitting EBMFcov with <code>Kmax=21</code>:</p>
+<pre class="r"><code>ebmfcov_fit_k21 &lt;- cov_fit(group_overlap_1$data$YYt, ebnm_fn = ebnm::ebnm_generalized_binary, Kmax = 21, backfit = TRUE)
+fl_scaled &lt;- ldf(ebmfcov_fit_k21$fl)
+L_scaled &lt;- fl_scaled$L %*% diag(sqrt(fl_scaled$D))</code></pre>
+<p>This is the number of factors in the fit:</p>
+<pre class="r"><code>ebmfcov_fit_k21$fl$n_factors</code></pre>
+<pre><code>[1] 21</code></pre>
+<pre class="r"><code>ebmfcov_k21_L_permuted &lt;- permute_L(L_scaled, group_overlap_1$true_L)</code></pre>
+<p>This is a heatmap of the estimated loadings matrix:</p>
+<pre class="r"><code>plot_heatmap(ebmfcov_k21_L_permuted)</code></pre>
+<p><img src="figure/sparse_overlapping_ebmfcov.Rmd/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation matrix:</p>
+<pre class="r"><code>ebmfcov_k21_corr_mat &lt;- cor(ebmfcov_k21_L_permuted, group_overlap_1$true_L)
+ebmfcov_k21_corr_mat</code></pre>
+<pre><code>             [,1]        [,2]          [,3]         [,4]        [,5]
+ [1,]  0.99838484 -0.04675365 -0.0559113401  0.115133524 -0.04159937
+ [2,] -0.04678197  0.99898949 -0.0628769784 -0.076394635 -0.04678197
+ [3,] -0.05597965 -0.06291569  0.9996045516 -0.091414380  0.13803605
+ [4,]  0.09657272 -0.07640332 -0.0913685223  0.999103108  0.08959772
+ [5,] -0.04163366 -0.04679219  0.1435063804  0.103456821  0.99920782
+ [6,] -0.06795097 -0.07637030  0.1845570577 -0.010976393  0.08512236
+ [7,] -0.07531008 -0.08464123 -0.1012199910  0.190776438 -0.07531008
+ [8,]  0.10373383  0.07165646 -0.0913776773 -0.003360102 -0.06798717
+ [9,]  0.14855941  0.10055266 -0.0807713544  0.022934357 -0.06009581
+[10,]  0.08666248  0.06269630 -0.0008840359  0.174612945 -0.07876133
+[11,]  0.25297100  0.18501483 -0.3638446825 -0.100954368 -0.26437191
+[12,]  0.24951757  0.18614849 -0.3679379431 -0.099243016 -0.26769929
+[13,]  0.24994153  0.18603286 -0.3674271836 -0.099482198 -0.26727049
+[14,]  0.25032265  0.18592791 -0.3669649847 -0.099697560 -0.26688260
+[15,]  0.25067887  0.18582793 -0.3665313412 -0.099897571 -0.26651950
+[16,]  0.25230550  0.18521820 -0.3646711428 -0.100590406 -0.26505854
+[17,]  0.25102542  0.18572895 -0.3661079299 -0.100091025 -0.26616569
+[18,]  0.25136895  0.18562900 -0.3656868895 -0.100281426 -0.26581467
+[19,]  0.25170965  0.18552807 -0.3652680285 -0.100468923 -0.26546627
+[20,]  0.25219317  0.18538253 -0.3646705844 -0.100733937 -0.26497013
+[21,]  0.25264683  0.18524304 -0.3641073315 -0.100980700 -0.26450357
+             [,6]        [,7]         [,8]        [,9]       [,10]
+ [1,] -0.06793148 -0.07525609  0.088355187  0.11272839  0.08452552
+ [2,] -0.07639464 -0.08463177  0.063506027  0.10322820  0.04954419
+ [3,]  0.17197867 -0.10127099 -0.091414380 -0.08086989  0.01267991
+ [4,] -0.00808189  0.18845001  0.007456943  0.02308922  0.16077249
+ [5,]  0.10345682 -0.07531812 -0.067987481 -0.06014524 -0.07884284
+ [6,]  0.99867124 -0.02047176 -0.110963472 -0.09816403  0.07955892
+ [7,] -0.02532175  0.99910116  0.082986155 -0.10879522 -0.04696571
+ [8,] -0.11102258  0.07647131  0.999203217  0.02582035  0.07996311
+ [9,] -0.09813605 -0.10871741  0.038156972  0.99838659 -0.11380514
+[10,]  0.05188268 -0.05412208  0.070945774 -0.11378099  0.99813807
+[11,] -0.31552322 -0.03777543  0.060247537 -0.08510445 -0.02329185
+[12,] -0.31897403 -0.03530211  0.062626137 -0.08423202 -0.02099160
+[13,] -0.31852712 -0.03563129  0.062328555 -0.08435953 -0.02128870
+[14,] -0.31812268 -0.03592807  0.062059939 -0.08447421 -0.02155656
+[15,] -0.31774409 -0.03620471  0.061808407 -0.08458037 -0.02180670
+[16,] -0.31623996 -0.03726370  0.060722151 -0.08491375 -0.02282587
+[17,] -0.31737518 -0.03647320  0.061563264 -0.08468273 -0.02204987
+[18,] -0.31700921 -0.03673848  0.061319915 -0.08478313 -0.02229059
+[19,] -0.31664598 -0.03700071  0.061078239 -0.08488166 -0.02252900
+[20,] -0.31612865 -0.03737254  0.060734296 -0.08502052 -0.02286748
+[21,] -0.31564213 -0.03772035  0.060410813 -0.08514928 -0.02318478</code></pre>
+<p>This is the diagonal of the correlation matrix:</p>
+<pre class="r"><code>diag(ebmfcov_k21_corr_mat)</code></pre>
+<pre><code> [1] 0.9983848 0.9989895 0.9996046 0.9991031 0.9992078 0.9986712 0.9991012
+ [8] 0.9992032 0.9983866 0.9981381</code></pre>
+<p>This is the ELBO:</p>
+<pre class="r"><code>ebmfcov_fit_k21$fl$elbo</code></pre>
+<pre><code>[1] 15332.41</code></pre>
+<p>This is the L2 norm of the difference between the observed Gram
+matrix and estimated Gram matrix (not including diagonal entries):</p>
+<pre class="r"><code>compute_L2_fit(tcrossprod(L_scaled), group_overlap_1$data$YYt)</code></pre>
+<pre><code>[1] 30.50431</code></pre>
+<p>This is the L2 norm of the difference between the observed Gram
+matrix and estimated Gram matrix (including diagonal entries):</p>
+<pre class="r"><code>compute_L2_fit(tcrossprod(L_scaled), group_overlap_1$data$YYt, with_diag = TRUE)</code></pre>
+<pre><code>[1] 131.7616</code></pre>
+<p>These are the KL divergences for the factors:</p>
+<pre class="r"><code>ebmfcov_fit_k21$fl$flash_fit$KL</code></pre>
+<pre><code>[[1]]
+ [1] -19.939601 -11.249535  -3.678062 -23.479417 -11.672648 -11.626720
+ [7]  14.406061  13.422136   9.245237   1.156880  34.657354  34.657353
+[13]  34.597720  34.598164  34.598173  34.598298  34.598507  34.598876
+[19]  34.599402  34.600063  34.600815
+
+[[2]]
+ [1] -19.940014 -11.249597  -3.678202 -23.478088 -11.672628 -11.626935
+ [7]  14.406065  13.422042   9.245241   1.156902  34.657359  34.657359
+[13]  34.630603  34.627186  34.630403  34.627134  34.629393  34.630676
+[19]  34.630864  34.630174  34.630465</code></pre>
+<p>This is the estimate of the prior for the 21st loadings vector:</p>
+<pre class="r"><code>ebmfcov_fit_k21$fl$L_ghat[[21]]</code></pre>
+<pre><code>$pi
+[1] 0.92080189 0.07919811
+
+$mean
+[1] 0.000000 0.657438
+
+$sd
+[1] 0.0000000 0.0657438
+
+$a
+[1] -Inf    0
+
+$b
+[1] Inf Inf
+
+attr(,&quot;class&quot;)
+[1] &quot;tnormalmix&quot;
+attr(,&quot;row.names&quot;)
+[1] 1 2</code></pre>
+<p>This is the correlation between the first ten factors of this
+estimate and the first ten factors of the previous estimate:</p>
+<pre class="r"><code>diag(cor(ebmfcov_k21_L_permuted[,1:10], ebmfcov_L_permuted[,1:10]))</code></pre>
+<pre><code> [1] 1 1 1 1 1 1 1 1 1 1</code></pre>
+</div>
+</div>
+<div id="observations" class="section level1">
+<h1>Observations</h1>
+<p>Setting <code>Kmax = 21</code> led to an estimate with 21 factors.
+The first 10 factors match the first 10 factors of the
+<code>Kmax=20</code> estimate. The remaining factors seem to be the
+seemingly “trivial” factor. Comparing the <code>Kmax=21</code> estimate
+and the <code>Kmax=20</code> estimate, the main thing that seems to
+change is the KL term. I find that the KL term associated with the new
+loadings factor is usually about 34.6. As a result, the new factor is
+able to decrease the magnitude of the negative KL term and increase the
+elbo. I’m still trying to figure out why this is happening. I’ve seen
+this type of behavior before with the generalized binary prior (however
+it was with flash with a normal prior on <span
+class="math inline">\(F\)</span> in the balanced nonoverlapping
+setting). So I’m not sure if it is something specific to this prior.</p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.2 (2023-10-31)
+Platform: aarch64-apple-darwin20 (64-bit)
+Running under: macOS 15.6
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/Chicago
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] flashier_1.0.56 ebnm_1.1-34     pheatmap_1.0.12 ggplot2_3.5.2  
+[5] dplyr_1.1.4     workflowr_1.7.1
+
+loaded via a namespace (and not attached):
+ [1] tidyselect_1.2.1     viridisLite_0.4.2    farver_2.1.2        
+ [4] fastmap_1.2.0        lazyeval_0.2.2       promises_1.3.3      
+ [7] digest_0.6.37        lifecycle_1.0.4      processx_3.8.4      
+[10] invgamma_1.1         magrittr_2.0.3       compiler_4.3.2      
+[13] rlang_1.1.6          sass_0.4.10          progress_1.2.3      
+[16] tools_4.3.2          yaml_2.3.10          data.table_1.17.6   
+[19] knitr_1.50           prettyunits_1.2.0    htmlwidgets_1.6.4   
+[22] scatterplot3d_0.3-44 RColorBrewer_1.1-3   Rtsne_0.17          
+[25] withr_3.0.2          purrr_1.0.4          grid_4.3.2          
+[28] git2r_0.33.0         fastTopics_0.6-192   colorspace_2.1-1    
+[31] scales_1.4.0         gtools_3.9.5         cli_3.6.5           
+[34] rmarkdown_2.29       crayon_1.5.3         generics_0.1.4      
+[37] RcppParallel_5.1.10  rstudioapi_0.16.0    httr_1.4.7          
+[40] pbapply_1.7-2        cachem_1.1.0         stringr_1.5.1       
+[43] splines_4.3.2        parallel_4.3.2       softImpute_1.4-3    
+[46] vctrs_0.6.5          Matrix_1.6-5         jsonlite_2.0.0      
+[49] callr_3.7.6          hms_1.1.3            mixsqp_0.3-54       
+[52] ggrepel_0.9.6        irlba_2.3.5.1        horseshoe_0.2.0     
+[55] trust_0.1-8          plotly_4.11.0        jquerylib_0.1.4     
+[58] tidyr_1.3.1          glue_1.8.0           ps_1.7.7            
+[61] cowplot_1.1.3        uwot_0.2.3           stringi_1.8.7       
+[64] Polychrome_1.5.1     gtable_0.3.6         later_1.4.2         
+[67] quadprog_1.5-8       tibble_3.3.0         pillar_1.10.2       
+[70] htmltools_0.5.8.1    truncnorm_1.0-9      R6_2.6.1            
+[73] rprojroot_2.0.4      evaluate_1.0.4       lpSolve_5.6.20      
+[76] lattice_0.22-6       RhpcBLASctl_0.23-42  SQUAREM_2021.1      
+[79] ashr_2.2-66          httpuv_1.6.15        bslib_0.9.0         
+[82] Rcpp_1.0.14          deconvolveR_1.2-1    whisker_0.4.1       
+[85] xfun_0.52            fs_1.6.6             getPass_0.2-4       
+[88] pkgconfig_2.0.3     </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
