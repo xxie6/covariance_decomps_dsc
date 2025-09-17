@@ -1,0 +1,242 @@
+---
+title: "sparse_overlapping_ebmfcov"
+author: "Annie Xie"
+date: "2025-09-17"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+
+In previous analyses, I observed that the estimate from EBMFcov in the sparse overlapping setting would have extra factors which are essentially trivial, especially when EBMFcov was given a larger `Kmax` value. So this analysis is dedicated to investigating why that happens.
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+library(flashier)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+```{r}
+compute_L2_fit <- function(est, dat, with_diag = FALSE){
+  if (with_diag == FALSE){
+    score <- sum((dat - est)^2) - sum((diag(dat) - diag(est))^2)
+  }
+  else{
+    score <- sum((dat - est)^2)
+  }
+  return(score)
+}
+
+```
+
+```{r}
+permute_L <- function(est, truth){
+  K_est <- ncol(est)
+  K_truth <- ncol(truth)
+  n <- nrow(est)
+
+  #if estimates don't have same number of columns, try padding the estimate with zeros and make cosine similarity zero
+  if (K_est < K_truth){
+    est <- cbind(est, matrix(rep(0, n*(K_truth-K_est)), nrow = n))
+  }
+
+  if (K_est > K_truth){
+    truth <- cbind(truth, matrix(rep(0, n*(K_est - K_truth)), nrow = n))
+  }
+
+  #normalize est and truth
+  norms_est <- apply(est, 2, function(x){sqrt(sum(x^2))})
+  norms_est[norms_est == 0] <- Inf
+
+  norms_truth <- apply(truth, 2, function(x){sqrt(sum(x^2))})
+  norms_truth[norms_truth == 0] <- Inf
+
+  est_normalized <- t(t(est)/norms_est)
+  truth_normalized <- t(t(truth)/norms_truth)
+
+  #compute matrix of cosine similarities
+  cosine_sim_matrix <- abs(crossprod(est_normalized, truth_normalized))
+  assignment_problem <- lpSolve::lp.assign(t(cosine_sim_matrix), direction = "max")
+
+  perm <- apply(assignment_problem$solution, 1, which.max)
+  return(est[,perm])
+}
+```
+
+# True Loadings
+```{r}
+group_overlap_1 <- readRDS('data/group_overlap_1.rds')
+```
+
+This is a heatmap of the true loadings matrix:
+```{r}
+plot_heatmap(group_overlap_1$true_L)
+```
+
+# EBMFcov given 2K
+
+```{r}
+group_overlap_1_ebmfcov_diag_3 <- readRDS("data/adclus_cov_comp_dsc_2k_ex/group_overlap_1_ebmfcov_diag_3.rds")
+```
+
+```{r}
+ebmfcov_L_permuted <- permute_L(group_overlap_1_ebmfcov_diag_3$est_L, group_overlap_1$true_L)
+```
+
+This is a heatmap of the estimated loadings matrix:
+```{r}
+plot_heatmap(ebmfcov_L_permuted)
+```
+
+This is the correlation matrix:
+```{r}
+ebmfcov_corr_mat <- cor(ebmfcov_L_permuted, group_overlap_1$true_L)
+ebmfcov_corr_mat
+```
+
+This is the diagonal of the correlation matrix:
+```{r}
+diag(ebmfcov_corr_mat)
+```
+
+These are plots of the factors which appear to be trivial:
+```{r}
+par(mfrow = c(5, 2), mar = c(2, 2, 2, 2))
+for (i in c(11:20)){
+  plot(ebmfcov_L_permuted[,i])
+}
+par(mfrow = c(1, 1))
+```
+
+Interestingly, all of these factors appear to be essentially the same; they are just on different scales.
+
+This is the correlation matrix of these factors:
+```{r}
+cor(ebmfcov_L_permuted[,c(11:20)])
+```
+
+This is the ELBO:
+```{r}
+group_overlap_1_ebmfcov_diag_3$fit_obj$fl$elbo
+```
+
+This is the L2 norm of the difference between the observed Gram matrix and estimated Gram matrix (not including diagonal entries):
+```{r}
+compute_L2_fit(group_overlap_1_ebmfcov_diag_3$est_LLt, group_overlap_1$data$YYt)
+```
+
+This is the L2 norm of the difference between the observed Gram matrix and estimated Gram matrix (including diagonal entries):
+```{r}
+compute_L2_fit(group_overlap_1_ebmfcov_diag_3$est_LLt, group_overlap_1$data$YYt, with_diag = TRUE)
+```
+
+These are the KL divergences for the factors:
+```{r}
+group_overlap_1_ebmfcov_diag_3$fit_obj$fl$flash_fit$KL
+```
+
+# Test different numbers of factors
+
+```{r}
+cov_fit <- function(covmat, ebnm_fn = ebnm::ebnm_point_laplace, Kmax = 1000, verbose.lvl = 0, backfit = TRUE) {
+  fl <- flash_init(covmat, var_type = 0) %>%
+    flash_set_verbose(verbose.lvl) %>%
+    flash_greedy(ebnm_fn = ebnm_fn, Kmax = Kmax)
+  if (backfit == TRUE){
+    fl <- flash_backfit(fl)
+  }
+  s2 <- max(0, mean(diag(covmat) - diag(fitted(fl))))
+  s2_diff <- Inf
+  while(s2 > 0 && abs(s2_diff - 1) > 1e-4) {
+    covmat_minuss2 <- covmat - diag(rep(s2, ncol(covmat)))
+    fl <- flash_init(covmat_minuss2, var_type = 0) %>%
+      flash_set_verbose(verbose.lvl) %>%
+      flash_greedy(ebnm_fn = ebnm_fn, Kmax = Kmax)
+    if (backfit == TRUE){
+      fl <- flash_backfit(fl)
+    }
+    old_s2 <- s2
+    s2 <- max(0, mean(diag(covmat) - diag(fitted(fl))))
+    s2_diff <- s2 / old_s2
+  }
+  
+  return(list(fl=fl, s2 = s2))
+}
+```
+
+## K=21
+
+In this section, I try fitting EBMFcov with `Kmax=21`:
+
+```{r}
+ebmfcov_fit_k21 <- cov_fit(group_overlap_1$data$YYt, ebnm_fn = ebnm::ebnm_generalized_binary, Kmax = 21, backfit = TRUE)
+fl_scaled <- ldf(ebmfcov_fit_k21$fl)
+L_scaled <- fl_scaled$L %*% diag(sqrt(fl_scaled$D))
+```
+
+This is the number of factors in the fit:
+```{r}
+ebmfcov_fit_k21$fl$n_factors
+```
+
+```{r}
+ebmfcov_k21_L_permuted <- permute_L(L_scaled, group_overlap_1$true_L)
+```
+
+This is a heatmap of the estimated loadings matrix:
+```{r}
+plot_heatmap(ebmfcov_k21_L_permuted)
+```
+
+This is the correlation matrix:
+```{r}
+ebmfcov_k21_corr_mat <- cor(ebmfcov_k21_L_permuted, group_overlap_1$true_L)
+ebmfcov_k21_corr_mat
+```
+
+This is the diagonal of the correlation matrix:
+```{r}
+diag(ebmfcov_k21_corr_mat)
+```
+
+This is the ELBO:
+```{r}
+ebmfcov_fit_k21$fl$elbo
+```
+
+This is the L2 norm of the difference between the observed Gram matrix and estimated Gram matrix (not including diagonal entries):
+```{r}
+compute_L2_fit(tcrossprod(L_scaled), group_overlap_1$data$YYt)
+```
+
+This is the L2 norm of the difference between the observed Gram matrix and estimated Gram matrix (including diagonal entries):
+```{r}
+compute_L2_fit(tcrossprod(L_scaled), group_overlap_1$data$YYt, with_diag = TRUE)
+```
+
+These are the KL divergences for the factors:
+```{r}
+ebmfcov_fit_k21$fl$flash_fit$KL
+```
+
+This is the estimate of the prior for the 21st loadings vector:
+```{r}
+ebmfcov_fit_k21$fl$L_ghat[[21]]
+```
+
+This is the correlation between the first ten factors of this estimate and the first ten factors of the previous estimate:
+```{r}
+diag(cor(ebmfcov_k21_L_permuted[,1:10], ebmfcov_L_permuted[,1:10]))
+```
+
+# Observations
+
+Setting `Kmax = 21` led to an estimate with 21 factors. The first 10 factors match the first 10 factors of the `Kmax=20` estimate. The remaining factors seem to be the seemingly "trivial" factor. Comparing the `Kmax=21` estimate and the `Kmax=20` estimate, the main thing that seems to change is the KL term. I find that the KL term associated with the new loadings factor is usually about 34.6. As a result, the new factor is able to decrease the magnitude of the negative KL term and increase the elbo. I’m still trying to figure out why this is happening. I've seen this type of behavior before with the generalized binary prior (however it was with flash with a normal prior on $F$ in the balanced nonoverlapping setting). So I'm not sure if it is something specific to this prior.
