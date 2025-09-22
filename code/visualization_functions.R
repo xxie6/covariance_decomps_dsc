@@ -31,3 +31,23 @@ plot_heatmap <- function(L, title = "", colors_range = c("gray96", "red"), brks 
   plt <- pheatmap(L, show_rownames = FALSE, show_colnames = FALSE, cluster_rows = FALSE, cluster_cols = FALSE, color = cols, breaks = brks, main = title)
   return(plt)
 }
+
+dot_plot <- function(data, title, x_label, y_label){
+  p <- ggplot(data, aes(x = metric, y = method)) +
+    geom_point(size = 3, aes(color = grouping)) + # Add dots
+    geom_segment(aes(x = min(metric), xend = metric, y = method, yend = method, color = grouping),
+                 linewidth = 0.5) + # Add connecting lines from the minimum
+    labs(title = title,
+         x = x_label,
+         y = y_label) +
+    theme_minimal() + # Use a minimal theme for a clean look
+    theme(
+      panel.grid.major.y = element_blank(), # Remove horizontal grid lines
+      panel.grid.minor.y = element_blank(), # Remove minor horizontal grid lines
+      axis.text.y = element_text(size = 10), # Adjust y-axis label size
+      axis.title.y = element_text(size = 12, face = "bold"),
+      axis.title.x = element_text(size = 12, face = "bold"),
+      plot.title = element_text(size = 14, face = "bold", hjust = 0.5) # Center and bold title
+    )
+  return(p)
+}
