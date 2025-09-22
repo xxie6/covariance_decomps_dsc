@@ -15,6 +15,7 @@ In this analysis, I am interested in comparing all the methods when initialized 
 ```{r, message = FALSE, warning = FALSE}
 library(dplyr)
 library(ggplot2)
+library(ggrepel)
 library(pheatmap)
 ```
 
@@ -26,6 +27,7 @@ source('code/visualization_functions.R')
 
 ```{r}
 dscout <- readRDS("data/same_init_dsc_results_df.rds")
+dscout <- dscout %>% filter(initialization == 'pt_laplace_split', initialization.K_factor == 1, (is.na(score.threshold) == TRUE | score.threshold == 0.9))
 dim(dscout)
 ```
 
@@ -80,6 +82,34 @@ dscout %>% filter(simulate == 'baltree_4pop', score %in% c('prop_est_high_cos_si
 
 For most methods, the proportions are comparable. For Flash with normal prior on F, prop_est_high_cos_sim = 1 and prop_true_high_cos_sim = 0.7. This suggests that the method is not returning any extraneous factors, but it is still missing some of the underlying structure.
 
+```{r}
+prop_data_df <- dscout %>% filter(simulate == 'baltree_4pop', score %in% c('prop_est_high_cos_sim', 'prop_true_high_cos_sim'), (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, score) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, score)
+
+prop_est_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['avg_result']]
+
+prop_true_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_true_high_cos_sim') , ][['avg_result']]
+
+methods <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['analyze']]
+
+prop_plot_df <- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals)
+```
+
+```{r}
+ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals)) +
+  geom_point(size = 3, color = "dodgerblue") +
+  geom_text_repel(
+    aes(label = method), 
+    box.padding = 0.5, 
+    point.padding = 0.5,
+    segment.color = "grey50"
+  ) +
+  labs(title = "",
+       x = "Proportion of Estimate Capturing True Signal",
+       y = "Proportion of True Signals Recovered") +
+  theme_minimal()
+```
+
+
 ## symmetric NMF methods
 In this section, I will focus on the symmetric-NMF-style methods
 
@@ -116,6 +146,33 @@ dscout %>% filter(simulate == 'baltree_4pop', score %in% c('prop_est_high_cos_si
 ```
 
 For CoDesymNMF, prop_est_high_cos_sim and prop_true_high_cos_sim are both equal to 1, suggesting that the method does not return any factors containing noise (though it is possible the method is returning duplicate factors). EBMFcov also has prop_est_high_cos_sim and prop_true_high_cos_sim both equal to 1. For the other methods, it seems like there is a significant number of factors that are not highly similar to a true factor. 
+
+```{r}
+prop_data_df <- dscout %>% filter(simulate == 'baltree_4pop', score %in% c('prop_est_high_cos_sim', 'prop_true_high_cos_sim'), (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, score) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, score)
+
+prop_est_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['avg_result']]
+
+prop_true_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_true_high_cos_sim') , ][['avg_result']]
+
+methods <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['analyze']]
+
+prop_plot_df <- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals)
+```
+
+```{r}
+ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals)) +
+  geom_point(size = 3, color = "dodgerblue") +
+  geom_text_repel(
+    aes(label = method), 
+    box.padding = 0.5, 
+    point.padding = 0.5,
+    segment.color = "grey50"
+  ) +
+  labs(title = "",
+       x = "Proportion of Estimate Capturing True Signal",
+       y = "Proportion of True Signals Recovered") +
+  theme_minimal()
+```
 
 # Unbalanced Non-overlapping
 I will now consider the unbalanced non-overlapping setting. This setting should be the easiest of the four settings.
@@ -156,6 +213,33 @@ dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40,
 ```
 
 CoDesymNMF has prop_est_high_cos_sim = 0.663, but prop_true_high_cos_sim = 1, which suggests the initialization has more than four factors. With this is mind, we see that all of the methods return extra factors. Ideally the empirical Bayes methods would be able to get rid of extra factors. But in my experience, especially when working in the covariance space, the methods add extra factors. Furthermore, I've found that the generalized-binary prior is more sensitive to initialization and does not always shrink small values. 
+
+```{r}
+prop_data_df <- dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40, 4)', score %in% c('prop_est_high_cos_sim', 'prop_true_high_cos_sim'), (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, score) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, score)
+
+prop_est_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['avg_result']]
+
+prop_true_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_true_high_cos_sim') , ][['avg_result']]
+
+methods <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['analyze']]
+
+prop_plot_df <- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals)
+```
+
+```{r}
+ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals)) +
+  geom_point(size = 3, color = "dodgerblue") +
+  geom_text_repel(
+    aes(label = method), 
+    box.padding = 0.5, 
+    point.padding = 0.5,
+    segment.color = "grey50"
+  ) +
+  labs(title = "",
+       x = "Proportion of Estimate Capturing True Signal",
+       y = "Proportion of True Signals Recovered") +
+  theme_minimal()
+```
 
 ## symmetric NMF methods
 In this section, I will focus on the symmetric-NMF-style methods
@@ -200,6 +284,33 @@ dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40,
 
 In this case, EBMFcov and Flash with normal prior on F have prop_est_high_cos_sim and prop_true_high_cos_sim both equal to 1, suggesting the methods can return the correct number of components despite being given more. All of the methods have prop_true_high_cos_sim equal to 1 but prop_est_high_cos_sim less than 1, which suggests that the other methods are returning extra factors. 
 
+```{r}
+prop_data_df <- dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40, 4)', score %in% c('prop_est_high_cos_sim', 'prop_true_high_cos_sim'), (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, score) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, score)
+
+prop_est_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['avg_result']]
+
+prop_true_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_true_high_cos_sim') , ][['avg_result']]
+
+methods <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['analyze']]
+
+prop_plot_df <- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals)
+```
+
+```{r}
+ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals)) +
+  geom_point(size = 3, color = "dodgerblue") +
+  geom_text_repel(
+    aes(label = method), 
+    box.padding = 0.5, 
+    point.padding = 0.5,
+    segment.color = "grey50"
+  ) +
+  labs(title = "",
+       x = "Proportion of Estimate Capturing True Signal",
+       y = "Proportion of True Signals Recovered") +
+  theme_minimal()
+```
+
 # Balanced Non-overlapping
 I will now consider the balanced non-overlapping setting. This setting should be harder than the unbalanced non-overlapping setting.
 
@@ -241,6 +352,33 @@ dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes == 'rep(40,
 
 CoDesymNMF has prop_est_high_cos_sim = 0.731, but prop_true_high_cos_sim = 1, which suggests the initialization has more than four factors. With this is mind, we see that all of the methods return extra factors. 
 
+```{r}
+prop_data_df <- dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes == 'rep(40, 4)', score %in% c('prop_est_high_cos_sim', 'prop_true_high_cos_sim'), (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, score) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, score)
+
+prop_est_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['avg_result']]
+
+prop_true_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_true_high_cos_sim') , ][['avg_result']]
+
+methods <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['analyze']]
+
+prop_plot_df <- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals)
+```
+
+```{r}
+ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals)) +
+  geom_point(size = 3, color = "dodgerblue") +
+  geom_text_repel(
+    aes(label = method), 
+    box.padding = 0.5, 
+    point.padding = 0.5,
+    segment.color = "grey50"
+  ) +
+  labs(title = "",
+       x = "Proportion of Estimate Capturing True Signal",
+       y = "Proportion of True Signals Recovered") +
+  theme_minimal()
+```
+
 ## symmetric NMF methods
 In this section, I will focus on the symmetric-NMF-style methods
 
@@ -277,6 +415,33 @@ dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes == 'rep(40,
 ```
 
 Almost all of the methods have prop_true_high_cos_sim = 1 and prop_est_high_cos_sim less than 1, suggesting the initialization has more than four factors. As a result, the proportions suggest that most of methods return extra factors. However, Flash with normal prior on F has both proportions equal to 1, so this suggests the method is able to recover the correct number of components. In addition, prop_est_high_cos_sim for EBMFcov is very close to 1, so it seems like it doesn't happen that often for EBMFcov.
+
+```{r}
+prop_data_df <- dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40, 4)', score %in% c('prop_est_high_cos_sim', 'prop_true_high_cos_sim'), (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, score) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, score)
+
+prop_est_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['avg_result']]
+
+prop_true_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_true_high_cos_sim') , ][['avg_result']]
+
+methods <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['analyze']]
+
+prop_plot_df <- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals)
+```
+
+```{r}
+ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals)) +
+  geom_point(size = 3, color = "dodgerblue") +
+  geom_text_repel(
+    aes(label = method), 
+    box.padding = 0.5, 
+    point.padding = 0.5,
+    segment.color = "grey50"
+  ) +
+  labs(title = "",
+       x = "Proportion of Estimate Capturing True Signal",
+       y = "Proportion of True Signals Recovered") +
+  theme_minimal()
+```
 
 # Sparse Overlapping
 I will now consider the sparse, overlapping setting.
@@ -318,6 +483,33 @@ dscout %>% filter(simulate == 'group_overlap', score %in% c('prop_est_high_cos_s
 
 For CoDesymNMF, prop_est_high_cos_sim is less than 1 but prop_true_high_cos_sim = 1, suggesting the initialization has more than the true number of components (in this case, 10). 
 
+```{r}
+prop_data_df <- dscout %>% filter(simulate == 'group_overlap', score %in% c('prop_est_high_cos_sim', 'prop_true_high_cos_sim'), (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, score) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, score)
+
+prop_est_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['avg_result']]
+
+prop_true_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_true_high_cos_sim') , ][['avg_result']]
+
+methods <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['analyze']]
+
+prop_plot_df <- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals)
+```
+
+```{r}
+ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals)) +
+  geom_point(size = 3, color = "dodgerblue") +
+  geom_text_repel(
+    aes(label = method), 
+    box.padding = 0.5, 
+    point.padding = 0.5,
+    segment.color = "grey50"
+  ) +
+  labs(title = "",
+       x = "Proportion of Estimate Capturing True Signal",
+       y = "Proportion of True Signals Recovered") +
+  theme_minimal()
+```
+
 ## symmetric NMF methods
 In this section, I will focus on the symmetric-NMF-style methods
 
@@ -354,6 +546,33 @@ dscout %>% filter(simulate == 'group_overlap', score %in% c('prop_est_high_cos_s
 ```
 
 Most of the methods do a good job at recovering most of the factors. However, it seems like most of the methods are also returning extra factors. 
+
+```{r}
+prop_data_df <- dscout %>% filter(simulate == 'group_overlap', score %in% c('prop_est_high_cos_sim', 'prop_true_high_cos_sim'), (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, score) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, score)
+
+prop_est_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['avg_result']]
+
+prop_true_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_true_high_cos_sim') , ][['avg_result']]
+
+methods <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['analyze']]
+
+prop_plot_df <- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals)
+```
+
+```{r}
+ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals)) +
+  geom_point(size = 3, color = "dodgerblue") +
+  geom_text_repel(
+    aes(label = method), 
+    box.padding = 0.5, 
+    point.padding = 0.5,
+    segment.color = "grey50"
+  ) +
+  labs(title = "",
+       x = "Proportion of Estimate Capturing True Signal",
+       y = "Proportion of True Signals Recovered") +
+  theme_minimal()
+```
 
 # Unbalanced Tree Setting
 I will now consider the unbalanced tree setting. This setting is also one of the hardest settings.
@@ -401,6 +620,33 @@ dscout %>% filter(simulate == 'unbaltree_4pop', score %in% c('prop_est_high_cos_
 
 For Flash with normal prior on F, prop_est_high_cos_sim is quite a bit higher than prop_true_high_cos_sim, suggesting the method is not returning too many extraneous factors.
 
+```{r}
+prop_data_df <- dscout %>% filter(simulate == 'unbaltree_4pop', score %in% c('prop_est_high_cos_sim', 'prop_true_high_cos_sim'), (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, score) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, score)
+
+prop_est_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['avg_result']]
+
+prop_true_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_true_high_cos_sim') , ][['avg_result']]
+
+methods <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['analyze']]
+
+prop_plot_df <- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals)
+```
+
+```{r}
+ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals)) +
+  geom_point(size = 3, color = "dodgerblue") +
+  geom_text_repel(
+    aes(label = method), 
+    box.padding = 0.5, 
+    point.padding = 0.5,
+    segment.color = "grey50"
+  ) +
+  labs(title = "",
+       x = "Proportion of Estimate Capturing True Signal",
+       y = "Proportion of True Signals Recovered") +
+  theme_minimal()
+```
+
 ## symmetric NMF methods
 In this section, I will focus on the symmetric-NMF-style methods
 
@@ -437,3 +683,30 @@ dscout %>% filter(simulate == 'unbaltree_4pop', score %in% c('prop_est_high_cos_
 ```
 
 For Flash with normal prior on F, prop_est_high_cos_sim = 1, which suggests it is not returning extra factors.
+
+```{r}
+prop_data_df <- dscout %>% filter(simulate == 'unbaltree_4pop', score %in% c('prop_est_high_cos_sim', 'prop_true_high_cos_sim'), (analyze.ebnm_fn == 'ebnm::ebnm_point_exponential' | is.na(analyze.ebnm_fn) == TRUE)) %>% group_by(analyze, score) %>% summarise(avg_result = mean(score.result)) %>% arrange(analyze, score)
+
+prop_est_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['avg_result']]
+
+prop_true_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_true_high_cos_sim') , ][['avg_result']]
+
+methods <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['analyze']]
+
+prop_plot_df <- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals)
+```
+
+```{r}
+ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals)) +
+  geom_point(size = 3, color = "dodgerblue") +
+  geom_text_repel(
+    aes(label = method), 
+    box.padding = 0.5, 
+    point.padding = 0.5,
+    segment.color = "grey50"
+  ) +
+  labs(title = "",
+       x = "Proportion of Estimate Capturing True Signal",
+       y = "Proportion of True Signals Recovered") +
+  theme_minimal()
+```
