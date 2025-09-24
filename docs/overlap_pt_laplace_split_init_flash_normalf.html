@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Annie Xie" />
+
+<meta name="date" content="2025-09-24" />
+
+<title>unbal_nonoverlap_pt_laplace_split_init_flash_normalf</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">covariance_decomps_dsc</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/xxie6/covariance_decomps_dsc">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">unbal_nonoverlap_pt_laplace_split_init_flash_normalf</h1>
+<h4 class="author">Annie Xie</h4>
+<h4 class="date">2025-09-24</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2025-09-24
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>covariance_decomps_dsc/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20250203code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20250203)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20250203code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20250203)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree21d4f843f1ca2f6232458361359b6b94b7554d3etargetblank21d4f84a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/21d4f843f1ca2f6232458361359b6b94b7554d3e" target="_blank">21d4f84</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree21d4f843f1ca2f6232458361359b6b94b7554d3etargetblank21d4f84a"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/21d4f843f1ca2f6232458361359b6b94b7554d3e" target="_blank">21d4f84</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    data/.DS_Store
+    Ignored:    data/adclus_cov_comp_dsc_ex/.DS_Store
+    Ignored:    data/adclus_same_init_dsc_ex/.DS_Store
+    Ignored:    data/pt_laplace_split_init_ex/.DS_Store
+
+Untracked files:
+    Untracked:  analysis/init_comparison_baltree_setting.Rmd
+    Untracked:  analysis/init_comparison_overlap_setting.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown
+(<code>analysis/overlap_pt_laplace_split_init_flash_normalf.Rmd</code>)
+and HTML
+(<code>docs/overlap_pt_laplace_split_init_flash_normalf.html</code>)
+files. If you’ve configured a remote Git repository (see
+<code>?wflow_git_remote</code>), click on the hyperlinks in the table
+below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/21d4f843f1ca2f6232458361359b6b94b7554d3e/analysis/overlap_pt_laplace_split_init_flash_normalf.Rmd" target="_blank">21d4f84</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-24
+</td>
+<td>
+Add analysis of flash with normal f with pt-laplace init in unbal
+nonoverlap
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>In this analysis, I investigate flash with a normal prior on <span
+class="math inline">\(F\)</span> initialized with the point-Laplace plus
+splitting strategy in the unbalanced nonoverlapping setting. A
+surprising observation is that the estimate from this method returns
+extra factors. However, we would expect flash with a normal prior on
+<span class="math inline">\(F\)</span> to return the correct number of
+factors because there is an argument in the flash paper which states the
+method is conservative with the number of factors it utilizes. In
+addition, the flash model is correctly specified in this simulation, so
+we don’t expect extra factors due to model misspecification. In this
+analysis, my aim is to explore why this happens. I did a similar
+investigation of flash with normal prior on <span
+class="math inline">\(F\)</span> in the balanced nonoverlapping setting
+<a href="balanced_nonoverlapping_flash_normalf.html">here</a></p>
+<pre class="r"><code>library(dplyr)
+library(ggplot2)
+library(pheatmap)
+library(flashier)
+library(ashr)</code></pre>
+<pre class="r"><code>source(&#39;code/visualization_functions.R&#39;)</code></pre>
+<pre class="r"><code>compute_L2_fit &lt;- function(est, dat, with_diag = FALSE){
+  if (with_diag == FALSE){
+    score &lt;- sum((dat - est)^2) - sum((diag(dat) - diag(est))^2)
+  }
+  else{
+    score &lt;- sum((dat - est)^2)
+  }
+  return(score)
+}</code></pre>
+</div>
+<div id="flash-with-normal-prior-on-f-with-backfitting"
+class="section level1">
+<h1>Flash with Normal Prior on F (with backfitting)</h1>
+<pre class="r"><code>group_nonoverlap_2 &lt;- readRDS(&quot;data/group_nonoverlap_2.rds&quot;)
+group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1 &lt;- readRDS(&quot;data/adclus_same_init_dsc_ex/group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1.rds&quot;)</code></pre>
+<div id="visualization-of-estimate" class="section level2">
+<h2>Visualization of Estimate</h2>
+<p>This is a heatmap of the true <span class="math inline">\(L\)</span>
+that we are hoping to recover:</p>
+<pre class="r"><code>plot_heatmap(group_nonoverlap_2$true_L)</code></pre>
+<p><img src="figure/overlap_pt_laplace_split_init_flash_normalf.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a heatmap of <span class="math inline">\(\hat{L}\)</span>,
+the estimate for <span class="math inline">\(L\)</span> from Flashier
+with normal prior on <span class="math inline">\(F\)</span>:</p>
+<pre class="r"><code>plot_heatmap(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_L, brks = seq(0, max(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_L), length.out = 50))</code></pre>
+<p><img src="figure/overlap_pt_laplace_split_init_flash_normalf.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a scatterplot of the entries of <span
+class="math inline">\(\hat{L}\)</span>:</p>
+<pre class="r"><code>pops_vec &lt;- c(rep(&#39;A&#39;, 20), rep(&#39;B&#39;, 50), rep(&#39;C&#39;, 30), rep(&#39;D&#39;, 60))
+plot_loadings(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_L, pops_vec)</code></pre>
+<p><img src="figure/overlap_pt_laplace_split_init_flash_normalf.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>As previously mentioned, the loadings estimate returns extra factors.
+Interestingly, these extra factors don’t seem to add much – in these
+visualizations, the factors look like zero vectors.</p>
+</div>
+</div>
+<div id="visualizations-of-trivial-factors" class="section level1">
+<h1>Visualizations of trivial factors</h1>
+<p>This is a heatmap of the trivial factors:</p>
+<pre class="r"><code>trivial.idx &lt;- c(1,3,4)
+plot_heatmap(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_L[,trivial.idx], brks = seq(0, max(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_L[,trivial.idx]), length.out = 50))</code></pre>
+<p><img src="figure/overlap_pt_laplace_split_init_flash_normalf.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a plot of the entries of each of the trivial factors:</p>
+<pre class="r"><code>par(mfrow = c(3,1))
+for (i in trivial.idx){
+  plot(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_L[,i], ylab = &#39;loading value&#39;)
+}</code></pre>
+<p><img src="figure/overlap_pt_laplace_split_init_flash_normalf.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1,1))</code></pre>
+<p>We see that these factors contain very small entries.</p>
+</div>
+<div id="try-further-backfitting" class="section level1">
+<h1>Try further backfitting</h1>
+<p>I test if further backfitting will zero out these factors.
+Theoretically, it should, but based off my previous experience, I am not
+sure that it will.</p>
+<pre class="r"><code>fl &lt;- group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$fit_obj
+fl_more_backfit &lt;- flash_backfit(fl, maxiter = 50000, tol = 10^(-20))</code></pre>
+<pre><code>Backfitting 8 factors (tolerance: 1.00e-20)...
+  Difference between iterations is within 1.0e-09...
+Wrapping up...
+Done.</code></pre>
+<pre class="r"><code>fl_more_backfit &lt;- flash_nullcheck(fl_more_backfit)</code></pre>
+<pre><code>Nullchecking 8 factors...
+Done.</code></pre>
+<pre class="r"><code>fl_more_backfit$n_factors</code></pre>
+<pre><code>[1] 8</code></pre>
+<pre class="r"><code>fl_more_backfit_scaled &lt;- ldf(fl_more_backfit)
+fl_more_backfit_scaled_L &lt;- fl_more_backfit_scaled$L %*% diag(sqrt(fl_more_backfit_scaled$D))</code></pre>
+<p>This is a plot of the entries of each of the trivial factors:</p>
+<pre class="r"><code>par(mfrow = c(3,1))
+for (i in trivial.idx){
+  plot(fl_more_backfit_scaled_L[,i], ylab = &#39;loading value&#39;)
+}</code></pre>
+<p><img src="figure/overlap_pt_laplace_split_init_flash_normalf.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(1,1))</code></pre>
+<p>Backfitting did make the factors smaller. However, the method still
+does not remove these factors.</p>
+</div>
+<div id="try-flash_nullcheck" class="section level1">
+<h1>Try flash_nullcheck</h1>
+<p>I also test if the flash nullcheck function will zero out these
+factors. Theoretically, it should, but based off my previous experience,
+I am not sure that it will.</p>
+<pre class="r"><code>fl_nullcheck &lt;- flash_nullcheck(fl)</code></pre>
+<pre><code>Nullchecking 8 factors...
+Done.</code></pre>
+<pre class="r"><code>fl_nullcheck$n_factors</code></pre>
+<pre><code>[1] 8</code></pre>
+<p>The flash nullcheck function did not remove any factors.</p>
+</div>
+<div id="visualizations-related-to-fit" class="section level1">
+<h1>Visualizations related to fit</h1>
+<p>This is the true Gram matrix, <span
+class="math inline">\(\frac{1}{p}XX&#39;\)</span>:</p>
+<pre class="r"><code>plot_heatmap(group_nonoverlap_2$data$YYt, colors = c(&#39;blue&#39;,&#39;gray96&#39;, &#39;red&#39;), brks = seq(-max(abs(group_nonoverlap_2$data$YYt)), max(abs(group_nonoverlap_2$data$YYt)), length.out = 50))</code></pre>
+<p><img src="figure/overlap_pt_laplace_split_init_flash_normalf.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a heatmap of the estimate of the Gram matrix, <span
+class="math inline">\(\hat{L}\hat{L}&#39;\)</span>:</p>
+<pre class="r"><code>plot_heatmap(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_LLt, brks = seq(0, max(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_LLt), length.out = 50))</code></pre>
+<p><img src="figure/overlap_pt_laplace_split_init_flash_normalf.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a scatter plot of the fitted values vs observed values:</p>
+<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_2$data$YYt), y = c(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_LLt))) + geom_point() + ylim(-1, 7) + xlim(-1,7) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
+<p><img src="figure/overlap_pt_laplace_split_init_flash_normalf.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Let’s focus on the off-diagonal elements:</p>
+<pre class="r"><code>diag_idx &lt;- seq(1, prod(dim(group_nonoverlap_2$data$YYt)), length.out = ncol(group_nonoverlap_2$data$YYt))
+off_diag_idx &lt;- setdiff(c(1:prod(dim(group_nonoverlap_2$data$YYt))), diag_idx) </code></pre>
+<pre class="r"><code>ggplot(data = NULL, aes(x = c(group_nonoverlap_2$data$YYt)[off_diag_idx], y = c(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_LLt)[off_diag_idx])) + geom_point() + ylim(-1, 7) + xlim(-1,7) + xlab(&#39;Observed Values&#39;) + ylab(&#39;Fitted Values&#39;) + geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;)</code></pre>
+<p><img src="figure/overlap_pt_laplace_split_init_flash_normalf.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>We see that the estimate has a good fit with the observed data.</p>
+<p>This is the elbo of the flash fit:</p>
+<pre class="r"><code>group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$fit_obj$elbo</code></pre>
+<pre><code>[1] -237748.5</code></pre>
+<p>This is the Frobenius norm of the difference between <span
+class="math inline">\(\hat{L}\hat{L}&#39;\)</span> and <span
+class="math inline">\(\frac{1}{p}YY&#39;\)</span>:</p>
+<pre class="r"><code>compute_L2_fit(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_LLt, group_nonoverlap_2$dat, with_diag = TRUE)</code></pre>
+<pre><code>[1] 494.5847</code></pre>
+<p>This is the Frobenius norm of the difference between <span
+class="math inline">\(\hat{L}\hat{F}&#39;\)</span> and <span
+class="math inline">\(Y\)</span>:</p>
+<pre class="r"><code>compute_L2_fit(fitted(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$fit_obj), group_nonoverlap_2$data$Y)</code></pre>
+<pre><code>[1] 156644.5</code></pre>
+</div>
+<div id="exploring-the-effect-of-the-trivial-factors"
+class="section level1">
+<h1>Exploring the effect of the trivial factors</h1>
+<p>This is the Frobenius norm of the difference between <span
+class="math inline">\(\hat{L}\hat{F}&#39;\)</span> and <span
+class="math inline">\(Y\)</span> without the trivial factors:</p>
+<pre class="r"><code>compute_L2_fit(tcrossprod(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$fit_obj$L_pm[,-trivial.idx], group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$fit_obj$F_pm[, -trivial.idx]), group_nonoverlap_2$data$Y)</code></pre>
+<pre><code>[1] 156644.5</code></pre>
+<p>Not including the trivial factors does not significantly change the
+fit.</p>
+<p>These are the KL divergence values:</p>
+<pre class="r"><code>group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$fit_obj$flash_fit$KL</code></pre>
+<pre><code>[[1]]
+[1]   55.45177 -114.22333   55.45177   55.45177 -134.80657   55.45177  -63.65840
+[8]  -32.84148
+
+[[2]]
+[1]  0.000000e+00 -2.683920e+03  0.000000e+00 -1.818989e-12 -2.774399e+03
+[6]  0.000000e+00 -2.421675e+03 -2.226945e+03</code></pre>
+<p>The (negative) KL values for the trivial loadings are 55.45177 and
+the (negative) KL values for the corresponding factors are 0. This means
+that including these extra factors increases the objective function. In
+theory, the negative KL should not be negative, so maybe there’s an
+optimization issue?</p>
+</div>
+<div id="point-exponential-prior" class="section level1">
+<h1>Point-Exponential Prior</h1>
+<p>For comparison, I test the method with the point-exponential
+prior.</p>
+<pre class="r"><code>group_nonoverlap_2_pt_laplace_split_1_flash_normalf_2 &lt;- readRDS(&quot;data/symnmf_same_init_dsc_ex/group_nonoverlap_2_pt_laplace_split_1_flash_normalf_2.rds&quot;)</code></pre>
+<div id="visualization-of-estimate-1" class="section level2">
+<h2>Visualization of Estimate</h2>
+<p>This is a heatmap of <span class="math inline">\(\hat{L}\)</span>,
+the estimate for <span class="math inline">\(L\)</span> from Flashier
+with normal prior on <span class="math inline">\(F\)</span> and
+point-exponential prior on <span class="math inline">\(L\)</span>:</p>
+<pre class="r"><code>plot_heatmap(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_2$est_L, brks = seq(0, max(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_2$est_L), length.out = 50))</code></pre>
+<p><img src="figure/overlap_pt_laplace_split_init_flash_normalf.Rmd/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a scatterplot of the entries of <span
+class="math inline">\(\hat{L}\)</span>:</p>
+<pre class="r"><code>pops_vec &lt;- c(rep(&#39;A&#39;, 20), rep(&#39;B&#39;, 50), rep(&#39;C&#39;, 30), rep(&#39;D&#39;, 60))
+plot_loadings(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_2$est_L, pops_vec)</code></pre>
+<p><img src="figure/overlap_pt_laplace_split_init_flash_normalf.Rmd/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This estimate does not return any extra factors. So I wonder if the
+trivial factors stem from an optimization issue with the generalized
+binary prior.</p>
+</div>
+</div>
+<div id="testing-how-many-factors-flash-wants-to-add"
+class="section level1">
+<h1>Testing how many factors flash wants to add</h1>
+<div id="generalized-binary" class="section level2">
+<h2>Generalized Binary</h2>
+<pre class="r"><code>flash_normalf_gb_largeK_fit &lt;- flash_init(group_nonoverlap_2$data$Y) %&gt;%
+  flash_greedy(Kmax = 15, ebnm_fn = c(ebnm::ebnm_generalized_binary, ebnm_normal)) %&gt;%
+  flash_backfit(maxiter = 10000, tol = 10^(-20)) %&gt;%
+  flash_nullcheck()</code></pre>
+<pre><code>Adding factor 1 to flash object...
+Adding factor 2 to flash object...
+Adding factor 3 to flash object...
+Adding factor 4 to flash object...
+Adding factor 5 to flash object...
+Adding factor 6 to flash object...
+Adding factor 7 to flash object...
+Adding factor 8 to flash object...
+Adding factor 9 to flash object...
+Adding factor 10 to flash object...
+Adding factor 11 to flash object...
+Adding factor 12 to flash object...
+Adding factor 13 to flash object...
+Adding factor 14 to flash object...
+Adding factor 15 to flash object...
+Wrapping up...
+Done.
+Backfitting 15 factors (tolerance: 1.00e-20)...
+  Difference between iterations is within 1.0e+03...
+  Difference between iterations is within 1.0e+02...
+  Difference between iterations is within 1.0e+01...
+  Difference between iterations is within 1.0e+00...
+  Difference between iterations is within 1.0e-01...
+Wrapping up...
+Done.
+Nullchecking 15 factors...
+Done.</code></pre>
+<p>This is a heatmap of the loadings estimate:</p>
+<pre class="r"><code>plot_heatmap(flash_normalf_gb_largeK_fit$L_pm)</code></pre>
+<p><img src="figure/overlap_pt_laplace_split_init_flash_normalf.Rmd/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This estimate returns extra factors. That is unexpected given the
+argument that flashier is conservative with the number of factors.</p>
+</div>
+<div id="a-more-strict-version-of-generalized-binary"
+class="section level2">
+<h2>A more strict version of generalized binary</h2>
+<pre class="r"><code>ebnm_generalized_binary_fix_scale &lt;- function(x, s, mode = &#39;estimate&#39;, g_init = NULL, fix_g = FALSE, output = ebnm_output_default(), control = NULL){
+  ebnm_gb_output &lt;- ebnm::ebnm_generalized_binary(x = x, s = s, mode = mode, 
+                                                  scale = 0.01, 
+                                                  g_init = g_init, fix_g = fix_g,
+                                                  output = output, control = control)
+  return(ebnm_gb_output)
+}</code></pre>
+<pre class="r"><code>flash_normalf_binary_largeK_fit &lt;- flash_init(group_nonoverlap_2$data$Y) %&gt;%
+  flash_greedy(Kmax = 15, ebnm_fn = c(ebnm_generalized_binary_fix_scale, ebnm_normal)) %&gt;%
+  flash_backfit(maxiter = 10000, tol = 10^(-20)) %&gt;%
+  flash_nullcheck()</code></pre>
+<pre><code>Adding factor 1 to flash object...
+Adding factor 2 to flash object...
+Adding factor 3 to flash object...
+Adding factor 4 to flash object...
+Adding factor 5 to flash object...
+Adding factor 6 to flash object...
+Adding factor 7 to flash object...
+Adding factor 8 to flash object...
+Adding factor 9 to flash object...
+Adding factor 10 to flash object...
+Adding factor 11 to flash object...
+Adding factor 12 to flash object...
+Adding factor 13 to flash object...
+Adding factor 14 to flash object...
+Adding factor 15 to flash object...
+Wrapping up...
+Done.
+Backfitting 15 factors (tolerance: 1.00e-20)...</code></pre>
+<pre><code>  Difference between iterations is within 1.0e+02...</code></pre>
+<pre><code>  Difference between iterations is within 1.0e+01...</code></pre>
+<pre><code>  Difference between iterations is within 1.0e+00...</code></pre>
+<pre><code>  Difference between iterations is within 1.0e-01...</code></pre>
+<pre><code>  Difference between iterations is within 1.0e-02...</code></pre>
+<pre><code>  Difference between iterations is within 1.0e-03...</code></pre>
+<pre><code>  Difference between iterations is within 1.0e-04...</code></pre>
+<pre><code>  Difference between iterations is within 1.0e-05...</code></pre>
+<pre><code>  Difference between iterations is within 1.0e-06...
+Wrapping up...
+Done.
+Nullchecking 15 factors...
+Done.</code></pre>
+<p>This is a heatmap of the loadings estimate:</p>
+<pre class="r"><code>plot_heatmap(flash_normalf_binary_largeK_fit$L_pm)</code></pre>
+<p><img src="figure/overlap_pt_laplace_split_init_flash_normalf.Rmd/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="point-exponential" class="section level2">
+<h2>Point-Exponential</h2>
+<pre class="r"><code>flash_normalf_pexp_largeK_fit &lt;- flash_init(group_nonoverlap_2$data$Y) %&gt;%
+  flash_greedy(Kmax = 15, ebnm_fn = c(ebnm::ebnm_point_exponential, ebnm_normal)) %&gt;%
+  flash_backfit(maxiter = 10000, tol = 10^(-20)) %&gt;%
+  flash_nullcheck()</code></pre>
+<pre><code>Adding factor 1 to flash object...
+Adding factor 2 to flash object...
+Adding factor 3 to flash object...
+Adding factor 4 to flash object...
+Adding factor 5 to flash object...
+Factor doesn&#39;t significantly increase objective and won&#39;t be added.
+Wrapping up...
+Done.
+Backfitting 4 factors (tolerance: 1.00e-20)...
+  Difference between iterations is within 1.0e+03...
+  Difference between iterations is within 1.0e+02...
+  Difference between iterations is within 1.0e+01...
+  Difference between iterations is within 1.0e+00...
+  Difference between iterations is within 1.0e-01...
+  Difference between iterations is within 1.0e-02...
+  Difference between iterations is within 1.0e-03...
+  Difference between iterations is within 1.0e-04...
+  Difference between iterations is within 1.0e-05...
+  Difference between iterations is within 1.0e-06...
+  Difference between iterations is within 1.0e-07...
+  Difference between iterations is within 1.0e-08...
+  Difference between iterations is within 1.0e-09...
+  Difference between iterations is within 1.0e-10...
+Wrapping up...
+Done.
+Nullchecking 4 factors...
+Done.</code></pre>
+<p>This is a heatmap of the loadings estimate:</p>
+<pre class="r"><code>plot_heatmap(flash_normalf_pexp_largeK_fit$L_pm)</code></pre>
+<p><img src="figure/overlap_pt_laplace_split_init_flash_normalf.Rmd/unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This estimate does not return extra factors.</p>
+</div>
+<div id="archive---binormal-prior" class="section level2">
+<h2>Archive - Binormal prior</h2>
+<!--
+
+``` r
+dbinormal = function (x,s,s0,lambda,log=TRUE){
+  pi0 = 0.5
+  pi1 = 0.5
+  s2 = s^2
+  s02 = s0^2
+  l0 = dnorm(x,0,sqrt(lambda^2 * s02 + s2),log=TRUE)
+  l1 = dnorm(x,lambda,sqrt(lambda^2 * s02 + s2),log=TRUE)
+  logsum = log(pi0*exp(l0) + pi1*exp(l1))
+ 
+  m = pmax(l0,l1)
+  logsum = m + log(pi0*exp(l0-m) + pi1*exp(l1-m))
+  if (log) return(sum(logsum))
+  else return(exp(sum(logsum)))
+}
+```
+
+
+``` r
+# need to edit this code to turn it into an ebnm function
+ebnm_binormal = function(x,s, g_init = NULL, fix_g = FALSE, output = ebnm_output_default(), control = NULL){
+  # Add g_init to make the method run
+  if(is.null(dim(x)) == FALSE){
+    x <- c(x)
+  }
+  s0 = 0.01
+  if (fix_g == TRUE){
+    g = g_init
+  } else {
+    lambda = optimize(function(lambda){-dbinormal(x,s,s0,lambda,log=TRUE)},
+              lower = 0, upper = max(x))$minimum
+    g = ashr::normalmix(pi=c(0.5,0.5), mean=c(0,lambda), sd=c((lambda * s0) , (lambda * s0)))
+  }
+  postmean = ashr::postmean(g,ashr::set_data(x,s))
+  postsd = ashr::postsd(g,ashr::set_data(x,s))
+  log_likelihood <- ashr::calc_loglik(g, ashr::set_data(x,s))
+  
+  res <- structure(list(fitted_g = g, posterior = data.frame(mean=postmean,second_moment=postsd^2 + postmean^2), log_likelihood = log_likelihood), class = c('list','ebnm'))
+  return(res)
+}
+```
+
+
+``` r
+flash_normalf_binormal_largeK_fit <- flash_init(group_nonoverlap_2$data$Y) %>%
+  flash_greedy(Kmax = 15, ebnm_fn = c(ebnm_binormal, ebnm::ebnm_normal)) %>%
+  flash_backfit(maxiter = 10000, tol = 10^(-20)) %>%
+  flash_nullcheck()
+```
+
+```
+Adding factor 1 to flash object...
+Adding factor 2 to flash object...
+Adding factor 3 to flash object...
+Adding factor 4 to flash object...
+Adding factor 5 to flash object...
+Adding factor 6 to flash object...
+Adding factor 7 to flash object...
+Adding factor 8 to flash object...
+Factor doesn't significantly increase objective and won't be added.
+Wrapping up...
+Done.
+Backfitting 7 factors (tolerance: 1.00e-20)...
+  Difference between iterations is within 1.0e+03...
+Wrapping up...
+Done.
+Nullchecking 7 factors...
+Done.
+```
+
+This is a heatmap of the loadings estimate:
+
+``` r
+flash_normalf_binormal_largeK_fit_scaled <- ldf(flash_normalf_binormal_largeK_fit, 'i')
+plot_heatmap(flash_normalf_binormal_largeK_fit_scaled$L)
+```
+
+<img src="figure/overlap_pt_laplace_split_init_flash_normalf.Rmd/unnamed-chunk-37-1.png" width="672" style="display: block; margin: auto;" />
+-->
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.2 (2023-10-31)
+Platform: aarch64-apple-darwin20 (64-bit)
+Running under: macOS 15.6
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/Chicago
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] ashr_2.2-66     flashier_1.0.56 ebnm_1.1-34     pheatmap_1.0.12
+[5] ggplot2_3.5.2   dplyr_1.1.4     workflowr_1.7.1
+
+loaded via a namespace (and not attached):
+ [1] tidyselect_1.2.1     viridisLite_0.4.2    farver_2.1.2        
+ [4] fastmap_1.2.0        lazyeval_0.2.2       promises_1.3.3      
+ [7] digest_0.6.37        lifecycle_1.0.4      processx_3.8.4      
+[10] invgamma_1.1         magrittr_2.0.3       compiler_4.3.2      
+[13] rlang_1.1.6          sass_0.4.10          progress_1.2.3      
+[16] tools_4.3.2          yaml_2.3.10          data.table_1.17.6   
+[19] knitr_1.50           prettyunits_1.2.0    labeling_0.4.3      
+[22] htmlwidgets_1.6.4    scatterplot3d_0.3-44 RColorBrewer_1.1-3  
+[25] Rtsne_0.17           withr_3.0.2          purrr_1.0.4         
+[28] grid_4.3.2           git2r_0.33.0         fastTopics_0.6-192  
+[31] colorspace_2.1-1     scales_1.4.0         gtools_3.9.5        
+[34] cli_3.6.5            rmarkdown_2.29       crayon_1.5.3        
+[37] generics_0.1.4       RcppParallel_5.1.10  rstudioapi_0.16.0   
+[40] httr_1.4.7           pbapply_1.7-2        cachem_1.1.0        
+[43] stringr_1.5.1        splines_4.3.2        parallel_4.3.2      
+[46] softImpute_1.4-3     vctrs_0.6.5          Matrix_1.6-5        
+[49] jsonlite_2.0.0       callr_3.7.6          hms_1.1.3           
+[52] mixsqp_0.3-54        ggrepel_0.9.6        irlba_2.3.5.1       
+[55] horseshoe_0.2.0      trust_0.1-8          plotly_4.11.0       
+[58] jquerylib_0.1.4      tidyr_1.3.1          glue_1.8.0          
+[61] ps_1.7.7             cowplot_1.1.3        uwot_0.2.3          
+[64] stringi_1.8.7        Polychrome_1.5.1     gtable_0.3.6        
+[67] later_1.4.2          quadprog_1.5-8       tibble_3.3.0        
+[70] pillar_1.10.2        htmltools_0.5.8.1    truncnorm_1.0-9     
+[73] R6_2.6.1             rprojroot_2.0.4      evaluate_1.0.4      
+[76] lattice_0.22-6       RhpcBLASctl_0.23-42  SQUAREM_2021.1      
+[79] httpuv_1.6.15        bslib_0.9.0          Rcpp_1.0.14         
+[82] deconvolveR_1.2-1    whisker_0.4.1        xfun_0.52           
+[85] fs_1.6.6             getPass_0.2-4        pkgconfig_2.0.3     </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
