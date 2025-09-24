@@ -1,0 +1,841 @@
+---
+title: "init_comparison_overlap_setting"
+author: "Annie Xie"
+date: "2025-09-22"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+In this analysis, I investigate the different initialization strategies in the sparse overlapping setting.
+
+```{r load_packages, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(ggrepel)
+library(pheatmap)
+```
+
+```{r load_viz_functions}
+source('code/visualization_functions.R')
+```
+
+# Data
+
+```{r}
+group_overlap_1 <- readRDS('data/group_overlap_1.rds')
+```
+
+This is a heatmap of the true loadings matrix:
+```{r}
+plot_heatmap(group_overlap_1$true_L)
+```
+
+# CoDesymNMF Initialization
+
+```{r}
+library(codesymnmf)
+codesymnmf_init.wrapper <- function(S, Kmax){
+  codesymnmf_L <- codesymnmf(S, r = Kmax, maxiter = 20)$H
+  return(codesymnmf_L)
+}
+```
+
+```{r}
+codesymnmf_init_L <- codesymnmf_init.wrapper(group_overlap_1$data$YYt, 10)
+```
+
+This is a heatmap of the initialization:
+```{r}
+plot_heatmap(codesymnmf_init_L)
+```
+
+This is the correlation between the estimates and the true factors:
+```{r}
+apply(cor(codesymnmf_init_L, group_overlap_1$true_L), 1, max)
+```
+
+This is the true factor with which each estimate is most correlated:
+```{r}
+apply(cor(codesymnmf_init_L, group_overlap_1$true_L), 1, which.max)
+```
+
+# point-Laplace Initialization
+
+```{r}
+library(flashier)
+laplace_split_initialization <- function(S, Kmax, verbose = 2, backfit_maxiter = 500, backfit_tol = NULL){
+  # backfitting is important in the tree setting
+  
+  # fit point-laplace fit with flash
+  flash_laplace_fit <- flash_init(data = S, var_type = 0) |>
+    flash_set_verbose(verbose = verbose) |>
+    flash_greedy(Kmax = Kmax, ebnm_fn = ebnm::ebnm_point_laplace) |>
+    flash_backfit(maxiter = backfit_maxiter, tol = backfit_tol) |>
+    flash_nullcheck()
+  
+  # rescale fit so that L and F are of the same scale
+  flash_laplace_fit_scaled <- ldf(flash_laplace_fit, 'i')
+  LL <- flash_laplace_fit_scaled$L
+  ##FF <- flash_laplace_fit_scaled$F
+  
+  # split into positive and negative components
+  LL <- cbind(pmax(LL, 0), pmax(-LL, 0))
+  ##FF <- cbind(pmax(FF, 0), pmax(-FF, 0))
+  
+  # remove columns of zeros
+  idx.nonzero <- apply(LL, 2, function(x){return(sum(x^2))}) > 10^(-10)
+  LL <- LL[, idx.nonzero]
+  
+  # refit weights by least squares
+  n <- nrow(S)
+  llt_vec <- matrix(rep(0, ncol(LL)*n*n), ncol = ncol(LL))
+  for (i in 1:ncol(LL)){
+    llt_vec[,i] <- c(LL[,i]%*%t(LL[,i]))
+  }
+
+  nnlm_fit <- NNLM::nnlm(llt_vec, as.matrix(c(S), ncol = 1), alpha = c(0,0,0))
+
+  indices_keep <- (nnlm_fit$coefficients > 0)
+  LL_scaled <- LL[,indices_keep] %*% diag(sqrt(nnlm_fit$coefficients[indices_keep]))
+  
+  return(LL_scaled)
+}
+```
+
+```{r}
+pt_laplace_split_init_L <- laplace_split_initialization(group_overlap_1$data$YYt, 10)
+```
+
+This is a heatmap of the initialization:
+```{r}
+plot_heatmap(pt_laplace_split_init_L)
+```
+
+This is the correlation between the estimates and the true factors:
+```{r}
+apply(cor(pt_laplace_split_init_L, group_overlap_1$true_L), 1, max)
+```
+
+This is the true factor with which each estimate is most correlated:
+```{r}
+apply(cor(pt_laplace_split_init_L, group_overlap_1$true_L), 1, which.max)
+```
+
+It seems that the point-Laplace plus splitting initialization splits some of the effects. For example, factors 2 and 5 both correspond to true factor 10. However, neither factor has correlation greater than 0.91 with the true factor. Based off visual inspection, it also seems like many effects may be captured in single factors. For example, factor 2 has notable correlation with true factors 6 and 10. Furthermore, factor 10 has notable correlations with true factors 4 and 7.
+
+## CoDesymNMF
+
+```{r}
+codesymnmf_update.wrapper <- function(S, init_L, args = NULL){
+  codesymnmf_results <- codesymnmf_fit(S, init_L)
+  return(codesymnmf_fit = codesymnmf_results)
+}
+```
+
+```{r}
+codesymnmf_pt_laplace_split_init <- codesymnmf_update.wrapper(group_overlap_1$data$YYt, pt_laplace_split_init_L)
+```
+
+This is a heatmap of the estimate:
+```{r}
+plot_heatmap(codesymnmf_pt_laplace_split_init$H)
+```
+
+This is the correlation between the estimates and the true factors:
+```{r}
+apply(cor(codesymnmf_pt_laplace_split_init$H, group_overlap_1$true_L), 1, max)
+```
+
+This is the true factor with which each estimate is most correlated:
+```{r}
+apply(cor(codesymnmf_pt_laplace_split_init$H, group_overlap_1$true_L), 1, which.max)
+```
+
+These are the true factors which are accurately recovered:
+```{r}
+apply(cor(codesymnmf_pt_laplace_split_init$H, group_overlap_1$true_L), 1, which.max)[apply(cor(codesymnmf_pt_laplace_split_init$H, group_overlap_1$true_L), 1, max) > 0.99]
+```
+
+CoDesymNMF only accurately recovers three components.
+
+This is the objective function:
+```{r}
+codesymnmf_pt_laplace_split_init$obj_func
+```
+
+
+## EBCD
+
+```{r}
+PolarU <- function(A) {
+  svdA <- svd(A)
+  out <- svdA$u %*% t(svdA$v)
+  return(out)
+}
+
+ebcd_obj_init_L <- function(ebcd_obj, init_L, ebnm_fn){
+  ebcd_obj$EL <- init_L
+  ebcd_obj$Z <- PolarU(ebcd_obj$A%*%init_L)
+  ebcd_obj$tau <- prod(dim(ebcd_obj$A)) / sum((ebcd_obj$A - (ebcd_obj$Z%*%t(init_L)))^2)
+  
+  if(length(ebnm_fn)==1){
+    ebnm_fn <- rep(list(ebnm_fn), ncol(init_L))
+  }
+  ebcd_obj$ebnm_fn <- ebnm_fn
+   
+  # ebcd_obj$KL <- rep(0, length = ncol(init_L))
+  # 
+  # ebcd_obj$obj <- -ebcd_obj$N * ncol(ebcd_obj$A) / 2 * log(2 * pi / ebcd_obj$tau) +
+  #   -(ebcd_obj$N * ebcd_obj$tau / 2) * (
+  #     sum(ebcd_obj$A^2) / ebcd_obj$nrowA - 2 * sum(diag(t(ebcd_obj$A) %*% ebcd_obj$Z %*% t(ebcd_obj$EL))) / ebcd_obj$nrowA + sum(ebcd_obj$EL^2) + sum(ebcd_obj$V)
+  #   ) +
+  #   +sum(ebcd_obj$KL)
+  
+  return(ebcd_obj)
+}
+```
+
+```{r}
+library(ebcd)
+ebcd_backfit.wrapper <- function(X, init_L, ebnm_fn){
+  # set.seed(args$seed)
+  ebcd_obj <- ebcd_init(X = X)
+  ebcd_obj <- ebcd_obj_init_L(ebcd_obj, init_L, ebnm_fn)
+  ebcd_fit <- ebcd_backfit(ebcd_obj)
+  return(ebcd_fit)
+}
+```
+
+```{r}
+ebcd_backfit_pt_laplace_split_init <- ebcd_backfit.wrapper(t(group_overlap_1$data$Y), pt_laplace_split_init_L, ebnm::ebnm_generalized_binary)
+```
+
+This is a heatmap of the estimate:
+```{r}
+plot_heatmap(ebcd_backfit_pt_laplace_split_init$EL)
+```
+
+This is the correlation between the estimates and the true factors:
+```{r}
+apply(cor(ebcd_backfit_pt_laplace_split_init$EL, group_overlap_1$true_L), 1, max)
+```
+
+This is the true factor with which each estimate is most correlated:
+```{r}
+apply(cor(ebcd_backfit_pt_laplace_split_init$EL, group_overlap_1$true_L), 1, which.max)
+```
+
+These are the true factors which are accurately recovered:
+```{r}
+apply(cor(ebcd_backfit_pt_laplace_split_init$EL, group_overlap_1$true_L), 1, which.max)[apply(cor(ebcd_backfit_pt_laplace_split_init$EL, group_overlap_1$true_L), 1, max) > 0.99]
+```
+
+EBCD is able to accurately recover nine of the ten components.
+
+This is the ELBO:
+```{r}
+ebcd_backfit_pt_laplace_split_init$obj
+```
+
+## EBMFcov
+
+```{r}
+library(dplyr)
+cov_fit_backfit <- function(covmat, init_L, ebnm_fn = ebnm::ebnm_point_laplace, verbose.lvl = 0) {
+  fl <- flash_init(covmat, var_type = 0) |>
+    flash_set_verbose(verbose.lvl) |>
+    flash_factors_init(list(init_L, init_L), ebnm_fn = ebnm_fn)
+  s2 <- max(0, mean(diag(covmat) - diag(fitted(fl))))
+  s2_diff <- Inf
+  while(s2 > 0 && abs(s2_diff - 1) > 1e-4) {
+    covmat_minuss2 <- covmat - diag(rep(s2, ncol(covmat)))
+    fl <- fl |>
+      flash_update_data(covmat_minuss2) |>
+      flash_set_verbose(verbose.lvl) |>
+      flash_backfit() |>
+      flash_nullcheck()
+    old_s2 <- s2
+    s2 <- max(0, mean(diag(covmat) - diag(fitted(fl))))
+    s2_diff <- s2 / old_s2
+  }
+  
+  return(list(fl=fl, s2 = s2))
+}
+```
+
+```{r}
+ebmfcov_diag.wrapper <- function(input, init_L, args){
+  ebmfcov_diag_fit <- cov_fit_backfit(covmat = input$YYt, 
+                             init_L = init_L,
+                             ebnm_fn = args$ebnm_fn)
+  flash_cov_ldf <- ldf(ebmfcov_diag_fit$fl)
+  flash_cov_L <- flash_cov_ldf$L %*% diag(sqrt(flash_cov_ldf$D))
+  return(list(ebmfcov_diag_fit = ebmfcov_diag_fit, 
+              scaled_L = flash_cov_L))
+}
+```
+
+```{r}
+ebmfcov_pt_laplace_split_init <- ebmfcov_diag.wrapper(group_overlap_1$data, pt_laplace_split_init_L, args = list(ebnm_fn = ebnm::ebnm_generalized_binary))
+```
+
+Note: this takes longer to run than the other methods.
+
+This is a heatmap of the estimate:
+```{r}
+plot_heatmap(ebmfcov_pt_laplace_split_init$scaled_L)
+```
+
+This is the correlation between the estimates and the true factors:
+```{r}
+apply(cor(ebmfcov_pt_laplace_split_init$scaled_L, group_overlap_1$true_L), 1, max)
+```
+
+This is the true factor with which each estimate is most correlated:
+```{r}
+apply(cor(ebmfcov_pt_laplace_split_init$scaled_L, group_overlap_1$true_L), 1, which.max)
+```
+
+These are the true factors which are accurately recovered:
+```{r}
+apply(cor(ebmfcov_pt_laplace_split_init$scaled_L, group_overlap_1$true_L), 1, which.max)[apply(cor(ebmfcov_pt_laplace_split_init$scaled_L, group_overlap_1$true_L), 1, max) > 0.99]
+```
+
+In this case, EBMFcov is able to accurately recover 9 components.
+
+This is the ELBO:
+```{r}
+ebmfcov_pt_laplace_split_init$ebmfcov_diag_fit$fl$elbo
+```
+
+## SINDCLUS
+
+```{r}
+sindclus_update <- function(sind_obj, S, r, off_diagonal, additive_term, conv_tol){
+  n <- nrow(S)
+  fold <- sind_obj$obj_func_val + 2*conv_tol*sind_obj$obj_func_val
+  num_iter <- 0
+  W <- sind_obj$W
+  P <- sind_obj$P
+  Q <- sind_obj$Q
+  c <- sind_obj$c
+  
+  while (((fold - sind_obj$obj_func_val) > conv_tol*sind_obj$obj_func_val) | (num_iter < 3)){
+    fold <- sind_obj$obj_func_val
+    num_iter <- num_iter + 1
+    for (i in 1:r){
+      # define S-bar
+      if (r == 1){
+        SS <- S - sind_obj$c
+      } else{
+        SS <- S - P[,-i] %*% diag(W[-c(i)], ncol = (length(W)-1)) %*% t(Q[,-i]) - c
+      }
+      
+      # Update W(i)
+      T1 <- t(c(SS))
+      
+      # Sub step: Correct P[,i] or Q[,i] in case column is zero; replace it by 1
+      while (sum(P[,i]) == 0){
+        # set.seed(as.numeric(Sys.time()))
+        P[,i] <- round(runif(n))
+        print('correction of P')
+      }
+      
+      while (sum(Q[,i]) == 0){
+        # set.seed(as.numeric(Sys.time()))
+        Q[,i] <- round(runif(n))
+        print('correction of Q')
+      }
+      
+      # Update W(i)
+      if (off_diagonal == TRUE){
+        #W[i] <- T1/(t(kronecker(Q[,i], P[,i])) * c(1 - diag(n))) #This is matlab notation
+        g <- (t(kronecker(Q[,i], P[,i])) * c(1 - diag(n)))
+        W[i] <- sum((T1)*(g))/sum((g)^2)
+      }
+      else{
+        #W[i] <- T1/(t(kronecker(Q[,i], P[,i]))) #This is matlab notation
+        g <- (t(kronecker(Q[,i], P[,i])))
+        W[i] <- sum((T1)*(g))/sum((g)^2)
+      }
+      # Set negative elements to zero
+      if (W[i] < 0){
+        W[i] <- 0
+      }
+      
+      if (off_diagonal == TRUE){
+        # Update P (original SINDCLUS algo)
+        V1 <- rowSums((SS - t(t(rep(1,n)))%*%kronecker(W[i], Q[,i]) )^2 * c(1-diag(n)))
+        V2 <- rowSums((SS^2)* c(1-diag(n))) 
+        
+        P[,i] <- as.numeric(V1 < V2)
+        # Update Q (original SINDCLUS algo)
+        T3 <- t(SS)
+        X1 <- rowSums((T3 - t(t(rep(1,n)))%*%kronecker(W[i], P[,i]) )^2 * c(1-diag(n)))
+        X2 <- rowSums((T3^2)* c(1-diag(n)))
+        Q[,i] <- as.numeric(X1 < X2)
+      }
+      else{
+        # Update P (original SINDCLUS algo)
+        V1 <- rowSums((SS - t(t(rep(1,n)))%*%kronecker(W[i], Q[,i]) )^2)
+        V2 <- rowSums((SS^2)) #check
+        
+        P[,i] <- as.numeric(V1 < V2)
+        # Update Q (original SINDCLUS algo)
+        T3 <- t(SS)
+        X1 <- rowSums((T3 - t(t(rep(1,n)))%*%kronecker(W[i], P[,i]) )^2)
+        X2 <- rowSums((T3^2))
+        Q[,i] <- as.numeric(X1 < X2)
+      }
+      
+      # Update c
+      if (additive_term == TRUE){
+        if (off_diagonal == TRUE){
+          c <- sum((S - P %*% diag(W) %*% t(Q))*(1-diag(n)))/sum(1 - diag(n))
+        }
+        else{
+          c <- mean(S - P %*% diag(W) %*% t(Q))
+        }
+      }
+    }
+    
+    if (off_diagonal == TRUE){
+      sind_obj$obj_func_val <- sum(((S - (P%*% diag(W) %*% t(Q)) - c) * (1 - diag(n)))^2)
+    }
+    else{
+      sind_obj$obj_func_val <- sum((S - (P%*% diag(W) %*% t(Q)) - c)^2)
+    }
+    sind_obj$obj_func_list <- c(sind_obj$obj_func_list, sind_obj$obj_func_val)
+  }
+  sind_obj$W <- W
+  sind_obj$P <- P
+  sind_obj$Q <- Q
+  sind_obj$c <- c
+  sind_obj$off_diagonal <- off_diagonal
+  sind_obj$additive_term <- additive_term
+  return(sind_obj)
+}
+```
+
+```{r}
+sindclus_update.wrapper <- function(input, init_L, args){
+  r <- ncol(init_L)
+  n <- nrow(input$YYt)
+  
+  # initialize sindclus object
+  W <- apply(init_L, 2, max)^2 # assume none of the columns are zero vectors
+  P <- t(t(init_L)/sqrt(W))
+
+  # pre-processing to make P binary
+  P <- round(P)
+
+  Q <- P
+  
+  if (args$additive_term == TRUE){
+    if (args$off_diagonal == TRUE){
+      c <- sum((input$YYt - P %*% diag(W) %*% t(Q))*(1 - diag(n)))/sum(1 - diag(n))
+    }
+    else{
+      c <- mean(input$YYt - P %*% diag(W) %*% t(Q))
+    }
+  }
+  else{
+    c <- 0 # C is a matrix where all the values are just one value
+  }
+  
+  obj_func_val <- sum((input$YYt - (P%*% diag(W) %*% t(Q)))^2)
+  obj_func_list <- c(obj_func_val)
+  
+  sind_obj <- list(P = P, Q = Q, W = W, c = c, 
+                   obj_func_val = obj_func_val, obj_func_list = obj_func_list, init_method = 'user_provided_init')
+  
+  set.seed(args$seed)
+  sindclus_fit <- sindclus_update(sind_obj = sind_obj,
+                                  S = input$YYt, 
+                                  r = r, 
+                                  off_diagonal = args$off_diagonal,
+                                  additive_term = args$additive_term,
+                                  conv_tol = 1e-6)
+  return(list(sindclus_fit = sindclus_fit,
+              est_LLt = (sindclus_fit$P %*% diag(sindclus_fit$W) %*% t(sindclus_fit$P))))
+}
+```
+
+```{r}
+sindclus_pt_laplace_split_init <- sindclus_update.wrapper(group_overlap_1$data, pt_laplace_split_init_L, args = list(additive_term = FALSE, off_diagonal = FALSE, seed = 1))
+```
+
+```{r}
+sindclus_P_est <- sindclus_pt_laplace_split_init$sindclus_fit$P[ , apply(sindclus_pt_laplace_split_init$sindclus_fit$P, 2, sum) > 0]
+
+sindclus_Q_est <- sindclus_pt_laplace_split_init$sindclus_fit$P[ , apply(sindclus_pt_laplace_split_init$sindclus_fit$P, 2, sum) > 0]
+```
+
+This is a heatmap of the estimate:
+```{r}
+plot_heatmap(sindclus_P_est)
+```
+
+This is the correlation between the estimates and the true factors:
+```{r}
+apply(cor(sindclus_P_est, group_overlap_1$true_L), 1, max)
+```
+
+This is the true factor with which each estimate is most correlated:
+```{r}
+apply(cor(sindclus_P_est, group_overlap_1$true_L), 1, which.max)
+```
+
+These are the true factors which are accurately recovered:
+```{r}
+apply(cor(sindclus_P_est, group_overlap_1$true_L), 1, which.max)[apply(cor(sindclus_P_est, group_overlap_1$true_L), 1, max) > 0.99]
+```
+
+The $P$ estimate recovers 10 components accurately.
+
+This is the objective function:
+```{r}
+sindclus_pt_laplace_split_init$sindclus_fit$obj_func_val
+```
+
+# point-Laplace Initialization with K/2 input
+
+In this section, I check how well the initialization does when it's given the true number of components (which equates to inputting half of the true number of components).
+
+```{r}
+pt_laplace_split_half_K_init_L <- laplace_split_initialization(group_overlap_1$data$YYt, 5)
+```
+
+This is a heatmap of the initialization:
+```{r}
+plot_heatmap(pt_laplace_split_half_K_init_L)
+```
+
+This is the correlation between the estimates and the true factors:
+```{r}
+apply(cor(pt_laplace_split_half_K_init_L, group_overlap_1$true_L), 1, max)
+```
+
+This is the true factor with which each estimate is most correlated:
+```{r}
+apply(cor(pt_laplace_split_half_K_init_L, group_overlap_1$true_L), 1, which.max)
+```
+
+This initialization does not match the true loadings matrix very well. However, perhaps being given the correct number of components allows the backfitting methods to obtain a good estimate.
+
+## CoDesymNMF
+
+```{r}
+codesymnmf_pt_laplace_half_K_init <- codesymnmf_update.wrapper(group_overlap_1$data$YYt, pt_laplace_split_half_K_init_L)
+```
+
+This is a heatmap of the estimate:
+```{r}
+plot_heatmap(codesymnmf_pt_laplace_half_K_init$H)
+```
+
+This is the correlation between the estimates and the true factors:
+```{r}
+apply(cor(codesymnmf_pt_laplace_half_K_init$H, group_overlap_1$true_L), 1, max)
+```
+
+This is the true factor with which each estimate is most correlated:
+```{r}
+apply(cor(codesymnmf_pt_laplace_half_K_init$H, group_overlap_1$true_L), 1, which.max)
+```
+
+These are the true factors which are accurately recovered:
+```{r}
+apply(cor(codesymnmf_pt_laplace_half_K_init$H, group_overlap_1$true_L), 1, which.max)[apply(cor(codesymnmf_pt_laplace_half_K_init$H, group_overlap_1$true_L), 1, max) > 0.99]
+```
+
+CoDesymNMF is able to recover all ten components.
+
+This is the objective function:
+```{r}
+codesymnmf_pt_laplace_half_K_init$obj_func
+```
+
+## EBCD
+
+```{r}
+ebcd_backfit_pt_laplace_half_K_init <- ebcd_backfit.wrapper(t(group_overlap_1$data$Y), pt_laplace_split_half_K_init_L, ebnm::ebnm_generalized_binary)
+```
+
+This is a heatmap of the estimate:
+```{r}
+plot_heatmap(ebcd_backfit_pt_laplace_half_K_init$EL)
+```
+
+This is the correlation between the estimates and the true factors:
+```{r}
+apply(cor(ebcd_backfit_pt_laplace_half_K_init$EL, group_overlap_1$true_L), 1, max)
+```
+
+This is the true factor with which each estimate is most correlated:
+```{r}
+apply(cor(ebcd_backfit_pt_laplace_half_K_init$EL, group_overlap_1$true_L), 1, which.max)
+```
+
+These are the true factors which are accurately recovered:
+```{r}
+apply(cor(ebcd_backfit_pt_laplace_half_K_init$EL, group_overlap_1$true_L), 1, which.max)[apply(cor(ebcd_backfit_pt_laplace_half_K_init$EL, group_overlap_1$true_L), 1, max) > 0.99]
+```
+
+EBCD is also able to accurately recover all ten components.
+
+This is the ELBO:
+```{r}
+ebcd_backfit_pt_laplace_half_K_init$obj
+```
+
+## EBMFcov
+
+```{r}
+ebmfcov_pt_laplace_half_K_init <- ebmfcov_diag.wrapper(group_overlap_1$data, pt_laplace_split_half_K_init_L, args = list(ebnm_fn = ebnm::ebnm_generalized_binary))
+```
+
+This is a heatmap of the estimate:
+```{r}
+plot_heatmap(ebmfcov_pt_laplace_half_K_init$scaled_L)
+```
+
+This is the correlation between the estimates and the true factors:
+```{r}
+apply(cor(ebmfcov_pt_laplace_half_K_init$scaled_L, group_overlap_1$true_L), 1, max)
+```
+
+This is the true factor with which each estimate is most correlated:
+```{r}
+apply(cor(ebmfcov_pt_laplace_half_K_init$scaled_L, group_overlap_1$true_L), 1, which.max)
+```
+
+These are the true factors which are accurately recovered:
+```{r}
+apply(cor(ebmfcov_pt_laplace_half_K_init$scaled_L, group_overlap_1$true_L), 1, which.max)[apply(cor(ebmfcov_pt_laplace_half_K_init$scaled_L, group_overlap_1$true_L), 1, max) > 0.99]
+```
+
+This is the ELBO:
+```{r}
+ebmfcov_pt_laplace_half_K_init$ebmfcov_diag_fit$fl$elbo
+```
+
+EBMFcov also accurately recovers all ten components. Furthermore, the ELBO here is higher than the EBLO of the other estimates.
+
+## SINDCLUS
+
+```{r}
+sindclus_pt_laplace_half_K_init <- sindclus_update.wrapper(group_overlap_1$data, pt_laplace_split_half_K_init_L, args = list(additive_term = FALSE, off_diagonal = FALSE, seed = 1))
+```
+
+```{r}
+sindclus_P_est <- sindclus_pt_laplace_half_K_init$sindclus_fit$P[ , apply(sindclus_pt_laplace_half_K_init$sindclus_fit$P, 2, sum) > 0]
+
+sindclus_Q_est <- sindclus_pt_laplace_half_K_init$sindclus_fit$Q[ , apply(sindclus_pt_laplace_half_K_init$sindclus_fit$Q, 2, sum) > 0]
+```
+
+This is a heatmap of the estimate:
+```{r}
+plot_heatmap(sindclus_P_est)
+```
+
+This is the correlation between the estimates and the true factors:
+```{r}
+apply(cor(sindclus_P_est, group_overlap_1$true_L), 1, max)
+```
+
+This is the true factor with which each estimate is most correlated:
+```{r}
+apply(cor(sindclus_P_est, group_overlap_1$true_L), 1, which.max)
+```
+
+These are the true factors which are accurately recovered:
+```{r}
+apply(cor(sindclus_P_est, group_overlap_1$true_L), 1, which.max)[apply(cor(sindclus_P_est, group_overlap_1$true_L), 1, max) > 0.99]
+```
+
+The $P$ estimate recovers 9 components accurately.
+
+This is the objective function:
+```{r}
+sindclus_pt_laplace_split_init$sindclus_fit$obj_func_val
+```
+
+SINDCLUS is only able to recover eight of the components. So having the correct number of components is not enough to recover the true loadings.
+
+This is the objective function:
+```{r}
+sindclus_pt_laplace_half_K_init$sindclus_fit$obj_func_val
+```
+
+# CoDesymNMF Initialization with larger K input
+
+```{r}
+codesymnmf_init_larger_K_L <- codesymnmf_init.wrapper(group_overlap_1$data$YYt, 19)
+```
+
+This is a heatmap of the initialization:
+```{r}
+plot_heatmap(codesymnmf_init_larger_K_L)
+```
+
+This is the correlation between the estimates and the true factors:
+```{r}
+apply(cor(codesymnmf_init_larger_K_L, group_overlap_1$true_L), 1, max)
+```
+
+This is the true factor with which each estimate is most correlated:
+```{r}
+apply(cor(codesymnmf_init_larger_K_L, group_overlap_1$true_L), 1, which.max)
+```
+
+This method also splits effects when given a larger $K$ value. For example, factors 1 and 4 are both similar to the true factor 10, but neither factor has a correlation greater than 0.99. Meanwhile, when given the correct $K$ value, the estimate closest to the true factor 10 has correlation greater than 0.99.
+
+## CoDesymNMF
+
+```{r}
+codesymnmf_codesymnmf_larger_K_init <- codesymnmf_update.wrapper(group_overlap_1$data$YYt, codesymnmf_init_larger_K_L)
+```
+
+This is a heatmap of the estimate:
+```{r}
+plot_heatmap(codesymnmf_codesymnmf_larger_K_init$H)
+```
+
+This is the correlation between the estimates and the true factors:
+```{r}
+apply(cor(codesymnmf_codesymnmf_larger_K_init$H, group_overlap_1$true_L), 1, max)
+```
+
+This is the true factor with which each estimate is most correlated:
+```{r}
+apply(cor(codesymnmf_codesymnmf_larger_K_init$H, group_overlap_1$true_L), 1, which.max)
+```
+
+These are the true factors which are accurately recovered:
+```{r}
+apply(cor(codesymnmf_codesymnmf_larger_K_init$H, group_overlap_1$true_L), 1, which.max)[apply(cor(codesymnmf_codesymnmf_larger_K_init$H, group_overlap_1$true_L), 1, max) > 0.99]
+```
+
+CoDesymNMF is able to accurately recover five components.
+
+This is the objective function:
+```{r}
+codesymnmf_codesymnmf_larger_K_init$obj_func
+```
+
+## EBCD
+
+```{r}
+ebcd_backfit_codesymnmf_larger_K_init <- ebcd_backfit.wrapper(t(group_overlap_1$data$Y), codesymnmf_init_larger_K_L, ebnm::ebnm_generalized_binary)
+```
+
+This is a heatmap of the estimate:
+```{r}
+plot_heatmap(ebcd_backfit_codesymnmf_larger_K_init$EL)
+```
+
+This is the correlation between the estimates and the true factors:
+```{r}
+apply(cor(ebcd_backfit_codesymnmf_larger_K_init$EL, group_overlap_1$true_L), 1, max)
+```
+
+This is the true factor with which each estimate is most correlated:
+```{r}
+apply(cor(ebcd_backfit_codesymnmf_larger_K_init$EL, group_overlap_1$true_L), 1, which.max)
+```
+
+These are the true factors which are accurately recovered:
+```{r}
+apply(cor(ebcd_backfit_codesymnmf_larger_K_init$EL, group_overlap_1$true_L), 1, which.max)[apply(cor(ebcd_backfit_codesymnmf_larger_K_init$EL, group_overlap_1$true_L), 1, max) > 0.99]
+```
+
+```{r}
+plot(ebcd_backfit_codesymnmf_larger_K_init$EL[,4], group_overlap_1$true_L[,10])
+```
+
+EBCD accurately recovers six components. Some of the EBCD loadings estimates are not very close to binary, e.g. the fourth estimated factor. Would using a more strictly binary prior lead to a better solution? 
+
+This is the ELBO:
+```{r}
+ebcd_backfit_codesymnmf_larger_K_init$obj
+```
+
+## EBMFcov
+
+```{r}
+ebmfcov_codesymnmf_larger_K_init <- ebmfcov_diag.wrapper(group_overlap_1$data, codesymnmf_init_larger_K_L, args = list(ebnm_fn = ebnm::ebnm_generalized_binary))
+```
+
+Note: this takes longer to run than the other methods.
+
+This is a heatmap of the estimate:
+```{r}
+plot_heatmap(ebmfcov_codesymnmf_larger_K_init$scaled_L)
+```
+
+This is the correlation between the estimates and the true factors:
+```{r}
+apply(cor(ebmfcov_codesymnmf_larger_K_init$scaled_L, group_overlap_1$true_L), 1, max)
+```
+
+This is the true factor with which each estimate is most correlated:
+```{r}
+apply(cor(ebmfcov_codesymnmf_larger_K_init$scaled_L, group_overlap_1$true_L), 1, which.max)
+```
+
+These are the true factors which are accurately recovered:
+```{r}
+apply(cor(ebmfcov_codesymnmf_larger_K_init$scaled_L, group_overlap_1$true_L), 1, which.max)[apply(cor(ebmfcov_codesymnmf_larger_K_init$scaled_L, group_overlap_1$true_L), 1, max) > 0.99]
+```
+
+In this case, EBMFcov is still able to accurately recover all 10 components. Why does EBMFcov work and e.g. EBCD does not work? Why doesn't EBMFcov work as well in the point-Laplace initialization setting?
+
+This is the ELBO:
+```{r}
+ebmfcov_codesymnmf_larger_K_init$ebmfcov_diag_fit$fl$elbo
+```
+
+This ELBO is higher than the ELBO of the other estimates.
+
+## SINDCLUS
+
+```{r}
+sindclus_codesymnmf_larger_K_init <- sindclus_update.wrapper(group_overlap_1$data, codesymnmf_init_larger_K_L, args = list(additive_term = FALSE, off_diagonal = FALSE, seed = 1))
+```
+
+```{r}
+sindclus_codesymnmf_larger_K_init_est_P <- sindclus_codesymnmf_larger_K_init$sindclus_fit$P[, apply(sindclus_codesymnmf_larger_K_init$sindclus_fit$P, 2, sum) > 0]
+sindclus_codesymnmf_larger_K_init_est_Q <- sindclus_codesymnmf_larger_K_init$sindclus_fit$Q[, apply(sindclus_codesymnmf_larger_K_init$sindclus_fit$Q, 2, sum) > 0]
+```
+
+This is a heatmap of the estimate:
+```{r}
+plot_heatmap(sindclus_codesymnmf_larger_K_init_est_P)
+```
+
+This is the correlation between the estimates and the true factors:
+```{r}
+apply(cor(sindclus_codesymnmf_larger_K_init_est_P, group_overlap_1$true_L), 1, max)
+```
+
+This is the true factor with which each estimate is most correlated:
+```{r}
+apply(cor(sindclus_codesymnmf_larger_K_init_est_P, group_overlap_1$true_L), 1, which.max)
+```
+
+These are the true factors which are accurately recovered:
+```{r}
+apply(cor(sindclus_codesymnmf_larger_K_init_est_P, group_overlap_1$true_L), 1, which.max)[apply(cor(sindclus_codesymnmf_larger_K_init_est_P, group_overlap_1$true_L), 1, max) > 0.99]
+```
+
+The $P$ estimate is able to accurately recover eight factors.
+
+This is the objective function:
+```{r}
+sindclus_codesymnmf_larger_K_init$sindclus_fit$obj_func_val
+```
