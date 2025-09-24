@@ -1,0 +1,317 @@
+---
+title: "unbal_nonoverlap_pt_laplace_split_init_flash_normalf"
+author: "Annie Xie"
+date: "2025-09-24"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+In this analysis, I investigate flash with a normal prior on $F$ initialized with the point-Laplace plus splitting strategy in the unbalanced nonoverlapping setting. A surprising observation is that the estimate from this method returns extra factors. However, we would expect flash with a normal prior on $F$ to return the correct number of factors because there is an argument in the flash paper which states the method is conservative with the number of factors it utilizes. In addition, the flash model is correctly specified in this simulation, so we don't expect extra factors due to model misspecification. In this analysis, my aim is to explore why this happens. I did a similar investigation of flash with normal prior on $F$ in the balanced nonoverlapping setting [here](balanced_nonoverlapping_flash_normalf.html)
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+library(flashier)
+library(ashr)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+```{r}
+compute_L2_fit <- function(est, dat, with_diag = FALSE){
+  if (with_diag == FALSE){
+    score <- sum((dat - est)^2) - sum((diag(dat) - diag(est))^2)
+  }
+  else{
+    score <- sum((dat - est)^2)
+  }
+  return(score)
+}
+```
+
+# Flash with Normal Prior on F (with backfitting)
+
+```{r}
+group_nonoverlap_2 <- readRDS("data/group_nonoverlap_2.rds")
+group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1 <- readRDS("data/adclus_same_init_dsc_ex/group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1.rds")
+```
+
+## Visualization of Estimate
+This is a heatmap of the true $L$ that we are hoping to recover:
+```{r}
+plot_heatmap(group_nonoverlap_2$true_L)
+```
+
+This is a heatmap of $\hat{L}$, the estimate for $L$ from Flashier with normal prior on $F$:
+```{r}
+plot_heatmap(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_L, brks = seq(0, max(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_L), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}$:
+```{r}
+pops_vec <- c(rep('A', 20), rep('B', 50), rep('C', 30), rep('D', 60))
+plot_loadings(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_L, pops_vec)
+```
+
+As previously mentioned, the loadings estimate returns extra factors. Interestingly, these extra factors don't seem to add much -- in these visualizations, the factors look like zero vectors.
+
+# Visualizations of trivial factors
+
+This is a heatmap of the trivial factors:
+```{r}
+trivial.idx <- c(1,3,4)
+plot_heatmap(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_L[,trivial.idx], brks = seq(0, max(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_L[,trivial.idx]), length.out = 50))
+```
+
+This is a plot of the entries of each of the trivial factors:
+```{r}
+par(mfrow = c(3,1))
+for (i in trivial.idx){
+  plot(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_L[,i], ylab = 'loading value')
+}
+par(mfrow = c(1,1))
+```
+
+We see that these factors contain very small entries.
+
+# Try further backfitting
+
+I test if further backfitting will zero out these factors. Theoretically, it should, but based off my previous experience, I am not sure that it will.
+
+```{r}
+fl <- group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$fit_obj
+fl_more_backfit <- flash_backfit(fl, maxiter = 50000, tol = 10^(-20))
+
+fl_more_backfit <- flash_nullcheck(fl_more_backfit)
+fl_more_backfit$n_factors
+```
+
+```{r}
+fl_more_backfit_scaled <- ldf(fl_more_backfit)
+fl_more_backfit_scaled_L <- fl_more_backfit_scaled$L %*% diag(sqrt(fl_more_backfit_scaled$D))
+```
+
+This is a plot of the entries of each of the trivial factors:
+```{r}
+par(mfrow = c(3,1))
+for (i in trivial.idx){
+  plot(fl_more_backfit_scaled_L[,i], ylab = 'loading value')
+}
+par(mfrow = c(1,1))
+```
+
+Backfitting did make the factors smaller. However, the method still does not remove these factors.
+
+# Try flash_nullcheck
+
+I also test if the flash nullcheck function will zero out these factors. Theoretically, it should, but based off my previous experience, I am not sure that it will.
+
+```{r}
+fl_nullcheck <- flash_nullcheck(fl)
+fl_nullcheck$n_factors
+```
+
+The flash nullcheck function did not remove any factors.
+
+# Visualizations related to fit
+
+This is the true Gram matrix, $\frac{1}{p}XX'$:
+```{r}
+plot_heatmap(group_nonoverlap_2$data$YYt, colors = c('blue','gray96', 'red'), brks = seq(-max(abs(group_nonoverlap_2$data$YYt)), max(abs(group_nonoverlap_2$data$YYt)), length.out = 50))
+```
+
+This is a heatmap of the estimate of the Gram matrix, $\hat{L}\hat{L}'$:
+```{r}
+plot_heatmap(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_LLt, brks = seq(0, max(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_LLt), length.out = 50))
+```
+
+This is a scatter plot of the fitted values vs observed values:
+```{r}
+ggplot(data = NULL, aes(x = c(group_nonoverlap_2$data$YYt), y = c(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_LLt))) + geom_point() + ylim(-1, 7) + xlim(-1,7) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+Let's focus on the off-diagonal elements:
+```{r}
+diag_idx <- seq(1, prod(dim(group_nonoverlap_2$data$YYt)), length.out = ncol(group_nonoverlap_2$data$YYt))
+off_diag_idx <- setdiff(c(1:prod(dim(group_nonoverlap_2$data$YYt))), diag_idx) 
+```
+
+```{r}
+ggplot(data = NULL, aes(x = c(group_nonoverlap_2$data$YYt)[off_diag_idx], y = c(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_LLt)[off_diag_idx])) + geom_point() + ylim(-1, 7) + xlim(-1,7) + xlab('Observed Values') + ylab('Fitted Values') + geom_abline(slope = 1, intercept = 0, color = 'red')
+```
+
+We see that the estimate has a good fit with the observed data.
+
+This is the elbo of the flash fit:
+```{r}
+group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$fit_obj$elbo
+```
+
+This is the Frobenius norm of the difference between $\hat{L}\hat{L}'$ and $\frac{1}{p}YY'$:
+```{r}
+compute_L2_fit(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$est_LLt, group_nonoverlap_2$dat, with_diag = TRUE)
+```
+
+This is the Frobenius norm of the difference between $\hat{L}\hat{F}'$ and $Y$:
+```{r}
+compute_L2_fit(fitted(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$fit_obj), group_nonoverlap_2$data$Y)
+```
+
+# Exploring the effect of the trivial factors
+
+This is the Frobenius norm of the difference between $\hat{L}\hat{F}'$ and $Y$ without the trivial factors:
+```{r}
+compute_L2_fit(tcrossprod(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$fit_obj$L_pm[,-trivial.idx], group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$fit_obj$F_pm[, -trivial.idx]), group_nonoverlap_2$data$Y)
+```
+
+Not including the trivial factors does not significantly change the fit.
+
+These are the KL divergence values:
+```{r}
+group_nonoverlap_2_pt_laplace_split_1_flash_normalf_1$fit_obj$flash_fit$KL
+```
+
+The (negative) KL values for the trivial loadings are 55.45177 and the (negative) KL values for the corresponding factors are 0. This means that including these extra factors increases the objective function. In theory, the negative KL should not be negative, so maybe there's an optimization issue?
+
+# Point-Exponential Prior
+
+For comparison, I test the method with the point-exponential prior.
+
+```{r}
+group_nonoverlap_2_pt_laplace_split_1_flash_normalf_2 <- readRDS("data/symnmf_same_init_dsc_ex/group_nonoverlap_2_pt_laplace_split_1_flash_normalf_2.rds")
+```
+
+## Visualization of Estimate
+
+This is a heatmap of $\hat{L}$, the estimate for $L$ from Flashier with normal prior on $F$ and point-exponential prior on $L$:
+```{r}
+plot_heatmap(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_2$est_L, brks = seq(0, max(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_2$est_L), length.out = 50))
+```
+
+This is a scatterplot of the entries of $\hat{L}$:
+```{r}
+pops_vec <- c(rep('A', 20), rep('B', 50), rep('C', 30), rep('D', 60))
+plot_loadings(group_nonoverlap_2_pt_laplace_split_1_flash_normalf_2$est_L, pops_vec)
+```
+
+This estimate does not return any extra factors. So I wonder if the trivial factors stem from an optimization issue with the generalized binary prior.
+
+# Testing how many factors flash wants to add
+
+## Generalized Binary
+```{r}
+flash_normalf_gb_largeK_fit <- flash_init(group_nonoverlap_2$data$Y) %>%
+  flash_greedy(Kmax = 15, ebnm_fn = c(ebnm::ebnm_generalized_binary, ebnm_normal)) %>%
+  flash_backfit(maxiter = 10000, tol = 10^(-20)) %>%
+  flash_nullcheck()
+```
+
+This is a heatmap of the loadings estimate:
+```{r}
+plot_heatmap(flash_normalf_gb_largeK_fit$L_pm)
+```
+
+This estimate returns extra factors. That is unexpected given the argument that flashier is conservative with the number of factors.
+
+## A more strict version of generalized binary
+```{r}
+ebnm_generalized_binary_fix_scale <- function(x, s, mode = 'estimate', g_init = NULL, fix_g = FALSE, output = ebnm_output_default(), control = NULL){
+  ebnm_gb_output <- ebnm::ebnm_generalized_binary(x = x, s = s, mode = mode, 
+                                                  scale = 0.01, 
+                                                  g_init = g_init, fix_g = fix_g,
+                                                  output = output, control = control)
+  return(ebnm_gb_output)
+}
+```
+
+```{r, message = FALSE, warning = FALSE}
+flash_normalf_binary_largeK_fit <- flash_init(group_nonoverlap_2$data$Y) %>%
+  flash_greedy(Kmax = 15, ebnm_fn = c(ebnm_generalized_binary_fix_scale, ebnm_normal)) %>%
+  flash_backfit(maxiter = 10000, tol = 10^(-20)) %>%
+  flash_nullcheck()
+```
+
+This is a heatmap of the loadings estimate:
+```{r}
+plot_heatmap(flash_normalf_binary_largeK_fit$L_pm)
+```
+
+## Point-Exponential
+```{r}
+flash_normalf_pexp_largeK_fit <- flash_init(group_nonoverlap_2$data$Y) %>%
+  flash_greedy(Kmax = 15, ebnm_fn = c(ebnm::ebnm_point_exponential, ebnm_normal)) %>%
+  flash_backfit(maxiter = 10000, tol = 10^(-20)) %>%
+  flash_nullcheck()
+```
+
+This is a heatmap of the loadings estimate:
+```{r}
+plot_heatmap(flash_normalf_pexp_largeK_fit$L_pm)
+```
+
+This estimate does not return extra factors.
+
+## Archive - Binormal prior
+
+<!--
+```{r}
+dbinormal = function (x,s,s0,lambda,log=TRUE){
+  pi0 = 0.5
+  pi1 = 0.5
+  s2 = s^2
+  s02 = s0^2
+  l0 = dnorm(x,0,sqrt(lambda^2 * s02 + s2),log=TRUE)
+  l1 = dnorm(x,lambda,sqrt(lambda^2 * s02 + s2),log=TRUE)
+  logsum = log(pi0*exp(l0) + pi1*exp(l1))
+ 
+  m = pmax(l0,l1)
+  logsum = m + log(pi0*exp(l0-m) + pi1*exp(l1-m))
+  if (log) return(sum(logsum))
+  else return(exp(sum(logsum)))
+}
+```
+
+```{r}
+# need to edit this code to turn it into an ebnm function
+ebnm_binormal = function(x,s, g_init = NULL, fix_g = FALSE, output = ebnm_output_default(), control = NULL){
+  # Add g_init to make the method run
+  if(is.null(dim(x)) == FALSE){
+    x <- c(x)
+  }
+  s0 = 0.01
+  if (fix_g == TRUE){
+    g = g_init
+  } else {
+    lambda = optimize(function(lambda){-dbinormal(x,s,s0,lambda,log=TRUE)},
+              lower = 0, upper = max(x))$minimum
+    g = ashr::normalmix(pi=c(0.5,0.5), mean=c(0,lambda), sd=c((lambda * s0) , (lambda * s0)))
+  }
+  postmean = ashr::postmean(g,ashr::set_data(x,s))
+  postsd = ashr::postsd(g,ashr::set_data(x,s))
+  log_likelihood <- ashr::calc_loglik(g, ashr::set_data(x,s))
+  
+  res <- structure(list(fitted_g = g, posterior = data.frame(mean=postmean,second_moment=postsd^2 + postmean^2), log_likelihood = log_likelihood), class = c('list','ebnm'))
+  return(res)
+}
+```
+
+```{r}
+flash_normalf_binormal_largeK_fit <- flash_init(group_nonoverlap_2$data$Y) %>%
+  flash_greedy(Kmax = 15, ebnm_fn = c(ebnm_binormal, ebnm::ebnm_normal)) %>%
+  flash_backfit(maxiter = 10000, tol = 10^(-20)) %>%
+  flash_nullcheck()
+```
+
+This is a heatmap of the loadings estimate:
+```{r}
+flash_normalf_binormal_largeK_fit_scaled <- ldf(flash_normalf_binormal_largeK_fit, 'i')
+plot_heatmap(flash_normalf_binormal_largeK_fit_scaled$L)
+```
+-->
