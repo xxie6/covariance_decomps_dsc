@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Annie Xie" />
+
+<meta name="date" content="2025-09-22" />
+
+<title>init_comparison_overlap_setting</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">covariance_decomps_dsc</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/xxie6/covariance_decomps_dsc">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">init_comparison_overlap_setting</h1>
+<h4 class="author">Annie Xie</h4>
+<h4 class="date">2025-09-22</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2025-09-24
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>covariance_decomps_dsc/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20250203code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20250203)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20250203code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20250203)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree6e697ad3769c47aad638075d51a6d46942b92844targetblank6e697ada">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/6e697ad3769c47aad638075d51a6d46942b92844" target="_blank">6e697ad</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree6e697ad3769c47aad638075d51a6d46942b92844targetblank6e697ada"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/6e697ad3769c47aad638075d51a6d46942b92844" target="_blank">6e697ad</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    data/.DS_Store
+    Ignored:    data/adclus_cov_comp_dsc_ex/.DS_Store
+    Ignored:    data/adclus_same_init_dsc_ex/.DS_Store
+    Ignored:    data/pt_laplace_split_init_ex/.DS_Store
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown
+(<code>analysis/init_comparison_overlap_setting.Rmd</code>) and HTML
+(<code>docs/init_comparison_overlap_setting.html</code>) files. If
+you’ve configured a remote Git repository (see
+<code>?wflow_git_remote</code>), click on the hyperlinks in the table
+below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/6e697ad3769c47aad638075d51a6d46942b92844/analysis/init_comparison_overlap_setting.Rmd" target="_blank">6e697ad</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-24
+</td>
+<td>
+Add comparison of initializations in overlap setting
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>In this analysis, I investigate the different initialization
+strategies in the sparse overlapping setting.</p>
+<pre class="r"><code>library(dplyr)
+library(ggplot2)
+library(ggrepel)
+library(pheatmap)</code></pre>
+<pre class="r"><code>source(&#39;code/visualization_functions.R&#39;)</code></pre>
+</div>
+<div id="data" class="section level1">
+<h1>Data</h1>
+<pre class="r"><code>group_overlap_1 &lt;- readRDS(&#39;data/group_overlap_1.rds&#39;)</code></pre>
+<p>This is a heatmap of the true loadings matrix:</p>
+<pre class="r"><code>plot_heatmap(group_overlap_1$true_L)</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="codesymnmf-initialization" class="section level1">
+<h1>CoDesymNMF Initialization</h1>
+<pre class="r"><code>library(codesymnmf)
+codesymnmf_init.wrapper &lt;- function(S, Kmax){
+  codesymnmf_L &lt;- codesymnmf(S, r = Kmax, maxiter = 20)$H
+  return(codesymnmf_L)
+}</code></pre>
+<pre class="r"><code>codesymnmf_init_L &lt;- codesymnmf_init.wrapper(group_overlap_1$data$YYt, 10)</code></pre>
+<p>This is a heatmap of the initialization:</p>
+<pre class="r"><code>plot_heatmap(codesymnmf_init_L)</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the estimates and the true
+factors:</p>
+<pre class="r"><code>apply(cor(codesymnmf_init_L, group_overlap_1$true_L), 1, max)</code></pre>
+<pre><code> [1] 0.9337311 0.9979477 0.9969308 0.9956279 0.8976978 0.9960410 0.9973871
+ [8] 0.9935060 0.9940303 0.9973510</code></pre>
+<p>This is the true factor with which each estimate is most
+correlated:</p>
+<pre class="r"><code>apply(cor(codesymnmf_init_L, group_overlap_1$true_L), 1, which.max)</code></pre>
+<pre><code> [1]  4  8  6  2  4  9  7  3  1 10</code></pre>
+</div>
+<div id="point-laplace-initialization" class="section level1">
+<h1>point-Laplace Initialization</h1>
+<pre class="r"><code>library(flashier)</code></pre>
+<pre><code>Loading required package: ebnm</code></pre>
+<pre class="r"><code>laplace_split_initialization &lt;- function(S, Kmax, verbose = 2, backfit_maxiter = 500, backfit_tol = NULL){
+  # backfitting is important in the tree setting
+  
+  # fit point-laplace fit with flash
+  flash_laplace_fit &lt;- flash_init(data = S, var_type = 0) |&gt;
+    flash_set_verbose(verbose = verbose) |&gt;
+    flash_greedy(Kmax = Kmax, ebnm_fn = ebnm::ebnm_point_laplace) |&gt;
+    flash_backfit(maxiter = backfit_maxiter, tol = backfit_tol) |&gt;
+    flash_nullcheck()
+  
+  # rescale fit so that L and F are of the same scale
+  flash_laplace_fit_scaled &lt;- ldf(flash_laplace_fit, &#39;i&#39;)
+  LL &lt;- flash_laplace_fit_scaled$L
+  ##FF &lt;- flash_laplace_fit_scaled$F
+  
+  # split into positive and negative components
+  LL &lt;- cbind(pmax(LL, 0), pmax(-LL, 0))
+  ##FF &lt;- cbind(pmax(FF, 0), pmax(-FF, 0))
+  
+  # remove columns of zeros
+  idx.nonzero &lt;- apply(LL, 2, function(x){return(sum(x^2))}) &gt; 10^(-10)
+  LL &lt;- LL[, idx.nonzero]
+  
+  # refit weights by least squares
+  n &lt;- nrow(S)
+  llt_vec &lt;- matrix(rep(0, ncol(LL)*n*n), ncol = ncol(LL))
+  for (i in 1:ncol(LL)){
+    llt_vec[,i] &lt;- c(LL[,i]%*%t(LL[,i]))
+  }
+
+  nnlm_fit &lt;- NNLM::nnlm(llt_vec, as.matrix(c(S), ncol = 1), alpha = c(0,0,0))
+
+  indices_keep &lt;- (nnlm_fit$coefficients &gt; 0)
+  LL_scaled &lt;- LL[,indices_keep] %*% diag(sqrt(nnlm_fit$coefficients[indices_keep]))
+  
+  return(LL_scaled)
+}</code></pre>
+<pre class="r"><code>pt_laplace_split_init_L &lt;- laplace_split_initialization(group_overlap_1$data$YYt, 10)</code></pre>
+<pre><code>Adding factor 1 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: -2073.351 
+Adding factor 2 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: -1189.264 
+Adding factor 3 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: -290.972 
+Adding factor 4 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: 467.432 
+Adding factor 5 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: 1409.040 
+Adding factor 6 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: 2119.385 
+Adding factor 7 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: 2806.472 
+Adding factor 8 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: 3422.576 
+Adding factor 9 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: 3811.459 
+Adding factor 10 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: 4183.462 
+Wrapping up...
+Done.
+Backfitting 10 factors (tolerance: 1.49e-04)...
+  Difference between iterations is within 1.0e+02...
+  Difference between iterations is within 1.0e+01...
+  Difference between iterations is within 1.0e+00...
+  Difference between iterations is within 1.0e-01...
+  Difference between iterations is within 1.0e-02...
+  Difference between iterations is within 1.0e-03...
+  Difference between iterations is within 1.0e-04...
+  Backfit complete. Objective: 5739.065 
+Wrapping up...
+Done.
+Nullchecking 10 factors...
+  No factor can be removed without significantly decreasing the objective.
+Done.</code></pre>
+<p>This is a heatmap of the initialization:</p>
+<pre class="r"><code>plot_heatmap(pt_laplace_split_init_L)</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the estimates and the true
+factors:</p>
+<pre class="r"><code>apply(cor(pt_laplace_split_init_L, group_overlap_1$true_L), 1, max)</code></pre>
+<pre><code> [1] 0.6431266 0.7644131 0.8945209 0.9089918 0.8687430 0.5168654 0.2539698
+ [8] 0.9988118 0.9980442 0.7229666 0.9000229 0.6628057 0.8884273 0.8963792
+[15] 0.4955015 0.9991816 0.2145595 0.4996449 0.9991287</code></pre>
+<p>This is the true factor with which each estimate is most
+correlated:</p>
+<pre class="r"><code>apply(cor(pt_laplace_split_init_L, group_overlap_1$true_L), 1, which.max)</code></pre>
+<pre><code> [1]  3 10  6  4 10  8  5  2  1  4  7  9  8  9  7  3  9  5  5</code></pre>
+<p>It seems that the point-Laplace plus splitting initialization splits
+some of the effects. For example, factors 2 and 5 both correspond to
+true factor 10. However, neither factor has correlation greater than
+0.91 with the true factor. Based off visual inspection, it also seems
+like many effects may be captured in single factors. For example, factor
+2 has notable correlation with true factors 6 and 10. Furthermore,
+factor 10 has notable correlations with true factors 4 and 7.</p>
+<div id="codesymnmf" class="section level2">
+<h2>CoDesymNMF</h2>
+<pre class="r"><code>codesymnmf_update.wrapper &lt;- function(S, init_L, args = NULL){
+  codesymnmf_results &lt;- codesymnmf_fit(S, init_L)
+  return(codesymnmf_fit = codesymnmf_results)
+}</code></pre>
+<pre class="r"><code>codesymnmf_pt_laplace_split_init &lt;- codesymnmf_update.wrapper(group_overlap_1$data$YYt, pt_laplace_split_init_L)</code></pre>
+<p>This is a heatmap of the estimate:</p>
+<pre class="r"><code>plot_heatmap(codesymnmf_pt_laplace_split_init$H)</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the estimates and the true
+factors:</p>
+<pre class="r"><code>apply(cor(codesymnmf_pt_laplace_split_init$H, group_overlap_1$true_L), 1, max)</code></pre>
+<pre><code> [1]  0.71474804  0.87583507  0.97935966  0.96722202  0.95552281  0.75025219
+ [7]  0.01588864  0.99415725  0.99556121  0.88121124  0.97878086  0.73432034
+[13]  0.98687585  0.98596008 -0.04944958  0.99681672  0.79745053  0.84321444
+[19]  0.98742931</code></pre>
+<p>This is the true factor with which each estimate is most
+correlated:</p>
+<pre class="r"><code>apply(cor(codesymnmf_pt_laplace_split_init$H, group_overlap_1$true_L), 1, which.max)</code></pre>
+<pre><code> [1] 10 10  6  4 10  8  8  2  1  7  7  9  8  9  7  3  6  4  5</code></pre>
+<p>These are the true factors which are accurately recovered:</p>
+<pre class="r"><code>apply(cor(codesymnmf_pt_laplace_split_init$H, group_overlap_1$true_L), 1, which.max)[apply(cor(codesymnmf_pt_laplace_split_init$H, group_overlap_1$true_L), 1, max) &gt; 0.99]</code></pre>
+<pre><code>[1] 2 1 3</code></pre>
+<p>CoDesymNMF only accurately recovers three components.</p>
+<p>This is the objective function:</p>
+<pre class="r"><code>codesymnmf_pt_laplace_split_init$obj_func</code></pre>
+<pre><code>[1] 101.235</code></pre>
+</div>
+<div id="ebcd" class="section level2">
+<h2>EBCD</h2>
+<pre class="r"><code>PolarU &lt;- function(A) {
+  svdA &lt;- svd(A)
+  out &lt;- svdA$u %*% t(svdA$v)
+  return(out)
+}
+
+ebcd_obj_init_L &lt;- function(ebcd_obj, init_L, ebnm_fn){
+  ebcd_obj$EL &lt;- init_L
+  ebcd_obj$Z &lt;- PolarU(ebcd_obj$A%*%init_L)
+  ebcd_obj$tau &lt;- prod(dim(ebcd_obj$A)) / sum((ebcd_obj$A - (ebcd_obj$Z%*%t(init_L)))^2)
+  
+  if(length(ebnm_fn)==1){
+    ebnm_fn &lt;- rep(list(ebnm_fn), ncol(init_L))
+  }
+  ebcd_obj$ebnm_fn &lt;- ebnm_fn
+   
+  # ebcd_obj$KL &lt;- rep(0, length = ncol(init_L))
+  # 
+  # ebcd_obj$obj &lt;- -ebcd_obj$N * ncol(ebcd_obj$A) / 2 * log(2 * pi / ebcd_obj$tau) +
+  #   -(ebcd_obj$N * ebcd_obj$tau / 2) * (
+  #     sum(ebcd_obj$A^2) / ebcd_obj$nrowA - 2 * sum(diag(t(ebcd_obj$A) %*% ebcd_obj$Z %*% t(ebcd_obj$EL))) / ebcd_obj$nrowA + sum(ebcd_obj$EL^2) + sum(ebcd_obj$V)
+  #   ) +
+  #   +sum(ebcd_obj$KL)
+  
+  return(ebcd_obj)
+}</code></pre>
+<pre class="r"><code>library(ebcd)
+ebcd_backfit.wrapper &lt;- function(X, init_L, ebnm_fn){
+  # set.seed(args$seed)
+  ebcd_obj &lt;- ebcd_init(X = X)
+  ebcd_obj &lt;- ebcd_obj_init_L(ebcd_obj, init_L, ebnm_fn)
+  ebcd_fit &lt;- ebcd_backfit(ebcd_obj)
+  return(ebcd_fit)
+}</code></pre>
+<pre class="r"><code>ebcd_backfit_pt_laplace_split_init &lt;- ebcd_backfit.wrapper(t(group_overlap_1$data$Y), pt_laplace_split_init_L, ebnm::ebnm_generalized_binary)</code></pre>
+<p>This is a heatmap of the estimate:</p>
+<pre class="r"><code>plot_heatmap(ebcd_backfit_pt_laplace_split_init$EL)</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the estimates and the true
+factors:</p>
+<pre class="r"><code>apply(cor(ebcd_backfit_pt_laplace_split_init$EL, group_overlap_1$true_L), 1, max)</code></pre>
+<pre><code> [1]  0.319221118  0.982800291  0.998964158  0.997210357  0.869383911
+ [6]  0.424689183  0.263602053  0.998713306  0.998832079  0.515921120
+[11]  0.998462564  0.509067240  0.999191447  0.997187871  0.400178450
+[16]  0.998479495 -0.002177902  0.492365964  0.990580773</code></pre>
+<p>This is the true factor with which each estimate is most
+correlated:</p>
+<pre class="r"><code>apply(cor(ebcd_backfit_pt_laplace_split_init$EL, group_overlap_1$true_L), 1, which.max)</code></pre>
+<pre><code> [1]  3 10  6  4 10  4  8  2  1  7  7  9  8  9  7  3  8  5  5</code></pre>
+<p>These are the true factors which are accurately recovered:</p>
+<pre class="r"><code>apply(cor(ebcd_backfit_pt_laplace_split_init$EL, group_overlap_1$true_L), 1, which.max)[apply(cor(ebcd_backfit_pt_laplace_split_init$EL, group_overlap_1$true_L), 1, max) &gt; 0.99]</code></pre>
+<pre><code>[1] 6 4 2 1 7 8 9 3 5</code></pre>
+<p>EBCD is able to accurately recover nine of the ten components.</p>
+<p>This is the ELBO:</p>
+<pre class="r"><code>ebcd_backfit_pt_laplace_split_init$obj</code></pre>
+<pre><code>[1] -131883.2</code></pre>
+</div>
+<div id="ebmfcov" class="section level2">
+<h2>EBMFcov</h2>
+<pre class="r"><code>library(dplyr)
+cov_fit_backfit &lt;- function(covmat, init_L, ebnm_fn = ebnm::ebnm_point_laplace, verbose.lvl = 0) {
+  fl &lt;- flash_init(covmat, var_type = 0) |&gt;
+    flash_set_verbose(verbose.lvl) |&gt;
+    flash_factors_init(list(init_L, init_L), ebnm_fn = ebnm_fn)
+  s2 &lt;- max(0, mean(diag(covmat) - diag(fitted(fl))))
+  s2_diff &lt;- Inf
+  while(s2 &gt; 0 &amp;&amp; abs(s2_diff - 1) &gt; 1e-4) {
+    covmat_minuss2 &lt;- covmat - diag(rep(s2, ncol(covmat)))
+    fl &lt;- fl |&gt;
+      flash_update_data(covmat_minuss2) |&gt;
+      flash_set_verbose(verbose.lvl) |&gt;
+      flash_backfit() |&gt;
+      flash_nullcheck()
+    old_s2 &lt;- s2
+    s2 &lt;- max(0, mean(diag(covmat) - diag(fitted(fl))))
+    s2_diff &lt;- s2 / old_s2
+  }
+  
+  return(list(fl=fl, s2 = s2))
+}</code></pre>
+<pre class="r"><code>ebmfcov_diag.wrapper &lt;- function(input, init_L, args){
+  ebmfcov_diag_fit &lt;- cov_fit_backfit(covmat = input$YYt, 
+                             init_L = init_L,
+                             ebnm_fn = args$ebnm_fn)
+  flash_cov_ldf &lt;- ldf(ebmfcov_diag_fit$fl)
+  flash_cov_L &lt;- flash_cov_ldf$L %*% diag(sqrt(flash_cov_ldf$D))
+  return(list(ebmfcov_diag_fit = ebmfcov_diag_fit, 
+              scaled_L = flash_cov_L))
+}</code></pre>
+<pre class="r"><code>ebmfcov_pt_laplace_split_init &lt;- ebmfcov_diag.wrapper(group_overlap_1$data, pt_laplace_split_init_L, args = list(ebnm_fn = ebnm::ebnm_generalized_binary))</code></pre>
+<p>Note: this takes longer to run than the other methods.</p>
+<p>This is a heatmap of the estimate:</p>
+<pre class="r"><code>plot_heatmap(ebmfcov_pt_laplace_split_init$scaled_L)</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the estimates and the true
+factors:</p>
+<pre class="r"><code>apply(cor(ebmfcov_pt_laplace_split_init$scaled_L, group_overlap_1$true_L), 1, max)</code></pre>
+<pre><code> [1] 0.9981079 0.9987166 0.9992956 0.7428257 0.6493839 0.1599600 0.9987297
+ [8] 0.9985348 0.5113524 0.9991064 0.6328487 0.9077108 0.9988284 0.6223164
+[15] 0.9996007 0.9992004</code></pre>
+<p>This is the true factor with which each estimate is most
+correlated:</p>
+<pre class="r"><code>apply(cor(ebmfcov_pt_laplace_split_init$scaled_L, group_overlap_1$true_L), 1, which.max)</code></pre>
+<pre><code> [1] 10  6  4 10  8  2  2  1  4  7  9  8  9 10  3  5</code></pre>
+<p>These are the true factors which are accurately recovered:</p>
+<pre class="r"><code>apply(cor(ebmfcov_pt_laplace_split_init$scaled_L, group_overlap_1$true_L), 1, which.max)[apply(cor(ebmfcov_pt_laplace_split_init$scaled_L, group_overlap_1$true_L), 1, max) &gt; 0.99]</code></pre>
+<pre><code>[1] 10  6  4  2  1  7  9  3  5</code></pre>
+<p>In this case, EBMFcov is able to accurately recover 9 components.</p>
+<p>This is the ELBO:</p>
+<pre class="r"><code>ebmfcov_pt_laplace_split_init$ebmfcov_diag_fit$fl$elbo</code></pre>
+<pre><code>[1] 15014.64</code></pre>
+</div>
+<div id="sindclus" class="section level2">
+<h2>SINDCLUS</h2>
+<pre class="r"><code>sindclus_update &lt;- function(sind_obj, S, r, off_diagonal, additive_term, conv_tol){
+  n &lt;- nrow(S)
+  fold &lt;- sind_obj$obj_func_val + 2*conv_tol*sind_obj$obj_func_val
+  num_iter &lt;- 0
+  W &lt;- sind_obj$W
+  P &lt;- sind_obj$P
+  Q &lt;- sind_obj$Q
+  c &lt;- sind_obj$c
+  
+  while (((fold - sind_obj$obj_func_val) &gt; conv_tol*sind_obj$obj_func_val) | (num_iter &lt; 3)){
+    fold &lt;- sind_obj$obj_func_val
+    num_iter &lt;- num_iter + 1
+    for (i in 1:r){
+      # define S-bar
+      if (r == 1){
+        SS &lt;- S - sind_obj$c
+      } else{
+        SS &lt;- S - P[,-i] %*% diag(W[-c(i)], ncol = (length(W)-1)) %*% t(Q[,-i]) - c
+      }
+      
+      # Update W(i)
+      T1 &lt;- t(c(SS))
+      
+      # Sub step: Correct P[,i] or Q[,i] in case column is zero; replace it by 1
+      while (sum(P[,i]) == 0){
+        # set.seed(as.numeric(Sys.time()))
+        P[,i] &lt;- round(runif(n))
+        print(&#39;correction of P&#39;)
+      }
+      
+      while (sum(Q[,i]) == 0){
+        # set.seed(as.numeric(Sys.time()))
+        Q[,i] &lt;- round(runif(n))
+        print(&#39;correction of Q&#39;)
+      }
+      
+      # Update W(i)
+      if (off_diagonal == TRUE){
+        #W[i] &lt;- T1/(t(kronecker(Q[,i], P[,i])) * c(1 - diag(n))) #This is matlab notation
+        g &lt;- (t(kronecker(Q[,i], P[,i])) * c(1 - diag(n)))
+        W[i] &lt;- sum((T1)*(g))/sum((g)^2)
+      }
+      else{
+        #W[i] &lt;- T1/(t(kronecker(Q[,i], P[,i]))) #This is matlab notation
+        g &lt;- (t(kronecker(Q[,i], P[,i])))
+        W[i] &lt;- sum((T1)*(g))/sum((g)^2)
+      }
+      # Set negative elements to zero
+      if (W[i] &lt; 0){
+        W[i] &lt;- 0
+      }
+      
+      if (off_diagonal == TRUE){
+        # Update P (original SINDCLUS algo)
+        V1 &lt;- rowSums((SS - t(t(rep(1,n)))%*%kronecker(W[i], Q[,i]) )^2 * c(1-diag(n)))
+        V2 &lt;- rowSums((SS^2)* c(1-diag(n))) 
+        
+        P[,i] &lt;- as.numeric(V1 &lt; V2)
+        # Update Q (original SINDCLUS algo)
+        T3 &lt;- t(SS)
+        X1 &lt;- rowSums((T3 - t(t(rep(1,n)))%*%kronecker(W[i], P[,i]) )^2 * c(1-diag(n)))
+        X2 &lt;- rowSums((T3^2)* c(1-diag(n)))
+        Q[,i] &lt;- as.numeric(X1 &lt; X2)
+      }
+      else{
+        # Update P (original SINDCLUS algo)
+        V1 &lt;- rowSums((SS - t(t(rep(1,n)))%*%kronecker(W[i], Q[,i]) )^2)
+        V2 &lt;- rowSums((SS^2)) #check
+        
+        P[,i] &lt;- as.numeric(V1 &lt; V2)
+        # Update Q (original SINDCLUS algo)
+        T3 &lt;- t(SS)
+        X1 &lt;- rowSums((T3 - t(t(rep(1,n)))%*%kronecker(W[i], P[,i]) )^2)
+        X2 &lt;- rowSums((T3^2))
+        Q[,i] &lt;- as.numeric(X1 &lt; X2)
+      }
+      
+      # Update c
+      if (additive_term == TRUE){
+        if (off_diagonal == TRUE){
+          c &lt;- sum((S - P %*% diag(W) %*% t(Q))*(1-diag(n)))/sum(1 - diag(n))
+        }
+        else{
+          c &lt;- mean(S - P %*% diag(W) %*% t(Q))
+        }
+      }
+    }
+    
+    if (off_diagonal == TRUE){
+      sind_obj$obj_func_val &lt;- sum(((S - (P%*% diag(W) %*% t(Q)) - c) * (1 - diag(n)))^2)
+    }
+    else{
+      sind_obj$obj_func_val &lt;- sum((S - (P%*% diag(W) %*% t(Q)) - c)^2)
+    }
+    sind_obj$obj_func_list &lt;- c(sind_obj$obj_func_list, sind_obj$obj_func_val)
+  }
+  sind_obj$W &lt;- W
+  sind_obj$P &lt;- P
+  sind_obj$Q &lt;- Q
+  sind_obj$c &lt;- c
+  sind_obj$off_diagonal &lt;- off_diagonal
+  sind_obj$additive_term &lt;- additive_term
+  return(sind_obj)
+}</code></pre>
+<pre class="r"><code>sindclus_update.wrapper &lt;- function(input, init_L, args){
+  r &lt;- ncol(init_L)
+  n &lt;- nrow(input$YYt)
+  
+  # initialize sindclus object
+  W &lt;- apply(init_L, 2, max)^2 # assume none of the columns are zero vectors
+  P &lt;- t(t(init_L)/sqrt(W))
+
+  # pre-processing to make P binary
+  P &lt;- round(P)
+
+  Q &lt;- P
+  
+  if (args$additive_term == TRUE){
+    if (args$off_diagonal == TRUE){
+      c &lt;- sum((input$YYt - P %*% diag(W) %*% t(Q))*(1 - diag(n)))/sum(1 - diag(n))
+    }
+    else{
+      c &lt;- mean(input$YYt - P %*% diag(W) %*% t(Q))
+    }
+  }
+  else{
+    c &lt;- 0 # C is a matrix where all the values are just one value
+  }
+  
+  obj_func_val &lt;- sum((input$YYt - (P%*% diag(W) %*% t(Q)))^2)
+  obj_func_list &lt;- c(obj_func_val)
+  
+  sind_obj &lt;- list(P = P, Q = Q, W = W, c = c, 
+                   obj_func_val = obj_func_val, obj_func_list = obj_func_list, init_method = &#39;user_provided_init&#39;)
+  
+  set.seed(args$seed)
+  sindclus_fit &lt;- sindclus_update(sind_obj = sind_obj,
+                                  S = input$YYt, 
+                                  r = r, 
+                                  off_diagonal = args$off_diagonal,
+                                  additive_term = args$additive_term,
+                                  conv_tol = 1e-6)
+  return(list(sindclus_fit = sindclus_fit,
+              est_LLt = (sindclus_fit$P %*% diag(sindclus_fit$W) %*% t(sindclus_fit$P))))
+}</code></pre>
+<pre class="r"><code>sindclus_pt_laplace_split_init &lt;- sindclus_update.wrapper(group_overlap_1$data, pt_laplace_split_init_L, args = list(additive_term = FALSE, off_diagonal = FALSE, seed = 1))</code></pre>
+<pre><code>[1] &quot;correction of P&quot;
+[1] &quot;correction of Q&quot;
+[1] &quot;correction of P&quot;
+[1] &quot;correction of Q&quot;
+[1] &quot;correction of P&quot;
+[1] &quot;correction of Q&quot;
+[1] &quot;correction of P&quot;
+[1] &quot;correction of Q&quot;
+[1] &quot;correction of P&quot;
+[1] &quot;correction of Q&quot;
+[1] &quot;correction of P&quot;
+[1] &quot;correction of Q&quot;
+[1] &quot;correction of P&quot;
+[1] &quot;correction of Q&quot;
+[1] &quot;correction of P&quot;
+[1] &quot;correction of Q&quot;
+[1] &quot;correction of P&quot;
+[1] &quot;correction of Q&quot;
+[1] &quot;correction of P&quot;
+[1] &quot;correction of Q&quot;
+[1] &quot;correction of P&quot;
+[1] &quot;correction of Q&quot;</code></pre>
+<pre class="r"><code>sindclus_P_est &lt;- sindclus_pt_laplace_split_init$sindclus_fit$P[ , apply(sindclus_pt_laplace_split_init$sindclus_fit$P, 2, sum) &gt; 0]
+
+sindclus_Q_est &lt;- sindclus_pt_laplace_split_init$sindclus_fit$P[ , apply(sindclus_pt_laplace_split_init$sindclus_fit$P, 2, sum) &gt; 0]</code></pre>
+<p>This is a heatmap of the estimate:</p>
+<pre class="r"><code>plot_heatmap(sindclus_P_est)</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-40-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the estimates and the true
+factors:</p>
+<pre class="r"><code>apply(cor(sindclus_P_est, group_overlap_1$true_L), 1, max)</code></pre>
+<pre><code> [1] 1.0000000 1.0000000 1.0000000 1.0000000 0.5160468 0.4205377 1.0000000
+ [8] 1.0000000 0.8269803 1.0000000 0.5436401 1.0000000 1.0000000 0.2357023
+[15] 1.0000000 0.2211629 0.4923660 1.0000000</code></pre>
+<p>This is the true factor with which each estimate is most
+correlated:</p>
+<pre class="r"><code>apply(cor(sindclus_P_est, group_overlap_1$true_L), 1, which.max)</code></pre>
+<pre><code> [1] 10  6  4 10  4 10  2  1  4  7  9  8  9  1  3  9  5  5</code></pre>
+<p>These are the true factors which are accurately recovered:</p>
+<pre class="r"><code>apply(cor(sindclus_P_est, group_overlap_1$true_L), 1, which.max)[apply(cor(sindclus_P_est, group_overlap_1$true_L), 1, max) &gt; 0.99]</code></pre>
+<pre><code> [1] 10  6  4 10  2  1  7  8  9  3  5</code></pre>
+<p>The <span class="math inline">\(P\)</span> estimate recovers 10
+components accurately.</p>
+<p>This is the objective function:</p>
+<pre class="r"><code>sindclus_pt_laplace_split_init$sindclus_fit$obj_func_val</code></pre>
+<pre><code>[1] 118.6083</code></pre>
+</div>
+</div>
+<div id="point-laplace-initialization-with-k2-input"
+class="section level1">
+<h1>point-Laplace Initialization with K/2 input</h1>
+<p>In this section, I check how well the initialization does when it’s
+given the true number of components (which equates to inputting half of
+the true number of components).</p>
+<pre class="r"><code>pt_laplace_split_half_K_init_L &lt;- laplace_split_initialization(group_overlap_1$data$YYt, 5)</code></pre>
+<pre><code>Adding factor 1 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: -2073.351 
+Adding factor 2 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: -1189.264 
+Adding factor 3 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: -290.972 
+Adding factor 4 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: 467.432 
+Adding factor 5 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: 1409.040 
+Wrapping up...
+Done.
+Backfitting 5 factors (tolerance: 1.49e-04)...
+  Difference between iterations is within 1.0e+01...
+  Difference between iterations is within 1.0e+00...
+  Difference between iterations is within 1.0e-01...
+  Difference between iterations is within 1.0e-02...
+  Difference between iterations is within 1.0e-03...
+  Difference between iterations is within 1.0e-04...
+  Backfit complete. Objective: 1686.664 
+Wrapping up...
+Done.
+Nullchecking 5 factors...
+  No factor can be removed without significantly decreasing the objective.
+Done.</code></pre>
+<p>This is a heatmap of the initialization:</p>
+<pre class="r"><code>plot_heatmap(pt_laplace_split_half_K_init_L)</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-46-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the estimates and the true
+factors:</p>
+<pre class="r"><code>apply(cor(pt_laplace_split_half_K_init_L, group_overlap_1$true_L), 1, max)</code></pre>
+<pre><code> [1] 0.6153775 0.6747524 0.7238330 0.9428630 0.5894646 0.6435744 0.9318693
+ [8] 0.8393826 0.9420407 0.8925187</code></pre>
+<p>This is the true factor with which each estimate is most
+correlated:</p>
+<pre class="r"><code>apply(cor(pt_laplace_split_half_K_init_L, group_overlap_1$true_L), 1, which.max)</code></pre>
+<pre><code> [1]  3  6  6  4 10 10  7 10  8  9</code></pre>
+<p>This initialization does not match the true loadings matrix very
+well. However, perhaps being given the correct number of components
+allows the backfitting methods to obtain a good estimate.</p>
+<div id="codesymnmf-1" class="section level2">
+<h2>CoDesymNMF</h2>
+<pre class="r"><code>codesymnmf_pt_laplace_half_K_init &lt;- codesymnmf_update.wrapper(group_overlap_1$data$YYt, pt_laplace_split_half_K_init_L)</code></pre>
+<p>This is a heatmap of the estimate:</p>
+<pre class="r"><code>plot_heatmap(codesymnmf_pt_laplace_half_K_init$H)</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-50-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the estimates and the true
+factors:</p>
+<pre class="r"><code>apply(cor(codesymnmf_pt_laplace_half_K_init$H, group_overlap_1$true_L), 1, max)</code></pre>
+<pre><code> [1] 0.9971114 0.9976187 0.9950632 0.9978824 0.9956369 0.9973098 0.9984024
+ [8] 0.9942854 0.9980596 0.9959660</code></pre>
+<p>This is the true factor with which each estimate is most
+correlated:</p>
+<pre class="r"><code>apply(cor(codesymnmf_pt_laplace_half_K_init$H, group_overlap_1$true_L), 1, which.max)</code></pre>
+<pre><code> [1]  3  6  5  4  2 10  7  1  8  9</code></pre>
+<p>These are the true factors which are accurately recovered:</p>
+<pre class="r"><code>apply(cor(codesymnmf_pt_laplace_half_K_init$H, group_overlap_1$true_L), 1, which.max)[apply(cor(codesymnmf_pt_laplace_half_K_init$H, group_overlap_1$true_L), 1, max) &gt; 0.99]</code></pre>
+<pre><code> [1]  3  6  5  4  2 10  7  1  8  9</code></pre>
+<p>CoDesymNMF is able to recover all ten components.</p>
+<p>This is the objective function:</p>
+<pre class="r"><code>codesymnmf_pt_laplace_half_K_init$obj_func</code></pre>
+<pre><code>[1] 115.7083</code></pre>
+</div>
+<div id="ebcd-1" class="section level2">
+<h2>EBCD</h2>
+<pre class="r"><code>ebcd_backfit_pt_laplace_half_K_init &lt;- ebcd_backfit.wrapper(t(group_overlap_1$data$Y), pt_laplace_split_half_K_init_L, ebnm::ebnm_generalized_binary)</code></pre>
+<p>This is a heatmap of the estimate:</p>
+<pre class="r"><code>plot_heatmap(ebcd_backfit_pt_laplace_half_K_init$EL)</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-56-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the estimates and the true
+factors:</p>
+<pre class="r"><code>apply(cor(ebcd_backfit_pt_laplace_half_K_init$EL, group_overlap_1$true_L), 1, max)</code></pre>
+<pre><code> [1] 0.9994836 0.9990537 0.9992514 0.9995094 0.9991051 0.9989983 0.9993881
+ [8] 0.9990499 0.9994939 0.9989133</code></pre>
+<p>This is the true factor with which each estimate is most
+correlated:</p>
+<pre class="r"><code>apply(cor(ebcd_backfit_pt_laplace_half_K_init$EL, group_overlap_1$true_L), 1, which.max)</code></pre>
+<pre><code> [1]  3 10  6  4  5  2  7  1  8  9</code></pre>
+<p>These are the true factors which are accurately recovered:</p>
+<pre class="r"><code>apply(cor(ebcd_backfit_pt_laplace_half_K_init$EL, group_overlap_1$true_L), 1, which.max)[apply(cor(ebcd_backfit_pt_laplace_half_K_init$EL, group_overlap_1$true_L), 1, max) &gt; 0.99]</code></pre>
+<pre><code> [1]  3 10  6  4  5  2  7  1  8  9</code></pre>
+<p>EBCD is also able to accurately recover all ten components.</p>
+<p>This is the ELBO:</p>
+<pre class="r"><code>ebcd_backfit_pt_laplace_half_K_init$obj</code></pre>
+<pre><code>[1] -136955</code></pre>
+</div>
+<div id="ebmfcov-1" class="section level2">
+<h2>EBMFcov</h2>
+<pre class="r"><code>ebmfcov_pt_laplace_half_K_init &lt;- ebmfcov_diag.wrapper(group_overlap_1$data, pt_laplace_split_half_K_init_L, args = list(ebnm_fn = ebnm::ebnm_generalized_binary))</code></pre>
+<p>This is a heatmap of the estimate:</p>
+<pre class="r"><code>plot_heatmap(ebmfcov_pt_laplace_half_K_init$scaled_L)</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-62-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the estimates and the true
+factors:</p>
+<pre class="r"><code>apply(cor(ebmfcov_pt_laplace_half_K_init$scaled_L, group_overlap_1$true_L), 1, max)</code></pre>
+<pre><code> [1] 0.9996048 0.9986711 0.9992075 0.9991027 0.9989899 0.9983877 0.9991007
+ [8] 0.9981400 0.9992030 0.9983900</code></pre>
+<p>This is the true factor with which each estimate is most
+correlated:</p>
+<pre class="r"><code>apply(cor(ebmfcov_pt_laplace_half_K_init$scaled_L, group_overlap_1$true_L), 1, which.max)</code></pre>
+<pre><code> [1]  3  6  5  4  2  1  7 10  8  9</code></pre>
+<p>These are the true factors which are accurately recovered:</p>
+<pre class="r"><code>apply(cor(ebmfcov_pt_laplace_half_K_init$scaled_L, group_overlap_1$true_L), 1, which.max)[apply(cor(ebmfcov_pt_laplace_half_K_init$scaled_L, group_overlap_1$true_L), 1, max) &gt; 0.99]</code></pre>
+<pre><code> [1]  3  6  5  4  2  1  7 10  8  9</code></pre>
+<p>This is the ELBO:</p>
+<pre class="r"><code>ebmfcov_pt_laplace_half_K_init$ebmfcov_diag_fit$fl$elbo</code></pre>
+<pre><code>[1] 14572.94</code></pre>
+<p>EBMFcov also accurately recovers all ten components. Furthermore, the
+ELBO here is higher than the EBLO of the other estimates.</p>
+</div>
+<div id="sindclus-1" class="section level2">
+<h2>SINDCLUS</h2>
+<pre class="r"><code>sindclus_pt_laplace_half_K_init &lt;- sindclus_update.wrapper(group_overlap_1$data, pt_laplace_split_half_K_init_L, args = list(additive_term = FALSE, off_diagonal = FALSE, seed = 1))</code></pre>
+<pre class="r"><code>sindclus_P_est &lt;- sindclus_pt_laplace_half_K_init$sindclus_fit$P[ , apply(sindclus_pt_laplace_half_K_init$sindclus_fit$P, 2, sum) &gt; 0]
+
+sindclus_Q_est &lt;- sindclus_pt_laplace_half_K_init$sindclus_fit$Q[ , apply(sindclus_pt_laplace_half_K_init$sindclus_fit$Q, 2, sum) &gt; 0]</code></pre>
+<p>This is a heatmap of the estimate:</p>
+<pre class="r"><code>plot_heatmap(sindclus_P_est)</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-69-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the estimates and the true
+factors:</p>
+<pre class="r"><code>apply(cor(sindclus_P_est, group_overlap_1$true_L), 1, max)</code></pre>
+<pre><code> [1] 1.0000000 0.4285714 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000
+ [8] 0.9094719 1.0000000 1.0000000</code></pre>
+<p>This is the true factor with which each estimate is most
+correlated:</p>
+<pre class="r"><code>apply(cor(sindclus_P_est, group_overlap_1$true_L), 1, which.max)</code></pre>
+<pre><code> [1]  3  6  6  4  1  2  7 10  8  9</code></pre>
+<p>These are the true factors which are accurately recovered:</p>
+<pre class="r"><code>apply(cor(sindclus_P_est, group_overlap_1$true_L), 1, which.max)[apply(cor(sindclus_P_est, group_overlap_1$true_L), 1, max) &gt; 0.99]</code></pre>
+<pre><code>[1] 3 6 4 1 2 7 8 9</code></pre>
+<p>The <span class="math inline">\(P\)</span> estimate recovers 9
+components accurately.</p>
+<p>This is the objective function:</p>
+<pre class="r"><code>sindclus_pt_laplace_split_init$sindclus_fit$obj_func_val</code></pre>
+<pre><code>[1] 118.6083</code></pre>
+<p>SINDCLUS is only able to recover eight of the components. So having
+the correct number of components is not enough to recover the true
+loadings.</p>
+<p>This is the objective function:</p>
+<pre class="r"><code>sindclus_pt_laplace_half_K_init$sindclus_fit$obj_func_val</code></pre>
+<pre><code>[1] 146.8983</code></pre>
+</div>
+</div>
+<div id="codesymnmf-initialization-with-larger-k-input"
+class="section level1">
+<h1>CoDesymNMF Initialization with larger K input</h1>
+<pre class="r"><code>codesymnmf_init_larger_K_L &lt;- codesymnmf_init.wrapper(group_overlap_1$data$YYt, 19)</code></pre>
+<p>This is a heatmap of the initialization:</p>
+<pre class="r"><code>plot_heatmap(codesymnmf_init_larger_K_L)</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-76-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the estimates and the true
+factors:</p>
+<pre class="r"><code>apply(cor(codesymnmf_init_larger_K_L, group_overlap_1$true_L), 1, max)</code></pre>
+<pre><code> [1]  0.8175615  0.9961293  0.9596500  0.9564970  0.9182478  0.9962615
+ [7]  0.9642518  0.9862051  0.9287587  0.7954074  0.8801657  0.9941842
+[13]  0.9950818 -0.0644548  0.9910847  0.4454082  0.5121724  0.9187505
+[19]  0.6943350</code></pre>
+<p>This is the true factor with which each estimate is most
+correlated:</p>
+<pre class="r"><code>apply(cor(codesymnmf_init_larger_K_L, group_overlap_1$true_L), 1, which.max)</code></pre>
+<pre><code> [1] 10  8  6 10  7  9  7  3  4 10  6  2  5  7  1  8 10  4  3</code></pre>
+<p>This method also splits effects when given a larger <span
+class="math inline">\(K\)</span> value. For example, factors 1 and 4 are
+both similar to the true factor 10, but neither factor has a correlation
+greater than 0.99. Meanwhile, when given the correct <span
+class="math inline">\(K\)</span> value, the estimate closest to the true
+factor 10 has correlation greater than 0.99.</p>
+<div id="codesymnmf-2" class="section level2">
+<h2>CoDesymNMF</h2>
+<pre class="r"><code>codesymnmf_codesymnmf_larger_K_init &lt;- codesymnmf_update.wrapper(group_overlap_1$data$YYt, codesymnmf_init_larger_K_L)</code></pre>
+<p>This is a heatmap of the estimate:</p>
+<pre class="r"><code>plot_heatmap(codesymnmf_codesymnmf_larger_K_init$H)</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-80-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the estimates and the true
+factors:</p>
+<pre class="r"><code>apply(cor(codesymnmf_codesymnmf_larger_K_init$H, group_overlap_1$true_L), 1, max)</code></pre>
+<pre><code> [1]  0.76733822  0.99829500  0.96764008  0.96603556  0.90313570  0.99641650
+ [7]  0.97297614  0.98688488  0.92607799  0.76040969  0.87074224  0.99510787
+[13]  0.99532120 -0.05926599  0.99256359  0.04461838  0.60852605  0.93270404
+[19]  0.70177041</code></pre>
+<p>This is the true factor with which each estimate is most
+correlated:</p>
+<pre class="r"><code>apply(cor(codesymnmf_codesymnmf_larger_K_init$H, group_overlap_1$true_L), 1, which.max)</code></pre>
+<pre><code> [1] 10  8  6 10  7  9  7  3  4 10  6  2  5  9  1  8 10  4  3</code></pre>
+<p>These are the true factors which are accurately recovered:</p>
+<pre class="r"><code>apply(cor(codesymnmf_codesymnmf_larger_K_init$H, group_overlap_1$true_L), 1, which.max)[apply(cor(codesymnmf_codesymnmf_larger_K_init$H, group_overlap_1$true_L), 1, max) &gt; 0.99]</code></pre>
+<pre><code>[1] 8 9 2 5 1</code></pre>
+<p>CoDesymNMF is able to accurately recover five components.</p>
+<p>This is the objective function:</p>
+<pre class="r"><code>codesymnmf_codesymnmf_larger_K_init$obj_func</code></pre>
+<pre><code>[1] 101.5106</code></pre>
+</div>
+<div id="ebcd-2" class="section level2">
+<h2>EBCD</h2>
+<pre class="r"><code>ebcd_backfit_codesymnmf_larger_K_init &lt;- ebcd_backfit.wrapper(t(group_overlap_1$data$Y), codesymnmf_init_larger_K_L, ebnm::ebnm_generalized_binary)</code></pre>
+<p>This is a heatmap of the estimate:</p>
+<pre class="r"><code>plot_heatmap(ebcd_backfit_codesymnmf_larger_K_init$EL)</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-86-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the estimates and the true
+factors:</p>
+<pre class="r"><code>apply(cor(ebcd_backfit_codesymnmf_larger_K_init$EL, group_overlap_1$true_L), 1, max)</code></pre>
+<pre><code> [1]  0.81541294  0.99845841  0.98604455  0.98686646  0.96345913  0.99879029
+ [7]  0.96500783  0.99325879  0.97150048  0.57504319  0.80125690  0.99841903
+[13]  0.99886604 -0.01175971  0.99808789  0.40833301  0.22088123  0.91593077
+[19]  0.63181180</code></pre>
+<p>This is the true factor with which each estimate is most
+correlated:</p>
+<pre class="r"><code>apply(cor(ebcd_backfit_codesymnmf_larger_K_init$EL, group_overlap_1$true_L), 1, which.max)</code></pre>
+<pre><code> [1] 10  8  6 10  7  9  7  3  4 10  6  2  5  9  1  8 10  4  3</code></pre>
+<p>These are the true factors which are accurately recovered:</p>
+<pre class="r"><code>apply(cor(ebcd_backfit_codesymnmf_larger_K_init$EL, group_overlap_1$true_L), 1, which.max)[apply(cor(ebcd_backfit_codesymnmf_larger_K_init$EL, group_overlap_1$true_L), 1, max) &gt; 0.99]</code></pre>
+<pre><code>[1] 8 9 3 2 5 1</code></pre>
+<pre class="r"><code>plot(ebcd_backfit_codesymnmf_larger_K_init$EL[,4], group_overlap_1$true_L[,10])</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-90-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>EBCD accurately recovers six components. Some of the EBCD loadings
+estimates are not very close to binary, e.g. the fourth estimated
+factor. Would using a more strictly binary prior lead to a better
+solution?</p>
+<p>This is the ELBO:</p>
+<pre class="r"><code>ebcd_backfit_codesymnmf_larger_K_init$obj</code></pre>
+<pre><code>[1] -131308</code></pre>
+</div>
+<div id="ebmfcov-2" class="section level2">
+<h2>EBMFcov</h2>
+<pre class="r"><code>ebmfcov_codesymnmf_larger_K_init &lt;- ebmfcov_diag.wrapper(group_overlap_1$data, codesymnmf_init_larger_K_L, args = list(ebnm_fn = ebnm::ebnm_generalized_binary))</code></pre>
+<p>Note: this takes longer to run than the other methods.</p>
+<p>This is a heatmap of the estimate:</p>
+<pre class="r"><code>plot_heatmap(ebmfcov_codesymnmf_larger_K_init$scaled_L)</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-93-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the estimates and the true
+factors:</p>
+<pre class="r"><code>apply(cor(ebmfcov_codesymnmf_larger_K_init$scaled_L, group_overlap_1$true_L), 1, max)</code></pre>
+<pre><code> [1] 0.6296841 0.9991021 0.9987051 0.9976668 0.4928092 0.9987524 0.9989393
+ [8] 0.9995511 0.9992312 0.4584542 0.6528880 0.9989362 0.9991969 0.9984589
+[15] 0.1003529 0.7288529 0.5561158 0.9139779</code></pre>
+<p>This is the true factor with which each estimate is most
+correlated:</p>
+<pre class="r"><code>apply(cor(ebmfcov_codesymnmf_larger_K_init$scaled_L, group_overlap_1$true_L), 1, which.max)</code></pre>
+<pre><code> [1]  8  8  6 10  7  9  7  3  4  3  6  2  5  1  2 10  9  3</code></pre>
+<p>These are the true factors which are accurately recovered:</p>
+<pre class="r"><code>apply(cor(ebmfcov_codesymnmf_larger_K_init$scaled_L, group_overlap_1$true_L), 1, which.max)[apply(cor(ebmfcov_codesymnmf_larger_K_init$scaled_L, group_overlap_1$true_L), 1, max) &gt; 0.99]</code></pre>
+<pre><code> [1]  8  6 10  9  7  3  4  2  5  1</code></pre>
+<p>In this case, EBMFcov is still able to accurately recover all 10
+components. Why does EBMFcov work and e.g. EBCD does not work? Why
+doesn’t EBMFcov work as well in the point-Laplace initialization
+setting?</p>
+<p>This is the ELBO:</p>
+<pre class="r"><code>ebmfcov_codesymnmf_larger_K_init$ebmfcov_diag_fit$fl$elbo</code></pre>
+<pre><code>[1] 15273.84</code></pre>
+<p>This ELBO is higher than the ELBO of the other estimates.</p>
+</div>
+<div id="sindclus-2" class="section level2">
+<h2>SINDCLUS</h2>
+<pre class="r"><code>sindclus_codesymnmf_larger_K_init &lt;- sindclus_update.wrapper(group_overlap_1$data, codesymnmf_init_larger_K_L, args = list(additive_term = FALSE, off_diagonal = FALSE, seed = 1))</code></pre>
+<pre class="r"><code>sindclus_codesymnmf_larger_K_init_est_P &lt;- sindclus_codesymnmf_larger_K_init$sindclus_fit$P[, apply(sindclus_codesymnmf_larger_K_init$sindclus_fit$P, 2, sum) &gt; 0]
+sindclus_codesymnmf_larger_K_init_est_Q &lt;- sindclus_codesymnmf_larger_K_init$sindclus_fit$Q[, apply(sindclus_codesymnmf_larger_K_init$sindclus_fit$Q, 2, sum) &gt; 0]</code></pre>
+<p>This is a heatmap of the estimate:</p>
+<pre class="r"><code>plot_heatmap(sindclus_codesymnmf_larger_K_init_est_P)</code></pre>
+<p><img src="figure/init_comparison_overlap_setting.Rmd/unnamed-chunk-100-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the estimates and the true
+factors:</p>
+<pre class="r"><code>apply(cor(sindclus_codesymnmf_larger_K_init_est_P, group_overlap_1$true_L), 1, max)</code></pre>
+<pre><code> [1]  0.52933736  1.00000000  0.94345635  0.90947191  0.56176762  1.00000000
+ [7]  1.00000000  1.00000000  1.00000000  0.36956421  0.94345635  1.00000000
+[13]  1.00000000 -0.06419407  1.00000000  0.42857143  0.42857143  0.88465174
+[19]  0.54401741</code></pre>
+<p>This is the true factor with which each estimate is most
+correlated:</p>
+<pre class="r"><code>apply(cor(sindclus_codesymnmf_larger_K_init_est_P, group_overlap_1$true_L), 1, which.max)</code></pre>
+<pre><code> [1] 10  8  6 10  4  9  7  3  4 10  6  2  5  5  1  4  6  4  3</code></pre>
+<p>These are the true factors which are accurately recovered:</p>
+<pre class="r"><code>apply(cor(sindclus_codesymnmf_larger_K_init_est_P, group_overlap_1$true_L), 1, which.max)[apply(cor(sindclus_codesymnmf_larger_K_init_est_P, group_overlap_1$true_L), 1, max) &gt; 0.99]</code></pre>
+<pre><code>[1] 8 9 7 3 4 2 5 1</code></pre>
+<p>The <span class="math inline">\(P\)</span> estimate is able to
+accurately recover eight factors.</p>
+<p>This is the objective function:</p>
+<pre class="r"><code>sindclus_codesymnmf_larger_K_init$sindclus_fit$obj_func_val</code></pre>
+<pre><code>[1] 122.7254</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.2 (2023-10-31)
+Platform: aarch64-apple-darwin20 (64-bit)
+Running under: macOS 15.6
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/Chicago
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] ebcd_0.0.0.9000       flashier_1.0.56       ebnm_1.1-34          
+[4] codesymnmf_0.0.0.9000 pheatmap_1.0.12       ggrepel_0.9.6        
+[7] ggplot2_3.5.2         dplyr_1.1.4           workflowr_1.7.1      
+
+loaded via a namespace (and not attached):
+ [1] tidyselect_1.2.1     viridisLite_0.4.2    farver_2.1.2        
+ [4] fastmap_1.2.0        lazyeval_0.2.2       promises_1.3.3      
+ [7] digest_0.6.37        lifecycle_1.0.4      processx_3.8.4      
+[10] invgamma_1.1         magrittr_2.0.3       compiler_4.3.2      
+[13] rlang_1.1.6          sass_0.4.10          progress_1.2.3      
+[16] tools_4.3.2          yaml_2.3.10          data.table_1.17.6   
+[19] knitr_1.50           prettyunits_1.2.0    htmlwidgets_1.6.4   
+[22] scatterplot3d_0.3-44 RColorBrewer_1.1-3   Rtsne_0.17          
+[25] withr_3.0.2          purrr_1.0.4          grid_4.3.2          
+[28] git2r_0.33.0         fastTopics_0.6-192   colorspace_2.1-1    
+[31] scales_1.4.0         gtools_3.9.5         cli_3.6.5           
+[34] rmarkdown_2.29       crayon_1.5.3         generics_0.1.4      
+[37] RcppParallel_5.1.10  rstudioapi_0.16.0    httr_1.4.7          
+[40] pbapply_1.7-2        cachem_1.1.0         stringr_1.5.1       
+[43] splines_4.3.2        parallel_4.3.2       softImpute_1.4-3    
+[46] vctrs_0.6.5          Matrix_1.6-5         jsonlite_2.0.0      
+[49] callr_3.7.6          hms_1.1.3            mixsqp_0.3-54       
+[52] irlba_2.3.5.1        horseshoe_0.2.0      trust_0.1-8         
+[55] plotly_4.11.0        jquerylib_0.1.4      tidyr_1.3.1         
+[58] glue_1.8.0           ps_1.7.7             cowplot_1.1.3       
+[61] uwot_0.2.3           stringi_1.8.7        Polychrome_1.5.1    
+[64] gtable_0.3.6         later_1.4.2          quadprog_1.5-8      
+[67] NNLM_0.4.4           tibble_3.3.0         pillar_1.10.2       
+[70] htmltools_0.5.8.1    truncnorm_1.0-9      R6_2.6.1            
+[73] rprojroot_2.0.4      evaluate_1.0.4       lattice_0.22-6      
+[76] RhpcBLASctl_0.23-42  SQUAREM_2021.1       ashr_2.2-66         
+[79] httpuv_1.6.15        bslib_0.9.0          Rcpp_1.0.14         
+[82] deconvolveR_1.2-1    whisker_0.4.1        xfun_0.52           
+[85] fs_1.6.6             getPass_0.2-4        pkgconfig_2.0.3     </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
