@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Annie Xie" />
+
+<meta name="date" content="2025-09-24" />
+
+<title>metric_threshold_exploration</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">covariance_decomps_dsc</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/xxie6/covariance_decomps_dsc">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">metric_threshold_exploration</h1>
+<h4 class="author">Annie Xie</h4>
+<h4 class="date">2025-09-24</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2025-09-25
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>covariance_decomps_dsc/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20250203code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20250203)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20250203code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20250203)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree0f93cff4e647b9991b9804b3bfe60003f98435e3targetblank0f93cffa">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/0f93cff4e647b9991b9804b3bfe60003f98435e3" target="_blank">0f93cff</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree0f93cff4e647b9991b9804b3bfe60003f98435e3targetblank0f93cffa"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/0f93cff4e647b9991b9804b3bfe60003f98435e3" target="_blank">0f93cff</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    data/.DS_Store
+    Ignored:    data/adclus_cov_comp_dsc_ex/.DS_Store
+    Ignored:    data/adclus_same_init_dsc_ex/.DS_Store
+    Ignored:    data/pt_laplace_split_init_ex/.DS_Store
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown
+(<code>analysis/metric_threshold_exploration.Rmd</code>) and HTML
+(<code>docs/metric_threshold_exploration.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/0f93cff4e647b9991b9804b3bfe60003f98435e3/analysis/metric_threshold_exploration.Rmd" target="_blank">0f93cff</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-25
+</td>
+<td>
+wflow_publish(c("analysis/metric_threshold_exploration.Rmd"),
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>In this analysis, I do some investigation of the similarities between
+the estimated factors and the true factors. This exploration is meant to
+inform the threshold I will use for my metrics (and potentially
+stability selection).</p>
+<pre class="r"><code>library(dplyr)
+library(ggplot2)
+library(pheatmap)</code></pre>
+<pre class="r"><code>source(&#39;code/visualization_functions.R&#39;)</code></pre>
+<pre class="r"><code>compute_cosine_sim_matrix &lt;- function(L1, L2){
+  norms1 &lt;- apply(L1, 2, function(x){sqrt(sum(x^2))})
+  norms1[norms1 == 0] &lt;- Inf
+
+  norms2 &lt;- apply(L2, 2, function(x){sqrt(sum(x^2))})
+  norms2[norms2 == 0] &lt;- Inf
+
+  L1_normalized &lt;- t(t(L1)/norms1)
+  L2_normalized &lt;- t(t(L2)/norms2)
+
+  #compute matrix of cosine similarities
+  cosine_sim_matrix &lt;- crossprod(L1_normalized, L2_normalized)
+
+  return(cosine_sim_matrix)
+}</code></pre>
+</div>
+<div id="sparse-overlapping" class="section level1">
+<h1>Sparse Overlapping</h1>
+<pre class="r"><code>group_overlap_1 &lt;- readRDS(&#39;data/group_overlap_1.rds&#39;)</code></pre>
+<div id="ebcd" class="section level2">
+<h2>EBCD</h2>
+<pre class="r"><code>group_overlap_1_pt_laplace_split_1_ebcd_1 &lt;- readRDS(&#39;data/adclus_same_init_dsc_ex/group_overlap_1_pt_laplace_split_1_ebcd_1.rds&#39;)</code></pre>
+<div id="correlation" class="section level3">
+<h3>Correlation</h3>
+<pre class="r"><code>idx.keep &lt;- apply(group_overlap_1_pt_laplace_split_1_ebcd_1$est_L, 2, sd) &gt; 0</code></pre>
+<pre class="r"><code>ebcd_true_corr &lt;- cor(group_overlap_1_pt_laplace_split_1_ebcd_1$est_L[,idx.keep], group_overlap_1$true_L)</code></pre>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(ebcd_true_corr)){
+  hist(ebcd_true_corr[i,], main = paste(&#39;similarity of factor&#39;, which(idx.keep == TRUE)[i]), xlab = &#39;similarity with true factors&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cosine-similarity" class="section level3">
+<h3>Cosine Similarity</h3>
+<pre class="r"><code>ebcd_true_cos_sim &lt;- compute_cosine_sim_matrix(group_overlap_1_pt_laplace_split_1_ebcd_1$est_L, group_overlap_1$true_L)</code></pre>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(ebcd_true_cos_sim)){
+  hist(ebcd_true_cos_sim[i,], main = paste(&#39;similarity of factor&#39;, i), xlab = &#39;similarity with true factors&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="comparison-of-metrics" class="section level3">
+<h3>Comparison of Metrics</h3>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(ebcd_true_corr)){
+  idx &lt;- which(idx.keep == TRUE)[i]
+  plot(ebcd_true_corr[i,], ebcd_true_cos_sim[idx,], main = paste(&#39;factor&#39;, idx), xlab = &#39;correlation&#39;, ylab = &#39;cosine similarity&#39;)
+  abline(a=0, b=1, col = &#39;red&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="visualizations" class="section level3">
+<h3>Visualizations</h3>
+<p>These are the maximum similarities:</p>
+<pre class="r"><code>apply(ebcd_true_cos_sim, 1, max)</code></pre>
+<pre><code> [1] 0.3529622 0.9849862 0.9990676 0.9974883 0.8835195 0.4695338 0.2895608
+ [8] 0.9987775 0.9988787 0.5932402 0.9986467 0.5619221 0.9992722 0.9974120
+[15] 0.4934529 0.9985857 0.1391694 0.5000000 0.9909524</code></pre>
+<p>These are the true factors which are most similar to each estimated
+factor:</p>
+<pre class="r"><code>apply(ebcd_true_cos_sim, 1, which.max)</code></pre>
+<pre><code> [1]  3 10  6  4 10  4  8  2  1  7  7  9  8  9  7  3  8  5  5</code></pre>
+<p>Factor 2 has 0.98 similarity with true factor 10.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_ebcd_1$est_L[,2], group_overlap_1$true_L[,10])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Factor 5 has 0.88 similarity with true factor 10.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_ebcd_1$est_L[,5], group_overlap_1$true_L[,10])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="ebmfcov" class="section level2">
+<h2>EBMFcov</h2>
+<pre class="r"><code>group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1 &lt;- readRDS(&#39;data/adclus_same_init_dsc_ex/group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1.rds&#39;)</code></pre>
+<div id="correlation-1" class="section level3">
+<h3>Correlation</h3>
+<pre class="r"><code>idx.keep &lt;- apply(group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1$est_L, 2, sd) &gt; 0</code></pre>
+<pre class="r"><code>ebmfcov_diag_true_corr &lt;- cor(group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1$est_L[,idx.keep], group_overlap_1$true_L)</code></pre>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(ebmfcov_diag_true_corr)){
+  hist(ebmfcov_diag_true_corr[i,], main = paste(&#39;similarity of factor&#39;, which(idx.keep == TRUE)[i]), xlab = &#39;similarity with true factors&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cosine-similarity-1" class="section level3">
+<h3>Cosine Similarity</h3>
+<pre class="r"><code>ebmfcov_diag_true_cos_sim &lt;- compute_cosine_sim_matrix(group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1$est_L, group_overlap_1$true_L)</code></pre>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(ebmfcov_diag_true_cos_sim)){
+  hist(ebmfcov_diag_true_cos_sim[i,], main = paste(&#39;similarity of factor&#39;, i), xlab = &#39;similarity with true factors&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="comparison-of-metrics-1" class="section level3">
+<h3>Comparison of Metrics</h3>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(ebmfcov_diag_true_corr)){
+  idx &lt;- which(idx.keep == TRUE)[i]
+  plot(ebmfcov_diag_true_corr[i,], ebmfcov_diag_true_cos_sim[idx,], main = paste(&#39;factor&#39;, idx), xlab = &#39;correlation&#39;, ylab = &#39;cosine similarity&#39;)
+  abline(a=0, b=1, col = &#39;red&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="visualizations-1" class="section level3">
+<h3>Visualizations</h3>
+<p>These are the maximum similarities:</p>
+<pre class="r"><code>apply(ebmfcov_diag_true_cos_sim, 1, max)</code></pre>
+<pre><code> [1] 0.9981991 0.9988403 0.9994009 0.7965199 0.6688590 0.9987974 0.9984366
+ [8] 0.6224120 0.9991935 0.6278141 0.9144672 0.9989398 0.6829511 0.9996276
+[15] 0.9992333</code></pre>
+<p>These are the true factors which are most similar to each estimated
+factor:</p>
+<pre class="r"><code>apply(ebmfcov_diag_true_cos_sim, 1, which.max)</code></pre>
+<pre><code> [1] 10  6  4 10  8  2  1  4  7  9  8  9 10  3  5</code></pre>
+<p>Factor 5 has 0.67 similarity with true factor 8.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1$est_L[,5], group_overlap_1$true_L[,8])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Factor 11 has 0.91 similarity with true factor 8.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1$est_L[,11], group_overlap_1$true_L[,8])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Factor 4 has 0.79 similarity with true factor 10.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1$est_L[,4], group_overlap_1$true_L[,10])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-27-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Factor 1 has 0.99 similarity with true factor 10.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1$est_L[,1], group_overlap_1$true_L[,10])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Factor 13 has 0.68 similarity with true factor 10.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1$est_L[,13], group_overlap_1$true_L[,10])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="flash-with-normal-prior-on-f" class="section level2">
+<h2>Flash with Normal Prior on F</h2>
+<pre class="r"><code>group_overlap_1_pt_laplace_split_1_flash_normalf_1 &lt;- readRDS(&#39;data/adclus_same_init_dsc_ex/group_overlap_1_pt_laplace_split_1_flash_normalf_1.rds&#39;)</code></pre>
+<div id="correlation-2" class="section level3">
+<h3>Correlation</h3>
+<pre class="r"><code>idx.keep &lt;- apply(group_overlap_1_pt_laplace_split_1_flash_normalf_1$est_L, 2, sd) &gt; 0</code></pre>
+<pre class="r"><code>flash_normalf_true_corr &lt;- cor(group_overlap_1_pt_laplace_split_1_flash_normalf_1$est_L[,idx.keep], group_overlap_1$true_L)</code></pre>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(flash_normalf_true_corr)){
+  hist(flash_normalf_true_corr[i,], main = paste(&#39;similarity of factor&#39;, which(idx.keep == TRUE)[i]), xlab = &#39;similarity with true factors&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-33-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cosine-similarity-2" class="section level3">
+<h3>Cosine Similarity</h3>
+<pre class="r"><code>flash_normalf_true_cos_sim &lt;- compute_cosine_sim_matrix(group_overlap_1_pt_laplace_split_1_flash_normalf_1$est_L, group_overlap_1$true_L)</code></pre>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(flash_normalf_true_cos_sim)){
+  hist(flash_normalf_true_cos_sim[i,], main = paste(&#39;similarity of factor&#39;, i), xlab = &#39;similarity with true factors&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-35-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="comparison-of-metrics-2" class="section level3">
+<h3>Comparison of Metrics</h3>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(flash_normalf_true_corr)){
+  idx &lt;- which(idx.keep == TRUE)[i]
+  plot(flash_normalf_true_corr[i,], flash_normalf_true_cos_sim[idx,], main = paste(&#39;factor&#39;, idx), xlab = &#39;correlation&#39;, ylab = &#39;cosine similarity&#39;)
+  abline(a=0, b=1, col = &#39;red&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-36-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="visualizations-2" class="section level3">
+<h3>Visualizations</h3>
+<p>These are the maximum similarities:</p>
+<pre class="r"><code>apply(flash_normalf_true_cos_sim, 1, max)</code></pre>
+<pre><code> [1] 0.9027384 0.7961755 0.9996670 0.3605551 0.3605551 0.9990344 0.9987087
+ [8] 0.7161576 0.3605551 0.3605551 0.7544813 0.9992848 0.3605551 0.9995904
+[15] 0.9989671</code></pre>
+<p>These are the true factors which are most similar to each estimated
+factor:</p>
+<pre class="r"><code>apply(flash_normalf_true_cos_sim, 1, which.max)</code></pre>
+<pre><code> [1] 10  7  4 10 10  2  1  7 10 10  8  9 10  3  5</code></pre>
+<p>Factor 2 has 0.79 similarity with true factor 7.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_flash_normalf_1$est_L[,2], group_overlap_1$true_L[,7])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-39-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Factor 8 has 0.71 similarity with true factor 7.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_flash_normalf_1$est_L[,8], group_overlap_1$true_L[,7])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-40-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="sindclus" class="section level2">
+<h2>SINDCLUS</h2>
+<pre class="r"><code>group_overlap_1_pt_laplace_split_1_sindclus_2 &lt;- readRDS(&#39;data/adclus_same_init_dsc_ex/group_overlap_1_pt_laplace_split_1_sindclus_2.rds&#39;)</code></pre>
+<div id="correlation-3" class="section level3">
+<h3>Correlation</h3>
+<pre class="r"><code>idx.keep &lt;- apply(group_overlap_1_pt_laplace_split_1_sindclus_2$est_L, 2, sd) &gt; 0</code></pre>
+<pre class="r"><code>sindclus_true_corr &lt;- cor(group_overlap_1_pt_laplace_split_1_sindclus_2$est_L[,idx.keep], group_overlap_1$true_L)</code></pre>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(sindclus_true_corr)){
+  hist(sindclus_true_corr[i,], main = paste(&#39;similarity of factor&#39;, which(idx.keep == TRUE)[i]), xlab = &#39;similarity with true factors&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-44-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cosine-similarity-3" class="section level3">
+<h3>Cosine Similarity</h3>
+<pre class="r"><code>sindclus_true_cos_sim &lt;- compute_cosine_sim_matrix(group_overlap_1_pt_laplace_split_1_sindclus_2$est_L, group_overlap_1$true_L)</code></pre>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(sindclus_true_corr)){
+  hist(sindclus_true_cos_sim[i,], main = paste(&#39;similarity of factor&#39;, i), xlab = &#39;similarity with true factors&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-46-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="comparison-of-metrics-3" class="section level3">
+<h3>Comparison of Metrics</h3>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(sindclus_true_corr)){
+  idx &lt;- which(idx.keep == TRUE)[i]
+  plot(sindclus_true_corr[i,], sindclus_true_cos_sim[idx,], main = paste(&#39;factor&#39;, idx), xlab = &#39;correlation&#39;, ylab = &#39;cosine similarity&#39;)
+  abline(a=0, b=1, col = &#39;red&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-47-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="visualizations-3" class="section level3">
+<h3>Visualizations</h3>
+<p>These are the maximum similarities:</p>
+<pre class="r"><code>apply(sindclus_true_cos_sim, 1, max)</code></pre>
+<pre><code> [1] 0.0000000 1.0000000 1.0000000 1.0000000 1.0000000 0.5590170 0.5012804
+ [8] 1.0000000 1.0000000 0.8432740 1.0000000 0.5883484 1.0000000 1.0000000
+[15] 0.3464102 1.0000000 0.2500000 0.5000000 1.0000000</code></pre>
+<p>These are the true factors which are most similar to each estimated
+factor:</p>
+<pre class="r"><code>apply(sindclus_true_cos_sim, 1, which.max)</code></pre>
+<pre><code> [1]  1 10  6  4 10  4 10  2  1  4  7  9  8  9  7  3  9  5  5</code></pre>
+<p>Factor 10 has 0.84 similarity with true factor 4.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_sindclus_2$est_L[,10], group_overlap_1$true_L[,4])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-50-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="sympres" class="section level2">
+<h2>SYMPRES</h2>
+<pre class="r"><code>group_overlap_1_pt_laplace_split_1_sympres_2 &lt;- readRDS(&#39;data/adclus_same_init_dsc_ex/group_overlap_1_pt_laplace_split_1_sympres_2.rds&#39;)</code></pre>
+<div id="correlation-4" class="section level3">
+<h3>Correlation</h3>
+<pre class="r"><code>idx.keep &lt;- apply(group_overlap_1_pt_laplace_split_1_sympres_2$est_L, 2, sd) &gt; 0</code></pre>
+<pre class="r"><code>sympres_true_corr &lt;- cor(group_overlap_1_pt_laplace_split_1_sympres_2$est_L[,idx.keep], group_overlap_1$true_L)</code></pre>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(sympres_true_corr)){
+  hist(sympres_true_corr[i,], main = paste(&#39;similarity of factor&#39;, which(idx.keep == TRUE)[i]), xlab = &#39;similarity with true factors&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-54-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cosine-similarity-4" class="section level3">
+<h3>Cosine Similarity</h3>
+<pre class="r"><code>sympres_true_cos_sim &lt;- compute_cosine_sim_matrix(group_overlap_1_pt_laplace_split_1_sympres_2$est_L, group_overlap_1$true_L)</code></pre>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(sympres_true_cos_sim)){
+  hist(sympres_true_cos_sim[i,], main = paste(&#39;similarity of factor&#39;, i), xlab = &#39;similarity with true factors&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-56-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="comparison-of-metrics-4" class="section level3">
+<h3>Comparison of Metrics</h3>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(sympres_true_corr)){
+  idx &lt;- which(idx.keep == TRUE)[i]
+  plot(sympres_true_corr[i,], sympres_true_cos_sim[idx,], main = paste(&#39;factor&#39;, idx), xlab = &#39;correlation&#39;, ylab = &#39;cosine similarity&#39;)
+  abline(a=0, b=1, col = &#39;red&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-57-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="visualizations-4" class="section level3">
+<h3>Visualizations</h3>
+<p>These are the maximum similarities:</p>
+<pre class="r"><code>apply(sympres_true_cos_sim, 1, max)</code></pre>
+<pre><code> [1] 0.3067860 1.0000000 1.0000000 0.9486833 1.0000000 0.8366600 0.5078334
+ [8] 1.0000000 1.0000000 0.9486833 1.0000000 0.5477226 1.0000000 1.0000000
+[15] 0.3086067 1.0000000 0.2000000 0.0000000 1.0000000</code></pre>
+<p>These are the true factors which are most similar to each estimated
+factor:</p>
+<pre class="r"><code>apply(sympres_true_cos_sim, 1, which.max)</code></pre>
+<pre><code> [1]  4 10  6  4 10  4  4  2  1  4  7  4  8  9  9  3  6  1  5</code></pre>
+<p>Factor 6 has 0.83 similarity with true factor 4.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_sympres_2$est_L[,6], group_overlap_1$true_L[,4])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-60-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="codesymnmf" class="section level2">
+<h2>CoDesymNMF</h2>
+<pre class="r"><code>group_overlap_1_pt_laplace_split_1_codesymnmf_1 &lt;- readRDS(&#39;data/symnmf_same_init_dsc_ex/group_overlap_1_pt_laplace_split_1_codesymnmf_1.rds&#39;)</code></pre>
+<div id="correlation-5" class="section level3">
+<h3>Correlation</h3>
+<pre class="r"><code>idx.keep &lt;- apply(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L, 2, sd) &gt; 0</code></pre>
+<pre class="r"><code>codesymnmf_true_corr &lt;- cor(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L[,idx.keep], group_overlap_1$true_L)</code></pre>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(codesymnmf_true_corr)){
+  hist(codesymnmf_true_corr[i,], main = paste(&#39;similarity of factor&#39;, which(idx.keep == TRUE)[i]), xlab = &#39;similarity with true factors&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-64-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="cosine-similarity-5" class="section level3">
+<h3>Cosine Similarity</h3>
+<pre class="r"><code>codesymnmf_true_cos_sim &lt;- compute_cosine_sim_matrix(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L, group_overlap_1$true_L)</code></pre>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(codesymnmf_true_cos_sim)){
+  hist(codesymnmf_true_cos_sim[i,], main = paste(&#39;similarity of factor&#39;, i), xlab = &#39;similarity with true factors&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-66-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="comparison-of-metrics-5" class="section level3">
+<h3>Comparison of Metrics</h3>
+<pre class="r"><code>par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(codesymnmf_true_corr)){
+  idx &lt;- which(idx.keep == TRUE)[i]
+  plot(codesymnmf_true_corr[i,], codesymnmf_true_cos_sim[idx,], main = paste(&#39;factor&#39;, idx), xlab = &#39;correlation&#39;, ylab = &#39;cosine similarity&#39;)
+  abline(a=0, b=1, col = &#39;red&#39;)
+}
+par(mfrow = c(1, 1))</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-67-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="visualizations-5" class="section level3">
+<h3>Visualizations</h3>
+<p>These are the maximum similarities:</p>
+<pre class="r"><code>apply(codesymnmf_true_cos_sim, 1, max)</code></pre>
+<pre><code> [1] 0.74615390 0.89139762 0.98143560 0.97053596 0.96123138 0.77254251
+ [7] 0.12260474 0.99376601 0.99485317 0.89471704 0.98134794 0.75604883
+[13] 0.98816472 0.98707098 0.08574252 0.99674472 0.81653996 0.85779493
+[19] 0.98750239</code></pre>
+<p>These are the true factors which are most similar to each estimated
+factor:</p>
+<pre class="r"><code>apply(codesymnmf_true_cos_sim, 1, which.max)</code></pre>
+<pre><code> [1] 10 10  6  4 10  8  8  2  1  7  7  9  8  9  7  3  6  4  5</code></pre>
+<p>Factor 1 has 0.74 similarity with true factor 10.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L[,1], group_overlap_1$true_L[,10])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-70-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Factor 2 has 0.89 similarity with true factor 10.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L[,2], group_overlap_1$true_L[,10])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-71-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Factor 5 has 0.96 similarity with true factor 10.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L[,5], group_overlap_1$true_L[,10])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-72-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Factor 6 has 0.77 similarity with true factor 8.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L[,6], group_overlap_1$true_L[,8])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-73-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Factor 12 has 0.75 similarity with true factor 9.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L[,12], group_overlap_1$true_L[,9])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-74-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Factor 18 has 0.85 similarity with true factor 4.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L[,18], group_overlap_1$true_L[,4])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-75-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Factor 17 has 0.81 similarity with true factor 6.</p>
+<pre class="r"><code>plot(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L[,17], group_overlap_1$true_L[,6])</code></pre>
+<p><img src="figure/metric_threshold_exploration.Rmd/unnamed-chunk-76-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="observations" class="section level1">
+<h1>Observations</h1>
+<p>For many of the factors, the distribution of the similarity values
+has one value in the 0.8-1.0 bucket and the other 9 values below 0.4.
+The large gap suggests that a stringent threshold of e.g. 0.99 may not
+be necessary. In practice, there is often no “true” effect and overall
+the effects are more complex and less clear. So the focus doesn’t need
+to be whether the method gets it absolutely correct; it can lean more
+toward whether the method is able to generally pick up the correct
+structure (even if the values are not exactly correct).</p>
+<p>In comparing the cosine similarity and the correlation (for the
+factors for which correlation is defined), we generally see that when
+correlation is high, cosine similarity is also high. So I don’t think it
+matters too much what metric I use (though I did find one example where
+the metrics are different; that is something to think about).</p>
+<p>Taking a closer look at some of the factors which have 0.6-1
+similarity, I found that 0.9 seemed like a good cutoff for finding
+factors which (usually) have the correct separation of zero (or close to
+zero) values and non-zero values. There are some cases where the
+similarity is 0.85-0.9 and it does find the correct separation, but
+other cases where the similarity is in the range and it does not find
+the correct separation. I want to look at more pairs of factors with
+similarities in this range to get a better sense of how often the
+separation is generally correct.</p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.2 (2023-10-31)
+Platform: aarch64-apple-darwin20 (64-bit)
+Running under: macOS 15.6
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/Chicago
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] pheatmap_1.0.12 ggplot2_3.5.2   dplyr_1.1.4     workflowr_1.7.1
+
+loaded via a namespace (and not attached):
+ [1] softImpute_1.4-3     gtable_0.3.6         flashier_1.0.56     
+ [4] xfun_0.52            bslib_0.9.0          htmlwidgets_1.6.4   
+ [7] ggrepel_0.9.6        processx_3.8.4       ebnm_1.1-34         
+[10] lattice_0.22-6       callr_3.7.6          quadprog_1.5-8      
+[13] vctrs_0.6.5          tools_4.3.2          ps_1.7.7            
+[16] generics_0.1.4       parallel_4.3.2       Polychrome_1.5.1    
+[19] tibble_3.3.0         pkgconfig_2.0.3      Matrix_1.6-5        
+[22] data.table_1.17.6    SQUAREM_2021.1       RColorBrewer_1.1-3  
+[25] RcppParallel_5.1.10  scatterplot3d_0.3-44 lifecycle_1.0.4     
+[28] truncnorm_1.0-9      compiler_4.3.2       farver_2.1.2        
+[31] stringr_1.5.1        git2r_0.33.0         progress_1.2.3      
+[34] RhpcBLASctl_0.23-42  getPass_0.2-4        httpuv_1.6.15       
+[37] htmltools_0.5.8.1    sass_0.4.10          lazyeval_0.2.2      
+[40] yaml_2.3.10          plotly_4.11.0        crayon_1.5.3        
+[43] tidyr_1.3.1          later_1.4.2          pillar_1.10.2       
+[46] jquerylib_0.1.4      whisker_0.4.1        uwot_0.2.3          
+[49] cachem_1.1.0         trust_0.1-8          gtools_3.9.5        
+[52] tidyselect_1.2.1     digest_0.6.37        Rtsne_0.17          
+[55] stringi_1.8.7        purrr_1.0.4          ashr_2.2-66         
+[58] splines_4.3.2        cowplot_1.1.3        rprojroot_2.0.4     
+[61] fastmap_1.2.0        grid_4.3.2           colorspace_2.1-1    
+[64] cli_3.6.5            invgamma_1.1         magrittr_2.0.3      
+[67] withr_3.0.2          prettyunits_1.2.0    scales_1.4.0        
+[70] promises_1.3.3       horseshoe_0.2.0      rmarkdown_2.29      
+[73] httr_1.4.7           fastTopics_0.6-192   deconvolveR_1.2-1   
+[76] hms_1.1.3            pbapply_1.7-2        evaluate_1.0.4      
+[79] knitr_1.50           viridisLite_0.4.2    irlba_2.3.5.1       
+[82] rlang_1.1.6          Rcpp_1.0.14          mixsqp_0.3-54       
+[85] glue_1.8.0           rstudioapi_0.16.0    jsonlite_2.0.0      
+[88] R6_2.6.1             fs_1.6.6            </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
