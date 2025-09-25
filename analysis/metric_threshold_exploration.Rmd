@@ -1,0 +1,546 @@
+---
+title: "metric_threshold_exploration"
+author: "Annie Xie"
+date: "2025-09-24"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+
+In this analysis, I do some investigation of the similarities between the estimated factors and the true factors. This exploration is meant to inform the threshold I will use for my metrics (and potentially stability selection).
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+```{r}
+compute_cosine_sim_matrix <- function(L1, L2){
+  norms1 <- apply(L1, 2, function(x){sqrt(sum(x^2))})
+  norms1[norms1 == 0] <- Inf
+
+  norms2 <- apply(L2, 2, function(x){sqrt(sum(x^2))})
+  norms2[norms2 == 0] <- Inf
+
+  L1_normalized <- t(t(L1)/norms1)
+  L2_normalized <- t(t(L2)/norms2)
+
+  #compute matrix of cosine similarities
+  cosine_sim_matrix <- crossprod(L1_normalized, L2_normalized)
+
+  return(cosine_sim_matrix)
+}
+```
+
+# Sparse Overlapping
+
+```{r}
+group_overlap_1 <- readRDS('data/group_overlap_1.rds')
+```
+
+## EBCD
+```{r}
+group_overlap_1_pt_laplace_split_1_ebcd_1 <- readRDS('data/adclus_same_init_dsc_ex/group_overlap_1_pt_laplace_split_1_ebcd_1.rds')
+```
+
+### Correlation
+```{r}
+idx.keep <- apply(group_overlap_1_pt_laplace_split_1_ebcd_1$est_L, 2, sd) > 0
+```
+
+```{r}
+ebcd_true_corr <- cor(group_overlap_1_pt_laplace_split_1_ebcd_1$est_L[,idx.keep], group_overlap_1$true_L)
+```
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(ebcd_true_corr)){
+  hist(ebcd_true_corr[i,], main = paste('similarity of factor', which(idx.keep == TRUE)[i]), xlab = 'similarity with true factors')
+}
+par(mfrow = c(1, 1))
+```
+
+### Cosine Similarity
+```{r}
+ebcd_true_cos_sim <- compute_cosine_sim_matrix(group_overlap_1_pt_laplace_split_1_ebcd_1$est_L, group_overlap_1$true_L)
+```
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(ebcd_true_cos_sim)){
+  hist(ebcd_true_cos_sim[i,], main = paste('similarity of factor', i), xlab = 'similarity with true factors')
+}
+par(mfrow = c(1, 1))
+```
+
+### Comparison of Metrics
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(ebcd_true_corr)){
+  idx <- which(idx.keep == TRUE)[i]
+  plot(ebcd_true_corr[i,], ebcd_true_cos_sim[idx,], main = paste('factor', idx), xlab = 'correlation', ylab = 'cosine similarity')
+  abline(a=0, b=1, col = 'red')
+}
+par(mfrow = c(1, 1))
+```
+
+### Visualizations
+
+These are the maximum similarities:
+```{r}
+apply(ebcd_true_cos_sim, 1, max)
+```
+
+These are the true factors which are most similar to each estimated factor:
+```{r}
+apply(ebcd_true_cos_sim, 1, which.max)
+```
+
+Factor 2 has 0.98 similarity with true factor 10.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_ebcd_1$est_L[,2], group_overlap_1$true_L[,10])
+```
+
+Factor 5 has 0.88 similarity with true factor 10.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_ebcd_1$est_L[,5], group_overlap_1$true_L[,10])
+```
+
+## EBMFcov
+
+```{r}
+group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1 <- readRDS('data/adclus_same_init_dsc_ex/group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1.rds')
+```
+
+### Correlation
+```{r}
+idx.keep <- apply(group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1$est_L, 2, sd) > 0
+```
+
+```{r}
+ebmfcov_diag_true_corr <- cor(group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1$est_L[,idx.keep], group_overlap_1$true_L)
+```
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(ebmfcov_diag_true_corr)){
+  hist(ebmfcov_diag_true_corr[i,], main = paste('similarity of factor', which(idx.keep == TRUE)[i]), xlab = 'similarity with true factors')
+}
+par(mfrow = c(1, 1))
+```
+
+### Cosine Similarity
+```{r}
+ebmfcov_diag_true_cos_sim <- compute_cosine_sim_matrix(group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1$est_L, group_overlap_1$true_L)
+```
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(ebmfcov_diag_true_cos_sim)){
+  hist(ebmfcov_diag_true_cos_sim[i,], main = paste('similarity of factor', i), xlab = 'similarity with true factors')
+}
+par(mfrow = c(1, 1))
+```
+
+### Comparison of Metrics
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(ebmfcov_diag_true_corr)){
+  idx <- which(idx.keep == TRUE)[i]
+  plot(ebmfcov_diag_true_corr[i,], ebmfcov_diag_true_cos_sim[idx,], main = paste('factor', idx), xlab = 'correlation', ylab = 'cosine similarity')
+  abline(a=0, b=1, col = 'red')
+}
+par(mfrow = c(1, 1))
+```
+
+### Visualizations
+
+These are the maximum similarities:
+```{r}
+apply(ebmfcov_diag_true_cos_sim, 1, max)
+```
+
+These are the true factors which are most similar to each estimated factor:
+```{r}
+apply(ebmfcov_diag_true_cos_sim, 1, which.max)
+```
+
+Factor 5 has 0.67 similarity with true factor 8.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1$est_L[,5], group_overlap_1$true_L[,8])
+```
+
+Factor 11 has 0.91 similarity with true factor 8.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1$est_L[,11], group_overlap_1$true_L[,8])
+```
+
+Factor 4 has 0.79 similarity with true factor 10.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1$est_L[,4], group_overlap_1$true_L[,10])
+```
+
+Factor 1 has 0.99 similarity with true factor 10.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1$est_L[,1], group_overlap_1$true_L[,10])
+```
+
+Factor 13 has 0.68 similarity with true factor 10.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_ebmfcov_diag_1$est_L[,13], group_overlap_1$true_L[,10])
+```
+
+## Flash with Normal Prior on F
+
+```{r}
+group_overlap_1_pt_laplace_split_1_flash_normalf_1 <- readRDS('data/adclus_same_init_dsc_ex/group_overlap_1_pt_laplace_split_1_flash_normalf_1.rds')
+```
+
+### Correlation
+```{r}
+idx.keep <- apply(group_overlap_1_pt_laplace_split_1_flash_normalf_1$est_L, 2, sd) > 0
+```
+
+```{r}
+flash_normalf_true_corr <- cor(group_overlap_1_pt_laplace_split_1_flash_normalf_1$est_L[,idx.keep], group_overlap_1$true_L)
+```
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(flash_normalf_true_corr)){
+  hist(flash_normalf_true_corr[i,], main = paste('similarity of factor', which(idx.keep == TRUE)[i]), xlab = 'similarity with true factors')
+}
+par(mfrow = c(1, 1))
+```
+
+### Cosine Similarity
+
+```{r}
+flash_normalf_true_cos_sim <- compute_cosine_sim_matrix(group_overlap_1_pt_laplace_split_1_flash_normalf_1$est_L, group_overlap_1$true_L)
+```
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(flash_normalf_true_cos_sim)){
+  hist(flash_normalf_true_cos_sim[i,], main = paste('similarity of factor', i), xlab = 'similarity with true factors')
+}
+par(mfrow = c(1, 1))
+```
+
+### Comparison of Metrics
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(flash_normalf_true_corr)){
+  idx <- which(idx.keep == TRUE)[i]
+  plot(flash_normalf_true_corr[i,], flash_normalf_true_cos_sim[idx,], main = paste('factor', idx), xlab = 'correlation', ylab = 'cosine similarity')
+  abline(a=0, b=1, col = 'red')
+}
+par(mfrow = c(1, 1))
+```
+
+### Visualizations
+
+These are the maximum similarities:
+```{r}
+apply(flash_normalf_true_cos_sim, 1, max)
+```
+
+These are the true factors which are most similar to each estimated factor:
+```{r}
+apply(flash_normalf_true_cos_sim, 1, which.max)
+```
+
+Factor 2 has 0.79 similarity with true factor 7.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_flash_normalf_1$est_L[,2], group_overlap_1$true_L[,7])
+```
+
+Factor 8 has 0.71 similarity with true factor 7.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_flash_normalf_1$est_L[,8], group_overlap_1$true_L[,7])
+```
+
+## SINDCLUS
+
+```{r}
+group_overlap_1_pt_laplace_split_1_sindclus_2 <- readRDS('data/adclus_same_init_dsc_ex/group_overlap_1_pt_laplace_split_1_sindclus_2.rds')
+```
+
+### Correlation
+```{r}
+idx.keep <- apply(group_overlap_1_pt_laplace_split_1_sindclus_2$est_L, 2, sd) > 0
+```
+
+```{r}
+sindclus_true_corr <- cor(group_overlap_1_pt_laplace_split_1_sindclus_2$est_L[,idx.keep], group_overlap_1$true_L)
+```
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(sindclus_true_corr)){
+  hist(sindclus_true_corr[i,], main = paste('similarity of factor', which(idx.keep == TRUE)[i]), xlab = 'similarity with true factors')
+}
+par(mfrow = c(1, 1))
+```
+
+### Cosine Similarity
+
+```{r}
+sindclus_true_cos_sim <- compute_cosine_sim_matrix(group_overlap_1_pt_laplace_split_1_sindclus_2$est_L, group_overlap_1$true_L)
+```
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(sindclus_true_corr)){
+  hist(sindclus_true_cos_sim[i,], main = paste('similarity of factor', i), xlab = 'similarity with true factors')
+}
+par(mfrow = c(1, 1))
+```
+
+### Comparison of Metrics
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(sindclus_true_corr)){
+  idx <- which(idx.keep == TRUE)[i]
+  plot(sindclus_true_corr[i,], sindclus_true_cos_sim[idx,], main = paste('factor', idx), xlab = 'correlation', ylab = 'cosine similarity')
+  abline(a=0, b=1, col = 'red')
+}
+par(mfrow = c(1, 1))
+```
+
+### Visualizations
+
+These are the maximum similarities:
+```{r}
+apply(sindclus_true_cos_sim, 1, max)
+```
+
+These are the true factors which are most similar to each estimated factor:
+```{r}
+apply(sindclus_true_cos_sim, 1, which.max)
+```
+
+Factor 10 has 0.84 similarity with true factor 4.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_sindclus_2$est_L[,10], group_overlap_1$true_L[,4])
+```
+
+## SYMPRES
+
+```{r}
+group_overlap_1_pt_laplace_split_1_sympres_2 <- readRDS('data/adclus_same_init_dsc_ex/group_overlap_1_pt_laplace_split_1_sympres_2.rds')
+```
+
+### Correlation
+```{r}
+idx.keep <- apply(group_overlap_1_pt_laplace_split_1_sympres_2$est_L, 2, sd) > 0
+```
+
+```{r}
+sympres_true_corr <- cor(group_overlap_1_pt_laplace_split_1_sympres_2$est_L[,idx.keep], group_overlap_1$true_L)
+```
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(sympres_true_corr)){
+  hist(sympres_true_corr[i,], main = paste('similarity of factor', which(idx.keep == TRUE)[i]), xlab = 'similarity with true factors')
+}
+par(mfrow = c(1, 1))
+```
+
+### Cosine Similarity
+
+```{r}
+sympres_true_cos_sim <- compute_cosine_sim_matrix(group_overlap_1_pt_laplace_split_1_sympres_2$est_L, group_overlap_1$true_L)
+```
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(sympres_true_cos_sim)){
+  hist(sympres_true_cos_sim[i,], main = paste('similarity of factor', i), xlab = 'similarity with true factors')
+}
+par(mfrow = c(1, 1))
+```
+
+### Comparison of Metrics
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(sympres_true_corr)){
+  idx <- which(idx.keep == TRUE)[i]
+  plot(sympres_true_corr[i,], sympres_true_cos_sim[idx,], main = paste('factor', idx), xlab = 'correlation', ylab = 'cosine similarity')
+  abline(a=0, b=1, col = 'red')
+}
+par(mfrow = c(1, 1))
+```
+
+### Visualizations
+
+These are the maximum similarities:
+```{r}
+apply(sympres_true_cos_sim, 1, max)
+```
+
+These are the true factors which are most similar to each estimated factor:
+```{r}
+apply(sympres_true_cos_sim, 1, which.max)
+```
+
+Factor 6 has 0.83 similarity with true factor 4.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_sympres_2$est_L[,6], group_overlap_1$true_L[,4])
+```
+
+## CoDesymNMF
+
+```{r}
+group_overlap_1_pt_laplace_split_1_codesymnmf_1 <- readRDS('data/symnmf_same_init_dsc_ex/group_overlap_1_pt_laplace_split_1_codesymnmf_1.rds')
+```
+
+### Correlation
+```{r}
+idx.keep <- apply(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L, 2, sd) > 0
+```
+
+```{r}
+codesymnmf_true_corr <- cor(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L[,idx.keep], group_overlap_1$true_L)
+```
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(codesymnmf_true_corr)){
+  hist(codesymnmf_true_corr[i,], main = paste('similarity of factor', which(idx.keep == TRUE)[i]), xlab = 'similarity with true factors')
+}
+par(mfrow = c(1, 1))
+```
+
+### Cosine Similarity
+
+```{r}
+codesymnmf_true_cos_sim <- compute_cosine_sim_matrix(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L, group_overlap_1$true_L)
+```
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(codesymnmf_true_cos_sim)){
+  hist(codesymnmf_true_cos_sim[i,], main = paste('similarity of factor', i), xlab = 'similarity with true factors')
+}
+par(mfrow = c(1, 1))
+```
+
+### Comparison of Metrics
+
+```{r}
+par(mfrow = c(5, 4),    # 4 rows, 5 columns
+    mar = c(2, 2, 1, 1), # margins: bottom, left, top, right
+    oma = c(2, 2, 2, 0))
+for (i in 1:nrow(codesymnmf_true_corr)){
+  idx <- which(idx.keep == TRUE)[i]
+  plot(codesymnmf_true_corr[i,], codesymnmf_true_cos_sim[idx,], main = paste('factor', idx), xlab = 'correlation', ylab = 'cosine similarity')
+  abline(a=0, b=1, col = 'red')
+}
+par(mfrow = c(1, 1))
+```
+
+### Visualizations
+
+These are the maximum similarities:
+```{r}
+apply(codesymnmf_true_cos_sim, 1, max)
+```
+
+These are the true factors which are most similar to each estimated factor:
+```{r}
+apply(codesymnmf_true_cos_sim, 1, which.max)
+```
+
+Factor 1 has 0.74 similarity with true factor 10.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L[,1], group_overlap_1$true_L[,10])
+```
+
+Factor 2 has 0.89 similarity with true factor 10.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L[,2], group_overlap_1$true_L[,10])
+```
+
+Factor 5 has 0.96 similarity with true factor 10.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L[,5], group_overlap_1$true_L[,10])
+```
+
+Factor 6 has 0.77 similarity with true factor 8.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L[,6], group_overlap_1$true_L[,8])
+```
+
+Factor 12 has 0.75 similarity with true factor 9.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L[,12], group_overlap_1$true_L[,9])
+```
+
+Factor 18 has 0.85 similarity with true factor 4.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L[,18], group_overlap_1$true_L[,4])
+```
+
+Factor 17 has 0.81 similarity with true factor 6.
+```{r}
+plot(group_overlap_1_pt_laplace_split_1_codesymnmf_1$est_L[,17], group_overlap_1$true_L[,6])
+```
+
+# Observations
+
+For many of the factors, the distribution of the similarity values has one value in the 0.8-1.0 bucket and the other 9 values below 0.4. The large gap suggests that a stringent threshold of e.g. 0.99 may not be necessary. In practice, there is often no "true" effect and overall the effects are more complex and less clear. So the focus doesn't need to be whether the method gets it absolutely correct; it can lean more toward whether the method is able to generally pick up the correct structure (even if the values are not exactly correct).
+
+In comparing the cosine similarity and the correlation (for the factors for which correlation is defined), we generally see that when correlation is high, cosine similarity is also high. So I don't think it matters too much what metric I use (though I did find one example where the metrics are different; that is something to think about).
+
+Taking a closer look at some of the factors which have 0.6-1 similarity, I found that 0.9 seemed like a good cutoff for finding factors which (usually) have the correct separation of zero (or close to zero) values and non-zero values. There are some cases where the similarity is 0.85-0.9 and it does find the correct separation, but other cases where the similarity is in the range and it does not find the correct separation. I want to look at more pairs of factors with similarities in this range to get a better sense of how often the separation is generally correct.
+
