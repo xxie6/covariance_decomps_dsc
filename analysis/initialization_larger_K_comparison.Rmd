@@ -1,0 +1,322 @@
+---
+title: "initialization_larger_K_comparison"
+author: "Annie Xie"
+date: "2025-09-25"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+
+In this analysis, I compare three different initialization strategies which were given double the number of correct components. In practice, the number of components is unknown, so I want to explore how these initialization strategies perform when given too many components. Furthermore, the question of what initialization performs the best is intertwined with the question of how to choose the (maximum) number of components to fit. With flashier, we generally advise users to use a lot of components; the method should stop adding components when additional components no longer help.
+
+```{r load_packages, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(ggrepel)
+library(pheatmap)
+```
+
+```{r load_viz_functions}
+source('code/visualization_functions.R')
+```
+
+# Prepare the DSC data
+
+```{r load_dsc_results}
+dscout <- readRDS("data/same_init_dsc_results_df.rds")
+dscout <- dscout %>% filter((initialization.K_factor == 1 & initialization == 'pt_laplace_split') | (initialization.K_factor == 2 & initialization != 'pt_laplace_split'), (is.na(score.threshold) == TRUE | score.threshold == 0.9))
+dim(dscout)
+```
+
+I decided to focus on the variant of SINDCLUS and SYMPRES that does not explicitly model an intercept. So I clean the data to only include these variants. I also will focus on the generalized binary prior, so I will clean the data to only include that prior.
+```{r filter_results}
+dscout <- dscout %>% filter((is.na(analyze.additive_term) == TRUE) | (analyze.additive_term == 'FALSE'), (is.na(analyze.ebnm_fn) == TRUE) | (analyze.ebnm_fn == 'ebnm::ebnm_generalized_binary')) %>% select(!(analyze.off_diagonal))
+```
+
+# Unbalanced Nonoverlapping
+
+## Crossproduct Similarity
+
+```{r unbal_nonoverlap_crossprod_df}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40, 4)', score == 'crossprod_similarity') %>% group_by(analyze, initialization) %>% summarise(avg_result = mean(score.result))
+```
+
+```{r}
+unbal_nonoverlap_crossprod_results <- dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40, 4)', score == 'crossprod_similarity') %>% group_by(analyze, initialization) %>% summarise(metric = mean(score.result)) %>% mutate(method = paste(analyze, initialization, sep='-')) %>% rename(grouping = initialization)
+```
+
+```{r}
+dot_plot(unbal_nonoverlap_crossprod_results, 'Crossproduct Similarity for Unbalanced Nonoverlapping', '', '')
+```
+
+The CoDesymNMF and point-Laplace initialization procedures both perform really well in this setting. The EBMFcov greedy with refitting strategy also performs well, but it performs slightly worse with Flash with a normal prior on $F$ (It's not a significant difference).
+
+## Proportions
+
+```{r unbal_nonoverlap_prop_df}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40, 4)', score == 'prop_true_high_cos_sim') %>% group_by(analyze, analyze.ebnm_fn, initialization) %>% summarise(avg_result = mean(score.result))
+```
+
+```{r}
+unbal_nonoverlap_prop_results <- dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40, 4)', score == 'prop_true_high_cos_sim') %>% group_by(analyze, analyze.ebnm_fn, initialization) %>% summarise(metric = mean(score.result)) %>% mutate(method = paste(analyze, initialization, sep='-')) %>% rename(grouping = initialization)
+```
+
+```{r}
+dot_plot(unbal_nonoverlap_prop_results, 'Proportion Recovered for Unbalanced Nonoverlapping', '', '')
+```
+
+We see similar trends with the proportion recovered metric.
+
+```{r}
+prop_data_df <- dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes != 'rep(40, 4)', score %in% c('prop_true_high_cos_sim', 'prop_est_high_cos_sim')) %>% group_by(analyze, analyze.ebnm_fn, initialization, score) %>% summarise(metric = mean(score.result)) %>% mutate(method = paste(analyze, initialization, sep='-'))
+
+prop_est_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['metric']]
+prop_true_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_true_high_cos_sim') , ][['metric']]
+methods <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['analyze']]
+initialization <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['initialization']]
+
+prop_plot_df <- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals, initialization = initialization)
+```
+
+```{r}
+ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals, 
+                                color = initialization, shape = method))  +
+  facet_wrap(~ initialization, scales = "fixed") + 
+  geom_point(size = 3) +
+  labs(title = "",
+       x = "Proportion of Estimate Capturing True Signal",
+       y = "Proportion of True Signals Recovered")
+```
+
+We see that almost all of the methods recover all of the true signals. Furthermore, we see that all of the methods return extra factors. The EBMFcov greedy with refitting method returned the fewest number of extra factors. 
+
+# Balanced Nonoverlapping
+
+## Crossproduct Similarity
+
+```{r bal_nonoverlap_crossprod_df}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes == 'rep(40, 4)', score == 'crossprod_similarity') %>% group_by(analyze, initialization) %>% summarise(avg_result = mean(score.result))
+```
+
+```{r}
+bal_nonoverlap_crossprod_results <- dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes == 'rep(40, 4)', score == 'crossprod_similarity') %>% group_by(analyze, initialization) %>% summarise(metric = mean(score.result)) %>% mutate(method = paste(analyze, initialization, sep='-')) %>% rename(grouping = initialization)
+```
+
+```{r}
+dot_plot(bal_nonoverlap_crossprod_results, 'Crossproduct Similarity for Balanced Nonoverlapping', '', '')
+```
+
+The CoDesymNMF and point-Laplace initialization strategies both perform well. The EBMFcov greedy with refitting strategy performs slightly worse.
+
+## Proportions
+
+```{r bal_nonoverlap_prop_df}
+dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes == 'rep(40, 4)', score == 'prop_true_high_cos_sim') %>% group_by(analyze, analyze.ebnm_fn, initialization) %>% summarise(avg_result = mean(score.result))
+```
+
+```{r}
+bal_nonoverlap_prop_results <- dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes == 'rep(40, 4)', score == 'prop_true_high_cos_sim') %>% group_by(analyze, analyze.ebnm_fn, initialization) %>% summarise(metric = mean(score.result)) %>% mutate(method = paste(analyze, initialization, sep='-')) %>% rename(grouping = initialization)
+```
+
+```{r}
+dot_plot(bal_nonoverlap_prop_results, 'Proportion Recovered for Unbalanced Nonoverlapping', '', '')
+```
+
+We generally see the same trends with this metric. Before, I was under the impression that the EBMFcov greedy with refitting method was performing worse because it would often add a baseline factor for the first factor, and before, I limited the number of factors it could add to 4. I suspected that if it was allowed to add more factors, then it would be able to find all of the true effects. But these results don't suggest that. So maybe there are some other issues in this setting.
+
+```{r}
+prop_data_df <- dscout %>% filter(simulate == 'group_nonoverlap', simulate.pop_sizes == 'rep(40, 4)', score %in% c('prop_true_high_cos_sim', 'prop_est_high_cos_sim')) %>% group_by(analyze, analyze.ebnm_fn, initialization, score) %>% summarise(metric = mean(score.result)) %>% mutate(method = paste(analyze, initialization, sep='-'))
+
+prop_est_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['metric']]
+prop_true_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_true_high_cos_sim') , ][['metric']]
+methods <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['analyze']]
+initialization <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['initialization']]
+
+prop_plot_df <- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals, initialization = initialization)
+```
+
+```{r}
+ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals, 
+                                color = initialization, shape = method)) +
+  facet_wrap(~ initialization, scales = "fixed") + 
+  geom_point(size = 3) +
+  labs(title = "",
+       x = "Proportion of Estimate Capturing True Signal",
+       y = "Proportion of True Signals Recovered")
+```
+
+Most of the point-Laplace plus splitting methods are able to recover all of the true signals. All of the CoDesymNMF methods are able to recover all of the true signals. As noted before, the EBMFcov greedy with refitting performs worse than the other two initialization strategies. Again, all of the methods return extra factors. The CoDesymNMF initialed methods return the largest number of extra factors.
+
+# Balanced Tree
+
+## Crossproduct Similarity
+
+```{r baltree_crossprod_df}
+dscout %>% filter(simulate == 'baltree_4pop', score == 'crossprod_similarity') %>% group_by(analyze, initialization) %>% summarise(avg_result = mean(score.result))
+```
+
+```{r}
+baltree_crossprod_results <- dscout %>% filter(simulate == 'baltree_4pop', score == 'crossprod_similarity') %>% group_by(analyze, initialization) %>% summarise(metric = mean(score.result)) %>% mutate(method = paste(analyze, initialization, sep='-')) %>% rename(grouping = initialization)
+```
+
+```{r}
+dot_plot(baltree_crossprod_results, 'Crossproduct Similarity for Balanced Tree', '', '')
+```
+
+With regards to the crossproduct similarity, the CoDesymNMF initialization performs the worst. The point-Laplace plus splitting strategy performs the best.
+
+## Proportions
+
+```{r baltree_prop_df}
+dscout %>% filter(simulate == 'baltree_4pop', score == 'prop_true_high_cos_sim') %>% group_by(analyze, analyze.ebnm_fn, initialization) %>% summarise(avg_result = mean(score.result))
+```
+
+```{r}
+baltree_prop_results <- dscout %>% filter(simulate == 'baltree_4pop', score == 'prop_true_high_cos_sim') %>% group_by(analyze, analyze.ebnm_fn, initialization) %>% summarise(metric = mean(score.result)) %>% mutate(method = paste(analyze, initialization, sep='-')) %>% rename(grouping = initialization)
+```
+
+```{r}
+dot_plot(baltree_prop_results, 'Proportion Recovered for Balanced Tree', '', '')
+```
+
+We see the same trends with the proportion recovered metric.
+
+```{r}
+prop_data_df <- dscout %>% filter(simulate == 'baltree_4pop', score %in% c('prop_true_high_cos_sim', 'prop_est_high_cos_sim')) %>% group_by(analyze, analyze.ebnm_fn, initialization, score) %>% summarise(metric = mean(score.result)) %>% mutate(method = paste(analyze, initialization, sep='-'))
+
+prop_est_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['metric']]
+prop_true_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_true_high_cos_sim') , ][['metric']]
+methods <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['analyze']]
+initialization <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['initialization']]
+
+prop_plot_df <- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals, initialization = initialization)
+```
+
+```{r}
+ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals, 
+                                color = initialization, shape = method))  +
+  facet_wrap(~ initialization, scales = "fixed") +
+  geom_point(size = 3) +
+  labs(title = "",
+       x = "Proportion of Estimate Capturing True Signal",
+       y = "Proportion of True Signals Recovered")
+```
+
+In this case, point-Laplace with splitting does not return any extra factors. This initialization seems to reach the ideal case of not returning extra factors and recovering all of the real signal. The CoDesymNMF initialized methods perform the worst in this setting. This is not surprising since CoDesymNMF struggles to find trees. Some of the EBMFcov greedy with refitting methods are able to recover all of the true effects, but they also return extra factors.
+
+# Sparse Overlapping
+
+## Crossproduct Similarity
+
+```{r overlap_crossprod_df}
+dscout %>% filter(simulate == 'group_overlap', score == 'crossprod_similarity') %>% group_by(analyze, initialization) %>% summarise(avg_result = mean(score.result))
+```
+
+```{r}
+overlap_crossprod_results <- dscout %>% filter(simulate == 'group_overlap', score == 'crossprod_similarity') %>% group_by(analyze, initialization) %>% summarise(metric = mean(score.result)) %>% mutate(method = paste(analyze, initialization, sep='-')) %>% rename(grouping = initialization)
+```
+
+```{r}
+dot_plot(overlap_crossprod_results, 'Crossproduct Similarity for Overlapping', '', '')
+```
+
+With respect to the crossproduct similarity, the point-Laplace plus splitting strategy generally performs the worst. I would say that the CoDesymNMF and EBMFcov greedy plus refitting initializations have comparable performance.
+
+## Proportions
+
+```{r overlap_prop_df}
+dscout %>% filter(simulate == 'group_overlap', score == 'prop_true_high_cos_sim') %>% group_by(analyze, analyze.ebnm_fn, initialization) %>% summarise(avg_result = mean(score.result))
+```
+
+```{r}
+overlap_prop_results <- dscout %>% filter(simulate == 'group_overlap', score == 'prop_true_high_cos_sim') %>% group_by(analyze, analyze.ebnm_fn, initialization) %>% summarise(metric = mean(score.result)) %>% mutate(method = paste(analyze, initialization, sep='-')) %>% rename(grouping = initialization)
+```
+
+```{r}
+dot_plot(overlap_prop_results, 'Proportion Recovered for Overlapping', '', '')
+```
+
+We see similar trends here. With this metric, I would say that the CoDesymNMF initialzation peforms slightly better than the EBMFcov greedy plus refitting initialization.
+
+```{r}
+prop_data_df <- dscout %>% filter(simulate == 'group_overlap', score %in% c('prop_true_high_cos_sim', 'prop_est_high_cos_sim')) %>% group_by(analyze, analyze.ebnm_fn, initialization, score) %>% summarise(metric = mean(score.result)) %>% mutate(method = paste(analyze, initialization, sep='-'))
+
+prop_est_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['metric']]
+prop_true_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_true_high_cos_sim') , ][['metric']]
+methods <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['analyze']]
+initialization <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['initialization']]
+
+prop_plot_df <- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals, initialization = initialization)
+```
+
+```{r}
+ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals, 
+                                color = initialization, shape = method)) +
+  facet_wrap(~ initialization, scales = "fixed") + 
+  geom_point(size = 3) +
+  labs(title = "",
+       x = "Proportion of Estimate Capturing True Signal",
+       y = "Proportion of True Signals Recovered")
+```
+
+In this setting, we see that all of the methods return extra factors. The EBMFcov greedy with refitting methods seem to return the fewest number of extra factors. It also seems like the point-Laplace plus splitting initialization struggles the most in this setting. It does not recover as much of  the true signal as the CoDesymNMF initialized methods.
+
+# Unbalanced Tree
+
+## Crossproduct Similarity
+
+```{r unbaltree_crossprod_df}
+dscout %>% filter(simulate == 'unbaltree_4pop', score == 'crossprod_similarity') %>% group_by(analyze, initialization) %>% summarise(avg_result = mean(score.result))
+```
+
+```{r}
+unbaltree_crossprod_results <- dscout %>% filter(simulate == 'unbaltree_4pop', score == 'crossprod_similarity') %>% group_by(analyze, initialization) %>% summarise(metric = mean(score.result)) %>% mutate(method = paste(analyze, initialization, sep='-')) %>% rename(grouping = initialization)
+```
+
+```{r}
+dot_plot(unbaltree_crossprod_results, 'Crossproduct Similarity for Unbalanced Tree', '', '')
+```
+
+With respect to the crossproduct similarity, I would say the EBMFcov greedy plus refitting initialization generally performs the best. 
+
+## Proportions
+
+```{r unbaltree_prop_df}
+dscout %>% filter(simulate == 'unbaltree_4pop', score == 'prop_true_high_cos_sim') %>% group_by(analyze, analyze.ebnm_fn, initialization) %>% summarise(avg_result = mean(score.result))
+```
+
+```{r}
+unbaltree_prop_results <- dscout %>% filter(simulate == 'unbaltree_4pop', score == 'prop_true_high_cos_sim') %>% group_by(analyze, analyze.ebnm_fn, initialization) %>% summarise(metric = mean(score.result)) %>% mutate(method = paste(analyze, initialization, sep='-')) %>% rename(grouping = initialization)
+```
+
+```{r}
+dot_plot(baltree_prop_results, 'Proportion Recovered for Unbalanced Tree', '', '')
+```
+
+With respect to the proportion recovered metric, the point-Laplace plus splitting initialization appears to perform the best and the CoDesymNMF initialization appears to perform the worst.
+
+```{r}
+prop_data_df <- dscout %>% filter(simulate == 'unbaltree_4pop', score %in% c('prop_true_high_cos_sim', 'prop_est_high_cos_sim')) %>% group_by(analyze, analyze.ebnm_fn, initialization, score) %>% summarise(metric = mean(score.result)) %>% mutate(method = paste(analyze, initialization, sep='-'))
+
+prop_est_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['metric']]
+prop_true_high_cos_sim_vals <- prop_data_df[(prop_data_df$score == 'prop_true_high_cos_sim') , ][['metric']]
+methods <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['analyze']]
+initialization <- prop_data_df[(prop_data_df$score == 'prop_est_high_cos_sim') , ][['initialization']]
+
+prop_plot_df <- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals, initialization = initialization)
+```
+
+```{r}
+ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals, color = initialization, shape = method))  +
+  facet_wrap(~ initialization, scales = "fixed") +
+  geom_point(size = 3) +
+  labs(title = "",
+       x = "Proportion of Estimate Capturing True Signal",
+       y = "Proportion of True Signals Recovered")
+```
+
+Some of the point-Laplace plus splitting initialized methods perform very well; however some of the methods do not perform very well. The CoDesymNMF initialized methods generally return many extra factors.
