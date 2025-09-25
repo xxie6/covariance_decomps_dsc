@@ -234,7 +234,7 @@ overlap_prop_results <- dscout %>% filter(simulate == 'group_overlap', score == 
 dot_plot(overlap_prop_results, 'Proportion Recovered for Overlapping', '', '')
 ```
 
-With respect to the proportion of factors recovered, the CoDesymNMF initialization also performs the best. However, with respect to this metric, the point-Laplace initialization consistently performs the worst.
+With respect to the proportion of factors recovered, the CoDesymNMF initialization generally performs the best. However, with respect to this metric, the point-Laplace initialization generally performs the worst.
 
 ```{r}
 prop_data_df <- dscout %>% filter(simulate == 'group_overlap', score %in% c('prop_true_high_cos_sim', 'prop_est_high_cos_sim')) %>% group_by(analyze, analyze.ebnm_fn, initialization, score) %>% summarise(metric = mean(score.result)) %>% mutate(method = paste(analyze, initialization, sep='-'))
