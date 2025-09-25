@@ -402,7 +402,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-09-22
+<strong>Last updated:</strong> 2025-09-25
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -533,15 +533,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree3cb6e5171d77b1d8f739f125967a810cf54d96f6targetblank3cb6e51a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree02f0658b6ee21aaafa720ec7686f63c98a18e3c0targetblank02f0658a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/3cb6e5171d77b1d8f739f125967a810cf54d96f6" target="_blank">3cb6e51</a>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/02f0658b6ee21aaafa720ec7686f63c98a18e3c0" target="_blank">02f0658</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree3cb6e5171d77b1d8f739f125967a810cf54d96f6targetblank3cb6e51a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctree02f0658b6ee21aaafa720ec7686f63c98a18e3c0targetblank02f0658a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -551,7 +551,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/3cb6e5171d77b1d8f739f125967a810cf54d96f6" target="_blank">3cb6e51</a>.
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/02f0658b6ee21aaafa720ec7686f63c98a18e3c0" target="_blank">02f0658</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -572,6 +572,9 @@ Ignored files:
     Ignored:    data/adclus_cov_comp_dsc_ex/.DS_Store
     Ignored:    data/adclus_same_init_dsc_ex/.DS_Store
     Ignored:    data/pt_laplace_split_init_ex/.DS_Store
+
+Untracked files:
+    Untracked:  analysis/initialization_larger_K_comparison.Rmd
 
 </code></pre>
 <p>
@@ -623,6 +626,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/02f0658b6ee21aaafa720ec7686f63c98a18e3c0/analysis/initialization_comparison.Rmd" target="_blank">02f0658</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-25
+</td>
+<td>
+Update comparison of initializations
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/xxie6/covariance_decomps_dsc/8b6c892ff541d74d1b9d074cf373852b35ce1ae5/docs/initialization_comparison.html" target="_blank">8b6c892</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-22
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/xxie6/covariance_decomps_dsc/blob/3cb6e5171d77b1d8f739f125967a810cf54d96f6/analysis/initialization_comparison.Rmd" target="_blank">3cb6e51</a>
 </td>
 <td>
@@ -660,7 +697,7 @@ library(pheatmap)</code></pre>
 <div id="prepare-the-dsc-data" class="section level1">
 <h1>Prepare the DSC data</h1>
 <pre class="r"><code>dscout &lt;- readRDS(&quot;data/same_init_dsc_results_df.rds&quot;)
-dscout &lt;- dscout %&gt;% filter(initialization.K_factor == 1, (is.na(score.threshold) == TRUE | score.threshold == 0.99))
+dscout &lt;- dscout %&gt;% filter(initialization.K_factor == 1, (is.na(score.threshold) == TRUE | score.threshold == 0.9))
 dim(dscout)</code></pre>
 <pre><code>[1] 6600   13</code></pre>
 <p>I decided to focus on the variant of SINDCLUS and SYMPRES that does
@@ -703,6 +740,43 @@ will clean the data to only include that prior.</p>
 `.groups` argument.</code></pre>
 <pre class="r"><code>dot_plot(unbal_nonoverlap_crossprod_results, &#39;Crossproduct Similarity for Unbalanced Nonoverlapping&#39;, &#39;&#39;, &#39;&#39;)</code></pre>
 <p><img src="figure/initialization_comparison.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/8b6c892ff541d74d1b9d074cf373852b35ce1ae5/docs/figure/initialization_comparison.Rmd/unnamed-chunk-2-1.png" target="_blank">8b6c892</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The CoDesymNMF and point-Laplace initialization procedures both
 perform really well in this setting. The EBMFcov greedy with refitting
 strategy also performs well, but it performs slightly worse with Flash
@@ -740,23 +814,97 @@ override using the `.groups` argument.</code></pre>
 override using the `.groups` argument.</code></pre>
 <pre class="r"><code>dot_plot(unbal_nonoverlap_prop_results, &#39;Proportion Recovered for Unbalanced Nonoverlapping&#39;, &#39;&#39;, &#39;&#39;)</code></pre>
 <p><img src="figure/initialization_comparison.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/8b6c892ff541d74d1b9d074cf373852b35ce1ae5/docs/figure/initialization_comparison.Rmd/unnamed-chunk-4-1.png" target="_blank">8b6c892</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>We see similar trends with the proportion recovered metric.</p>
-<pre class="r"><code>prop_data_df &lt;- dscout %&gt;% filter(simulate == &#39;group_nonoverlap&#39;, simulate.pop_sizes != &#39;rep(40, 4)&#39;, score %in% c(&#39;prop_true_high_cos_sim&#39;, &#39;prop_est_high_cos_sim&#39;)) %&gt;% group_by(analyze, analyze.ebnm_fn, initialization, score) %&gt;% summarise(metric = mean(score.result)) %&gt;% mutate(method = paste(analyze, initialization, sep=&#39;-&#39;)) %&gt;% rename(grouping = initialization)</code></pre>
+<pre class="r"><code>prop_data_df &lt;- dscout %&gt;% filter(simulate == &#39;group_nonoverlap&#39;, simulate.pop_sizes != &#39;rep(40, 4)&#39;, score %in% c(&#39;prop_true_high_cos_sim&#39;, &#39;prop_est_high_cos_sim&#39;)) %&gt;% group_by(analyze, analyze.ebnm_fn, initialization, score) %&gt;% summarise(metric = mean(score.result)) %&gt;% mutate(method = paste(analyze, initialization, sep=&#39;-&#39;))</code></pre>
 <pre><code>`summarise()` has grouped output by &#39;analyze&#39;, &#39;analyze.ebnm_fn&#39;,
 &#39;initialization&#39;. You can override using the `.groups` argument.</code></pre>
 <pre class="r"><code>prop_est_high_cos_sim_vals &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;metric&#39;]]
 prop_true_high_cos_sim_vals &lt;- prop_data_df[(prop_data_df$score == &#39;prop_true_high_cos_sim&#39;) , ][[&#39;metric&#39;]]
 methods &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;analyze&#39;]]
-grouping &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;grouping&#39;]]
+initialization &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;initialization&#39;]]
 
-prop_plot_df &lt;- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals, grouping = grouping)</code></pre>
-<pre class="r"><code>ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals, color = grouping))  +
-  facet_wrap(~ grouping, scales = &quot;fixed&quot;) + 
+prop_plot_df &lt;- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals, initialization = initialization)</code></pre>
+<pre class="r"><code>ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals, color = initialization, shape = method))  +
+  facet_wrap(~ initialization, scales = &quot;fixed&quot;) + 
   geom_point(size = 3) +
   labs(title = &quot;&quot;,
        x = &quot;Proportion of Estimate Capturing True Signal&quot;,
        y = &quot;Proportion of True Signals Recovered&quot;)</code></pre>
 <p><img src="figure/initialization_comparison.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/8b6c892ff541d74d1b9d074cf373852b35ce1ae5/docs/figure/initialization_comparison.Rmd/unnamed-chunk-6-1.png" target="_blank">8b6c892</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>We see that with the point-Laplace initialization strategy, many of
 the methods return extra factors. On the other hand, since CoDesymNMF is
 given the correct number of factors, it does not return extra factors.
@@ -798,6 +946,43 @@ also return extra factors.</p>
 `.groups` argument.</code></pre>
 <pre class="r"><code>dot_plot(bal_nonoverlap_crossprod_results, &#39;Crossproduct Similarity for Balanced Nonoverlapping&#39;, &#39;&#39;, &#39;&#39;)</code></pre>
 <p><img src="figure/initialization_comparison.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/8b6c892ff541d74d1b9d074cf373852b35ce1ae5/docs/figure/initialization_comparison.Rmd/unnamed-chunk-8-1.png" target="_blank">8b6c892</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The CoDesymNMF and point-Laplace initialization strategies both
 perform well. The EBMFcov greedy with refitting strategy performs
 slightly worse.</p>
@@ -812,10 +997,10 @@ override using the `.groups` argument.</code></pre>
    analyze       analyze.ebnm_fn               initialization         avg_result
    &lt;chr&gt;         &lt;chr&gt;                         &lt;chr&gt;                       &lt;dbl&gt;
  1 codesymnmf    &lt;NA&gt;                          codesymnmf_init             1    
- 2 codesymnmf    &lt;NA&gt;                          ebmfcov_greedy_refit_…      0.925
+ 2 codesymnmf    &lt;NA&gt;                          ebmfcov_greedy_refit_…      0.975
  3 codesymnmf    &lt;NA&gt;                          pt_laplace_split            1    
  4 ebcd          ebnm::ebnm_generalized_binary codesymnmf_init             1    
- 5 ebcd          ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…      0.925
+ 5 ebcd          ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…      0.95 
  6 ebcd          ebnm::ebnm_generalized_binary pt_laplace_split            1    
  7 ebmfcov_diag  ebnm::ebnm_generalized_binary codesymnmf_init             1    
  8 ebmfcov_diag  ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…      0.95 
@@ -832,28 +1017,99 @@ override using the `.groups` argument.</code></pre>
 <pre class="r"><code>bal_nonoverlap_prop_results &lt;- dscout %&gt;% filter(simulate == &#39;group_nonoverlap&#39;, simulate.pop_sizes == &#39;rep(40, 4)&#39;, score == &#39;prop_true_high_cos_sim&#39;) %&gt;% group_by(analyze, analyze.ebnm_fn, initialization) %&gt;% summarise(metric = mean(score.result)) %&gt;% mutate(method = paste(analyze, initialization, sep=&#39;-&#39;)) %&gt;% rename(grouping = initialization)</code></pre>
 <pre><code>`summarise()` has grouped output by &#39;analyze&#39;, &#39;analyze.ebnm_fn&#39;. You can
 override using the `.groups` argument.</code></pre>
-<pre class="r"><code>dot_plot(bal_nonoverlap_prop_results, &#39;Proportion Recovered for Unbalanced Nonoverlapping&#39;, &#39;&#39;, &#39;&#39;)</code></pre>
+<pre class="r"><code>dot_plot(bal_nonoverlap_prop_results, &#39;Proportion Recovered for Balanced Nonoverlapping&#39;, &#39;&#39;, &#39;&#39;)</code></pre>
 <p><img src="figure/initialization_comparison.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>We generally see the same trends with this metric. However, the
-point-Laplace split strategy performs slightly worse than the CoDesymNMF
-strategy with Flash with a normal prior on <span
-class="math inline">\(F\)</span>.</p>
-<pre class="r"><code>prop_data_df &lt;- dscout %&gt;% filter(simulate == &#39;group_nonoverlap&#39;, simulate.pop_sizes == &#39;rep(40, 4)&#39;, score %in% c(&#39;prop_true_high_cos_sim&#39;, &#39;prop_est_high_cos_sim&#39;)) %&gt;% group_by(analyze, analyze.ebnm_fn, initialization, score) %&gt;% summarise(metric = mean(score.result)) %&gt;% mutate(method = paste(analyze, initialization, sep=&#39;-&#39;)) %&gt;% rename(grouping = initialization)</code></pre>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/8b6c892ff541d74d1b9d074cf373852b35ce1ae5/docs/figure/initialization_comparison.Rmd/unnamed-chunk-10-1.png" target="_blank">8b6c892</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>We generally see the same trends with this metric.</p>
+<pre class="r"><code>prop_data_df &lt;- dscout %&gt;% filter(simulate == &#39;group_nonoverlap&#39;, simulate.pop_sizes == &#39;rep(40, 4)&#39;, score %in% c(&#39;prop_true_high_cos_sim&#39;, &#39;prop_est_high_cos_sim&#39;)) %&gt;% group_by(analyze, analyze.ebnm_fn, initialization, score) %&gt;% summarise(metric = mean(score.result)) %&gt;% mutate(method = paste(analyze, initialization, sep=&#39;-&#39;))</code></pre>
 <pre><code>`summarise()` has grouped output by &#39;analyze&#39;, &#39;analyze.ebnm_fn&#39;,
 &#39;initialization&#39;. You can override using the `.groups` argument.</code></pre>
 <pre class="r"><code>prop_est_high_cos_sim_vals &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;metric&#39;]]
 prop_true_high_cos_sim_vals &lt;- prop_data_df[(prop_data_df$score == &#39;prop_true_high_cos_sim&#39;) , ][[&#39;metric&#39;]]
 methods &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;analyze&#39;]]
-grouping &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;grouping&#39;]]
+initialization &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;initialization&#39;]]
 
-prop_plot_df &lt;- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals, grouping = grouping)</code></pre>
-<pre class="r"><code>ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals, color = grouping)) +
-  facet_wrap(~ grouping, scales = &quot;fixed&quot;) + 
+prop_plot_df &lt;- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals, initialization = initialization)</code></pre>
+<pre class="r"><code>ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals, color = initialization, shape = method)) +
+  facet_wrap(~ initialization, scales = &quot;fixed&quot;) + 
   geom_point(size = 3) +
   labs(title = &quot;&quot;,
        x = &quot;Proportion of Estimate Capturing True Signal&quot;,
        y = &quot;Proportion of True Signals Recovered&quot;)</code></pre>
 <p><img src="figure/initialization_comparison.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
+Past versions of unnamed-chunk-12-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-12-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/8b6c892ff541d74d1b9d074cf373852b35ce1ae5/docs/figure/initialization_comparison.Rmd/unnamed-chunk-12-1.png" target="_blank">8b6c892</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>We again see that most of the point-Laplace-initialzed estimates
 return extra factors. Again, CoDesymNMF is given the correct number of
 factors so it does not return extra factors.</p>
@@ -893,6 +1149,43 @@ factors so it does not return extra factors.</p>
 `.groups` argument.</code></pre>
 <pre class="r"><code>dot_plot(baltree_crossprod_results, &#39;Crossproduct Similarity for Balanced Tree&#39;, &#39;&#39;, &#39;&#39;)</code></pre>
 <p><img src="figure/initialization_comparison.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
+Past versions of unnamed-chunk-14-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-14-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/8b6c892ff541d74d1b9d074cf373852b35ce1ae5/docs/figure/initialization_comparison.Rmd/unnamed-chunk-14-1.png" target="_blank">8b6c892</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>With regards to the crossproduct similarity, the CoDesymNMF
 initialization performs the worst. The point-Laplace plus splitting
 strategy performs the best.</p>
@@ -906,50 +1199,121 @@ override using the `.groups` argument.</code></pre>
 # Groups:   analyze, analyze.ebnm_fn [6]
    analyze       analyze.ebnm_fn               initialization         avg_result
    &lt;chr&gt;         &lt;chr&gt;                         &lt;chr&gt;                       &lt;dbl&gt;
- 1 codesymnmf    &lt;NA&gt;                          codesymnmf_init             0.286
- 2 codesymnmf    &lt;NA&gt;                          ebmfcov_greedy_refit_…      0.829
- 3 codesymnmf    &lt;NA&gt;                          pt_laplace_split            0.971
- 4 ebcd          ebnm::ebnm_generalized_binary codesymnmf_init             0.429
- 5 ebcd          ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…      0.671
- 6 ebcd          ebnm::ebnm_generalized_binary pt_laplace_split            0.871
- 7 ebmfcov_diag  ebnm::ebnm_generalized_binary codesymnmf_init             0.3  
- 8 ebmfcov_diag  ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…      0.743
- 9 ebmfcov_diag  ebnm::ebnm_generalized_binary pt_laplace_split            0.929
-10 flash_normalf ebnm::ebnm_generalized_binary codesymnmf_init             0.586
-11 flash_normalf ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…      0.571
-12 flash_normalf ebnm::ebnm_generalized_binary pt_laplace_split            0.657
-13 sindclus      &lt;NA&gt;                          codesymnmf_init             0.614
+ 1 codesymnmf    &lt;NA&gt;                          codesymnmf_init             0.886
+ 2 codesymnmf    &lt;NA&gt;                          ebmfcov_greedy_refit_…      0.971
+ 3 codesymnmf    &lt;NA&gt;                          pt_laplace_split            1    
+ 4 ebcd          ebnm::ebnm_generalized_binary codesymnmf_init             0.729
+ 5 ebcd          ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…      0.843
+ 6 ebcd          ebnm::ebnm_generalized_binary pt_laplace_split            0.971
+ 7 ebmfcov_diag  ebnm::ebnm_generalized_binary codesymnmf_init             0.814
+ 8 ebmfcov_diag  ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…      0.886
+ 9 ebmfcov_diag  ebnm::ebnm_generalized_binary pt_laplace_split            0.986
+10 flash_normalf ebnm::ebnm_generalized_binary codesymnmf_init             0.614
+11 flash_normalf ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…      0.657
+12 flash_normalf ebnm::ebnm_generalized_binary pt_laplace_split            0.7  
+13 sindclus      &lt;NA&gt;                          codesymnmf_init             0.643
 14 sindclus      &lt;NA&gt;                          ebmfcov_greedy_refit_…      0.971
 15 sindclus      &lt;NA&gt;                          pt_laplace_split            1    
-16 sympres       &lt;NA&gt;                          codesymnmf_init             0.171
+16 sympres       &lt;NA&gt;                          codesymnmf_init             0.357
 17 sympres       &lt;NA&gt;                          ebmfcov_greedy_refit_…      0.929
 18 sympres       &lt;NA&gt;                          pt_laplace_split            1    </code></pre>
 <pre class="r"><code>baltree_prop_results &lt;- dscout %&gt;% filter(simulate == &#39;baltree_4pop&#39;, score == &#39;prop_true_high_cos_sim&#39;) %&gt;% group_by(analyze, analyze.ebnm_fn, initialization) %&gt;% summarise(metric = mean(score.result)) %&gt;% mutate(method = paste(analyze, initialization, sep=&#39;-&#39;)) %&gt;% rename(grouping = initialization)</code></pre>
 <pre><code>`summarise()` has grouped output by &#39;analyze&#39;, &#39;analyze.ebnm_fn&#39;. You can
 override using the `.groups` argument.</code></pre>
-<pre class="r"><code>dot_plot(baltree_prop_results, &#39;Proportion Recovered for Unbalanced Nonoverlapping&#39;, &#39;&#39;, &#39;&#39;)</code></pre>
+<pre class="r"><code>dot_plot(baltree_prop_results, &#39;Proportion Recovered for Balanced Tree&#39;, &#39;&#39;, &#39;&#39;)</code></pre>
 <p><img src="figure/initialization_comparison.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-1">
+Past versions of unnamed-chunk-16-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-16-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/8b6c892ff541d74d1b9d074cf373852b35ce1ae5/docs/figure/initialization_comparison.Rmd/unnamed-chunk-16-1.png" target="_blank">8b6c892</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>We generally see the same trends with the proportion recovered
-metric. We see something slightly different with Flash with the normal
-prior on <span class="math inline">\(F\)</span> – the CoDesymNMF
-initialization performs slightly better than the EBMFcov greedy with
-refitting initialization.</p>
-<pre class="r"><code>prop_data_df &lt;- dscout %&gt;% filter(simulate == &#39;baltree_4pop&#39;, score %in% c(&#39;prop_true_high_cos_sim&#39;, &#39;prop_est_high_cos_sim&#39;)) %&gt;% group_by(analyze, analyze.ebnm_fn, initialization, score) %&gt;% summarise(metric = mean(score.result)) %&gt;% mutate(method = paste(analyze, initialization, sep=&#39;-&#39;)) %&gt;% rename(grouping = initialization)</code></pre>
+metric.</p>
+<pre class="r"><code>prop_data_df &lt;- dscout %&gt;% filter(simulate == &#39;baltree_4pop&#39;, score %in% c(&#39;prop_true_high_cos_sim&#39;, &#39;prop_est_high_cos_sim&#39;)) %&gt;% group_by(analyze, analyze.ebnm_fn, initialization, score) %&gt;% summarise(metric = mean(score.result)) %&gt;% mutate(method = paste(analyze, initialization, sep=&#39;-&#39;))</code></pre>
 <pre><code>`summarise()` has grouped output by &#39;analyze&#39;, &#39;analyze.ebnm_fn&#39;,
 &#39;initialization&#39;. You can override using the `.groups` argument.</code></pre>
 <pre class="r"><code>prop_est_high_cos_sim_vals &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;metric&#39;]]
 prop_true_high_cos_sim_vals &lt;- prop_data_df[(prop_data_df$score == &#39;prop_true_high_cos_sim&#39;) , ][[&#39;metric&#39;]]
 methods &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;analyze&#39;]]
-grouping &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;grouping&#39;]]
+initialization &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;initialization&#39;]]
 
-prop_plot_df &lt;- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals, grouping = grouping)</code></pre>
-<pre class="r"><code>ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals, color = grouping))  +
-  facet_wrap(~ grouping, scales = &quot;fixed&quot;) +
+prop_plot_df &lt;- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals, initialization = initialization)</code></pre>
+<pre class="r"><code>ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals, color = initialization, shape = method))  +
+  facet_wrap(~ initialization, scales = &quot;fixed&quot;) +
   geom_point(size = 3) +
   labs(title = &quot;&quot;,
        x = &quot;Proportion of Estimate Capturing True Signal&quot;,
        y = &quot;Proportion of True Signals Recovered&quot;)</code></pre>
 <p><img src="figure/initialization_comparison.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-18-1">
+Past versions of unnamed-chunk-18-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-18-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/8b6c892ff541d74d1b9d074cf373852b35ce1ae5/docs/figure/initialization_comparison.Rmd/unnamed-chunk-18-1.png" target="_blank">8b6c892</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="sparse-overlapping" class="section level1">
@@ -986,6 +1350,43 @@ prop_plot_df &lt;- data.frame(method = methods, prop_est_high_cos_sim_vals = pro
 `.groups` argument.</code></pre>
 <pre class="r"><code>dot_plot(overlap_crossprod_results, &#39;Crossproduct Similarity for Overlapping&#39;, &#39;&#39;, &#39;&#39;)</code></pre>
 <p><img src="figure/initialization_comparison.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-20-1">
+Past versions of unnamed-chunk-20-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-20-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/8b6c892ff541d74d1b9d074cf373852b35ce1ae5/docs/figure/initialization_comparison.Rmd/unnamed-chunk-20-1.png" target="_blank">8b6c892</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>With respect to the crossproduct similarity, the CoDesymNMF
 initialization performs the best. This is not entirely surprising since
 CoDesymNMF can perfectly recover the loadings when given the correct
@@ -1000,51 +1401,218 @@ override using the `.groups` argument.</code></pre>
 # Groups:   analyze, analyze.ebnm_fn [6]
    analyze       analyze.ebnm_fn               initialization         avg_result
    &lt;chr&gt;         &lt;chr&gt;                         &lt;chr&gt;                       &lt;dbl&gt;
- 1 codesymnmf    &lt;NA&gt;                          codesymnmf_init              0.97
- 2 codesymnmf    &lt;NA&gt;                          ebmfcov_greedy_refit_…       0.95
- 3 codesymnmf    &lt;NA&gt;                          pt_laplace_split             0.64
- 4 ebcd          ebnm::ebnm_generalized_binary codesymnmf_init              0.97
- 5 ebcd          ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…       0.96
- 6 ebcd          ebnm::ebnm_generalized_binary pt_laplace_split             0.83
- 7 ebmfcov_diag  ebnm::ebnm_generalized_binary codesymnmf_init              0.97
- 8 ebmfcov_diag  ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…       0.93
- 9 ebmfcov_diag  ebnm::ebnm_generalized_binary pt_laplace_split             0.78
+ 1 codesymnmf    &lt;NA&gt;                          codesymnmf_init              0.99
+ 2 codesymnmf    &lt;NA&gt;                          ebmfcov_greedy_refit_…       0.98
+ 3 codesymnmf    &lt;NA&gt;                          pt_laplace_split             1   
+ 4 ebcd          ebnm::ebnm_generalized_binary codesymnmf_init              0.98
+ 5 ebcd          ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…       0.97
+ 6 ebcd          ebnm::ebnm_generalized_binary pt_laplace_split             0.88
+ 7 ebmfcov_diag  ebnm::ebnm_generalized_binary codesymnmf_init              0.98
+ 8 ebmfcov_diag  ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…       0.94
+ 9 ebmfcov_diag  ebnm::ebnm_generalized_binary pt_laplace_split             0.88
 10 flash_normalf ebnm::ebnm_generalized_binary codesymnmf_init              0.97
-11 flash_normalf ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…       0.87
-12 flash_normalf ebnm::ebnm_generalized_binary pt_laplace_split             0.57
+11 flash_normalf ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…       0.91
+12 flash_normalf ebnm::ebnm_generalized_binary pt_laplace_split             0.67
 13 sindclus      &lt;NA&gt;                          codesymnmf_init              0.98
 14 sindclus      &lt;NA&gt;                          ebmfcov_greedy_refit_…       0.93
-15 sindclus      &lt;NA&gt;                          pt_laplace_split             0.88
+15 sindclus      &lt;NA&gt;                          pt_laplace_split             0.92
 16 sympres       &lt;NA&gt;                          codesymnmf_init              1   
 17 sympres       &lt;NA&gt;                          ebmfcov_greedy_refit_…       0.98
-18 sympres       &lt;NA&gt;                          pt_laplace_split             0.92</code></pre>
+18 sympres       &lt;NA&gt;                          pt_laplace_split             0.96</code></pre>
 <pre class="r"><code>overlap_prop_results &lt;- dscout %&gt;% filter(simulate == &#39;group_overlap&#39;, score == &#39;prop_true_high_cos_sim&#39;) %&gt;% group_by(analyze, analyze.ebnm_fn, initialization) %&gt;% summarise(metric = mean(score.result)) %&gt;% mutate(method = paste(analyze, initialization, sep=&#39;-&#39;)) %&gt;% rename(grouping = initialization)</code></pre>
 <pre><code>`summarise()` has grouped output by &#39;analyze&#39;, &#39;analyze.ebnm_fn&#39;. You can
 override using the `.groups` argument.</code></pre>
 <pre class="r"><code>dot_plot(overlap_prop_results, &#39;Proportion Recovered for Overlapping&#39;, &#39;&#39;, &#39;&#39;)</code></pre>
 <p><img src="figure/initialization_comparison.Rmd/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-1">
+Past versions of unnamed-chunk-22-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-22-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/8b6c892ff541d74d1b9d074cf373852b35ce1ae5/docs/figure/initialization_comparison.Rmd/unnamed-chunk-22-1.png" target="_blank">8b6c892</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>With respect to the proportion of factors recovered, the CoDesymNMF
 initialization also performs the best. However, with respect to this
 metric, the point-Laplace initialization consistently performs the
 worst.</p>
-<pre class="r"><code>prop_data_df &lt;- dscout %&gt;% filter(simulate == &#39;group_overlap&#39;, score %in% c(&#39;prop_true_high_cos_sim&#39;, &#39;prop_est_high_cos_sim&#39;)) %&gt;% group_by(analyze, analyze.ebnm_fn, initialization, score) %&gt;% summarise(metric = mean(score.result)) %&gt;% mutate(method = paste(analyze, initialization, sep=&#39;-&#39;)) %&gt;% rename(grouping = initialization)</code></pre>
+<pre class="r"><code>prop_data_df &lt;- dscout %&gt;% filter(simulate == &#39;group_overlap&#39;, score %in% c(&#39;prop_true_high_cos_sim&#39;, &#39;prop_est_high_cos_sim&#39;)) %&gt;% group_by(analyze, analyze.ebnm_fn, initialization, score) %&gt;% summarise(metric = mean(score.result)) %&gt;% mutate(method = paste(analyze, initialization, sep=&#39;-&#39;))</code></pre>
 <pre><code>`summarise()` has grouped output by &#39;analyze&#39;, &#39;analyze.ebnm_fn&#39;,
 &#39;initialization&#39;. You can override using the `.groups` argument.</code></pre>
 <pre class="r"><code>prop_est_high_cos_sim_vals &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;metric&#39;]]
 prop_true_high_cos_sim_vals &lt;- prop_data_df[(prop_data_df$score == &#39;prop_true_high_cos_sim&#39;) , ][[&#39;metric&#39;]]
 methods &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;analyze&#39;]]
-grouping &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;grouping&#39;]]
+initialization &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;initialization&#39;]]
 
-prop_plot_df &lt;- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals, grouping = grouping)</code></pre>
-<pre class="r"><code>ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals, color = grouping)) +
-  facet_wrap(~ grouping, scales = &quot;fixed&quot;) + 
+prop_plot_df &lt;- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals, initialization = initialization)</code></pre>
+<pre class="r"><code>ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals, color = initialization, shape = method)) +
+  facet_wrap(~ initialization, scales = &quot;fixed&quot;) + 
   geom_point(size = 3) +
   labs(title = &quot;&quot;,
        x = &quot;Proportion of Estimate Capturing True Signal&quot;,
        y = &quot;Proportion of True Signals Recovered&quot;)</code></pre>
 <p><img src="figure/initialization_comparison.Rmd/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-24-1">
+Past versions of unnamed-chunk-24-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-24-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/8b6c892ff541d74d1b9d074cf373852b35ce1ae5/docs/figure/initialization_comparison.Rmd/unnamed-chunk-24-1.png" target="_blank">8b6c892</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-09-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Again, we see that the point-Laplace-initialized estimates tend to
 return extra factors.</p>
+</div>
+</div>
+<div id="unbalanced-tree" class="section level1">
+<h1>Unbalanced Tree</h1>
+<div id="crossproduct-similarity-4" class="section level2">
+<h2>Crossproduct Similarity</h2>
+<pre class="r"><code>dscout %&gt;% filter(simulate == &#39;unbaltree_4pop&#39;, score == &#39;crossprod_similarity&#39;) %&gt;% group_by(analyze, initialization) %&gt;% summarise(avg_result = mean(score.result))</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;analyze&#39;. You can override using the
+`.groups` argument.</code></pre>
+<pre><code># A tibble: 18 × 3
+# Groups:   analyze [6]
+   analyze       initialization           avg_result
+   &lt;chr&gt;         &lt;chr&gt;                         &lt;dbl&gt;
+ 1 codesymnmf    codesymnmf_init               0.870
+ 2 codesymnmf    ebmfcov_greedy_refit_alt      0.843
+ 3 codesymnmf    pt_laplace_split              0.826
+ 4 ebcd          codesymnmf_init               0.695
+ 5 ebcd          ebmfcov_greedy_refit_alt      0.793
+ 6 ebcd          pt_laplace_split              0.794
+ 7 ebmfcov_diag  codesymnmf_init               0.795
+ 8 ebmfcov_diag  ebmfcov_greedy_refit_alt      0.881
+ 9 ebmfcov_diag  pt_laplace_split              0.828
+10 flash_normalf codesymnmf_init               0.571
+11 flash_normalf ebmfcov_greedy_refit_alt      0.686
+12 flash_normalf pt_laplace_split              0.754
+13 sindclus      codesymnmf_init               0.775
+14 sindclus      ebmfcov_greedy_refit_alt      0.818
+15 sindclus      pt_laplace_split              0.732
+16 sympres       codesymnmf_init               0.836
+17 sympres       ebmfcov_greedy_refit_alt      0.822
+18 sympres       pt_laplace_split              0.737</code></pre>
+<pre class="r"><code>unbaltree_crossprod_results &lt;- dscout %&gt;% filter(simulate == &#39;unbaltree_4pop&#39;, score == &#39;crossprod_similarity&#39;) %&gt;% group_by(analyze, initialization) %&gt;% summarise(metric = mean(score.result)) %&gt;% mutate(method = paste(analyze, initialization, sep=&#39;-&#39;)) %&gt;% rename(grouping = initialization)</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;analyze&#39;. You can override using the
+`.groups` argument.</code></pre>
+<pre class="r"><code>dot_plot(unbaltree_crossprod_results, &#39;Crossproduct Similarity for Unbalanced Tree&#39;, &#39;&#39;, &#39;&#39;)</code></pre>
+<p><img src="figure/initialization_comparison.Rmd/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>With respect to the crossproduct similarity, the performance is
+mixed.</p>
+</div>
+<div id="proportions-4" class="section level2">
+<h2>Proportions</h2>
+<pre class="r"><code>dscout %&gt;% filter(simulate == &#39;unbaltree_4pop&#39;, score == &#39;prop_true_high_cos_sim&#39;) %&gt;% group_by(analyze, analyze.ebnm_fn, initialization) %&gt;% summarise(avg_result = mean(score.result))</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;analyze&#39;, &#39;analyze.ebnm_fn&#39;. You can
+override using the `.groups` argument.</code></pre>
+<pre><code># A tibble: 18 × 4
+# Groups:   analyze, analyze.ebnm_fn [6]
+   analyze       analyze.ebnm_fn               initialization         avg_result
+   &lt;chr&gt;         &lt;chr&gt;                         &lt;chr&gt;                       &lt;dbl&gt;
+ 1 codesymnmf    &lt;NA&gt;                          codesymnmf_init             0.743
+ 2 codesymnmf    &lt;NA&gt;                          ebmfcov_greedy_refit_…      0.814
+ 3 codesymnmf    &lt;NA&gt;                          pt_laplace_split            0.971
+ 4 ebcd          ebnm::ebnm_generalized_binary codesymnmf_init             0.7  
+ 5 ebcd          ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…      0.814
+ 6 ebcd          ebnm::ebnm_generalized_binary pt_laplace_split            0.857
+ 7 ebmfcov_diag  ebnm::ebnm_generalized_binary codesymnmf_init             0.629
+ 8 ebmfcov_diag  ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…      0.929
+ 9 ebmfcov_diag  ebnm::ebnm_generalized_binary pt_laplace_split            0.957
+10 flash_normalf ebnm::ebnm_generalized_binary codesymnmf_init             0.429
+11 flash_normalf ebnm::ebnm_generalized_binary ebmfcov_greedy_refit_…      0.586
+12 flash_normalf ebnm::ebnm_generalized_binary pt_laplace_split            0.557
+13 sindclus      &lt;NA&gt;                          codesymnmf_init             0.371
+14 sindclus      &lt;NA&gt;                          ebmfcov_greedy_refit_…      0.529
+15 sindclus      &lt;NA&gt;                          pt_laplace_split            0.386
+16 sympres       &lt;NA&gt;                          codesymnmf_init             0.357
+17 sympres       &lt;NA&gt;                          ebmfcov_greedy_refit_…      0.543
+18 sympres       &lt;NA&gt;                          pt_laplace_split            0.357</code></pre>
+<pre class="r"><code>unbaltree_prop_results &lt;- dscout %&gt;% filter(simulate == &#39;unbaltree_4pop&#39;, score == &#39;prop_true_high_cos_sim&#39;) %&gt;% group_by(analyze, analyze.ebnm_fn, initialization) %&gt;% summarise(metric = mean(score.result)) %&gt;% mutate(method = paste(analyze, initialization, sep=&#39;-&#39;)) %&gt;% rename(grouping = initialization)</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;analyze&#39;, &#39;analyze.ebnm_fn&#39;. You can
+override using the `.groups` argument.</code></pre>
+<pre class="r"><code>dot_plot(baltree_prop_results, &#39;Proportion Recovered for Unbalanced Tree&#39;, &#39;&#39;, &#39;&#39;)</code></pre>
+<p><img src="figure/initialization_comparison.Rmd/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>prop_data_df &lt;- dscout %&gt;% filter(simulate == &#39;unbaltree_4pop&#39;, score %in% c(&#39;prop_true_high_cos_sim&#39;, &#39;prop_est_high_cos_sim&#39;)) %&gt;% group_by(analyze, analyze.ebnm_fn, initialization, score) %&gt;% summarise(metric = mean(score.result)) %&gt;% mutate(method = paste(analyze, initialization, sep=&#39;-&#39;))</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;analyze&#39;, &#39;analyze.ebnm_fn&#39;,
+&#39;initialization&#39;. You can override using the `.groups` argument.</code></pre>
+<pre class="r"><code>prop_est_high_cos_sim_vals &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;metric&#39;]]
+prop_true_high_cos_sim_vals &lt;- prop_data_df[(prop_data_df$score == &#39;prop_true_high_cos_sim&#39;) , ][[&#39;metric&#39;]]
+methods &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;analyze&#39;]]
+initialization &lt;- prop_data_df[(prop_data_df$score == &#39;prop_est_high_cos_sim&#39;) , ][[&#39;initialization&#39;]]
+
+prop_plot_df &lt;- data.frame(method = methods, prop_est_high_cos_sim_vals = prop_est_high_cos_sim_vals, prop_true_high_cos_sim_vals = prop_true_high_cos_sim_vals, initialization = initialization)</code></pre>
+<pre class="r"><code>ggplot(data = prop_plot_df, aes(x = prop_est_high_cos_sim_vals, y = prop_true_high_cos_sim_vals, color = initialization, shape = method))  +
+  facet_wrap(~ initialization, scales = &quot;fixed&quot;) +
+  geom_point(size = 3) +
+  labs(title = &quot;&quot;,
+       x = &quot;Proportion of Estimate Capturing True Signal&quot;,
+       y = &quot;Proportion of True Signals Recovered&quot;)</code></pre>
+<p><img src="figure/initialization_comparison.Rmd/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>With respect to the proportion recovered metric, the point-Laplace
+plus splitting initialization performs the best and the CoDesymNMF
+initialization performs the worst. The point-Laplace plus splitting
+initialization does not seem to return extra factors; the CoDesymNMF and
+EBMFcov greedy with refitting initializations were given the correct
+number of components.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
