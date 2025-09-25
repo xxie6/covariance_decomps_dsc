@@ -26,6 +26,11 @@ DSC analyses (9/8/2025):
 
 All other analyses:    
   
+* Exploration of [similarity metrics and what thresholds to use](metric_threshold_exploration.html)  
+* Exploration of [initialization in the balanced tree setting](init_comparison_baltree_setting.html)  
+* Exploration of [initialization in the sparse overlapping setting](init_comparison_baltree_setting.html)  
+* Comparison of [three different initializations](initialization_comparison.html)  
+* Exploration of [EBMF with normal prior on F in Unbalanced, nonoverlapping setting](unbal_nonoverlap_pt_laplace_split_init_flash_normalf.html)
 * Exploration of [EBMFcov with large K in the sparse, overlapping setting](sparse_overlapping_ebmfcov.html)  
 * Exploration of [EBMFcov with different initializations in the sparse, overlapping setting](ebmfcov_init_comparison_sparse_overlapping.html)  
 * Exploration of [GBCD in the Unbalanced tree setting](unbalanced_tree_analysis.html)  
