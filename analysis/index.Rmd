@@ -29,7 +29,7 @@ All other analyses:
 * Comparison of [three different initializations with large K input](initialization_larger_K_comparison.html)  
 * Exploration of [similarity metrics and what thresholds to use](metric_threshold_exploration.html)  
 * Exploration of [initialization in the balanced tree setting](init_comparison_baltree_setting.html)  
-* Exploration of [initialization in the sparse overlapping setting](init_comparison_baltree_setting.html)  
+* Exploration of [initialization in the sparse overlapping setting](init_comparison_overlap_setting.html)  
 * Comparison of [three different initializations](initialization_comparison.html)  
 * Exploration of [EBMF with normal prior on F in Unbalanced, nonoverlapping setting](unbal_nonoverlap_pt_laplace_split_init_flash_normalf.html)
 * Exploration of [EBMFcov with large K in the sparse, overlapping setting](sparse_overlapping_ebmfcov.html)  
