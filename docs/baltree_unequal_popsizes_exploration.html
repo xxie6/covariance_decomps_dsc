@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Annie Xie" />
+
+<meta name="date" content="2025-11-17" />
+
+<title>baltree_unequal_popsizes_exploration</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">covariance_decomps_dsc</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/xxie6/covariance_decomps_dsc">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">baltree_unequal_popsizes_exploration</h1>
+<h4 class="author">Annie Xie</h4>
+<h4 class="date">2025-11-17</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2025-11-18
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>covariance_decomps_dsc/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.2). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20250203code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20250203)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20250203code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20250203)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreebacd1b1dd5d5abc2cd26bb8c05b584c7380f2755targetblankbacd1b1a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/bacd1b1dd5d5abc2cd26bb8c05b584c7380f2755" target="_blank">bacd1b1</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomxxie6covariancedecompsdsctreebacd1b1dd5d5abc2cd26bb8c05b584c7380f2755targetblankbacd1b1a"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/xxie6/covariance_decomps_dsc/tree/bacd1b1dd5d5abc2cd26bb8c05b584c7380f2755" target="_blank">bacd1b1</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    data/.DS_Store
+    Ignored:    data/adclus_cov_comp_dsc_ex/.DS_Store
+    Ignored:    data/adclus_same_init_dsc_ex/.DS_Store
+    Ignored:    data/pt_laplace_split_init_ex/.DS_Store
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown
+(<code>analysis/baltree_unequal_popsizes_exploration.Rmd</code>) and
+HTML (<code>docs/baltree_unequal_popsizes_exploration.html</code>)
+files. If you’ve configured a remote Git repository (see
+<code>?wflow_git_remote</code>), click on the hyperlinks in the table
+below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/xxie6/covariance_decomps_dsc/blob/bacd1b1dd5d5abc2cd26bb8c05b584c7380f2755/analysis/baltree_unequal_popsizes_exploration.Rmd" target="_blank">bacd1b1</a>
+</td>
+<td>
+Annie Xie
+</td>
+<td>
+2025-11-18
+</td>
+<td>
+Add exploration of balanced tree with unequal population sizes
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>In this analysis, I explore a simulation setting where the data is
+generated according to a balanced tree, but the leaves
+(i.e. populations) are different sizes. The reason I am interested in
+this is because of the row split stability selection method. In the row
+split stability selection method, we randomly split the samples into two
+groups. When applied to the balanced tree setting, this means that the
+leaves will likely be slightly different sizes. I want to investigate
+whether variation in the leaf sizes affects the methods’ abilities to
+recover a tree structure. Ideally the methods would be robust to this,
+but I’m not exactly sure.</p>
+</div>
+<div id="packages-and-functions" class="section level1">
+<h1>Packages and Functions</h1>
+<pre class="r"><code>library(dplyr)
+library(ggplot2)
+library(pheatmap)
+library(flashier)</code></pre>
+<pre class="r"><code>source(&#39;code/visualization_functions.R&#39;)</code></pre>
+</div>
+<div id="data-generation" class="section level1">
+<h1>Data Generation</h1>
+<pre class="r"><code>sim_4pops &lt;- function(args) {
+  set.seed(args$seed)
+  
+  n &lt;- sum(args$pop_sizes)
+  p &lt;- args$n_genes
+  
+  FF &lt;- matrix(rnorm(7 * p, sd = rep(args$branch_sds, each = p)), ncol = 7)
+  # if (args$constrain_F) {
+  #   FF_svd &lt;- svd(FF)
+  #   FF &lt;- FF_svd$u
+  #   FF &lt;- t(t(FF) * branch_sds * sqrt(p))
+  # }
+  
+  LL &lt;- matrix(0, nrow = n, ncol = 7)
+  LL[, 1] &lt;- 1
+  LL[, 2] &lt;- rep(c(1, 1, 0, 0), times = args$pop_sizes)
+  LL[, 3] &lt;- rep(c(0, 0, 1, 1), times = args$pop_sizes)
+  LL[, 4] &lt;- rep(c(1, 0, 0, 0), times = args$pop_sizes)
+  LL[, 5] &lt;- rep(c(0, 1, 0, 0), times = args$pop_sizes)
+  LL[, 6] &lt;- rep(c(0, 0, 1, 0), times = args$pop_sizes)
+  LL[, 7] &lt;- rep(c(0, 0, 0, 1), times = args$pop_sizes)
+  
+  E &lt;- matrix(rnorm(n * p, sd = args$indiv_sd), nrow = n)
+  Y &lt;- LL %*% t(FF) + E
+  YYt &lt;- (1/p)*tcrossprod(Y)
+  return(list(Y = Y, YYt = YYt, LL = LL, FF = FF, K = ncol(LL)))
+}</code></pre>
+<pre class="r"><code>sim_args = list(pop_sizes = c(20,50,30,60), n_genes = 1000, branch_sds = rep(2,7), indiv_sd = 1, seed = 1)
+sim_data &lt;- sim_4pops(sim_args)</code></pre>
+<p>This is a heatmap of the scaled Gram matrix:</p>
+<pre class="r"><code>plot_heatmap(sim_data$YYt)</code></pre>
+<p><img src="figure/baltree_unequal_popsizes_exploration.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a heatmap of the loadings matrix:</p>
+<pre class="r"><code>plot_heatmap(sim_data$LL)</code></pre>
+<p><img src="figure/baltree_unequal_popsizes_exploration.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gbcd" class="section level1">
+<h1>GBCD</h1>
+<p>GBCD is the primary method which performs well in the tree setting,
+so I want to check if GBCD still performs well. I feel like it should be
+able to, but I’m not sure if the symmetry in population sizes
+contributes to the performance of the point-Laplace fit.</p>
+<p>We will break down GBCD into its various steps. (Note: this is not
+exactly the same as what GBCD does, but the general idea behind the
+steps is the same).</p>
+<div id="investigating-a-point-laplace-fit" class="section level2">
+<h2>Investigating a point-Laplace fit</h2>
+<pre class="r"><code>laplace_split_initialization &lt;- function(S, Kmax, verbose = 2, backfit_maxiter = 500, backfit_tol = NULL){
+  # backfitting is important in the tree setting
+  
+  # fit point-laplace fit with flash
+  flash_laplace_fit &lt;- flash_init(data = S, var_type = 0) |&gt;
+    flash_set_verbose(verbose = verbose) |&gt;
+    flash_greedy(Kmax = Kmax, ebnm_fn = ebnm::ebnm_point_laplace) |&gt;
+    flash_backfit(maxiter = backfit_maxiter, tol = backfit_tol) |&gt;
+    flash_nullcheck()
+  
+  # rescale fit so that L and F are of the same scale
+  flash_laplace_fit_scaled &lt;- ldf(flash_laplace_fit, &#39;i&#39;)
+  LL &lt;- flash_laplace_fit_scaled$L
+  ##FF &lt;- flash_laplace_fit_scaled$F
+  
+  # split into positive and negative components
+  LL &lt;- cbind(pmax(LL, 0), pmax(-LL, 0))
+  ##FF &lt;- cbind(pmax(FF, 0), pmax(-FF, 0))
+  
+  # remove columns of zeros
+  idx.nonzero &lt;- apply(LL, 2, function(x){return(sum(x^2))}) &gt; 10^(-10)
+  LL &lt;- LL[, idx.nonzero]
+  
+  # refit weights by least squares
+  n &lt;- nrow(S)
+  llt_vec &lt;- matrix(rep(0, ncol(LL)*n*n), ncol = ncol(LL))
+  for (i in 1:ncol(LL)){
+    llt_vec[,i] &lt;- c(LL[,i]%*%t(LL[,i]))
+  }
+
+  nnlm_fit &lt;- NNLM::nnlm(llt_vec, as.matrix(c(S), ncol = 1), alpha = c(0,0,0))
+
+  indices_keep &lt;- (nnlm_fit$coefficients &gt; 0)
+  LL_scaled &lt;- LL[,indices_keep] %*% diag(sqrt(nnlm_fit$coefficients[indices_keep]))
+  
+  return(list(init_L = LL_scaled, pt_laplace_flash_fit = flash_laplace_fit))
+}</code></pre>
+<pre class="r"><code>pt_laplace_split_init &lt;- laplace_split_initialization(sim_data$YYt, 7, backfit_maxiter = 500)</code></pre>
+<pre><code>Adding factor 1 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: -69670.252 
+Adding factor 2 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: -45697.977 
+Adding factor 3 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: -34839.988 
+Adding factor 4 to flash object...
+  Optimizing factor...
+  Factor successfully added. Objective: -19269.747 
+Adding factor 5 to flash object...
+  Optimizing factor...
+Factor doesn&#39;t significantly increase objective and won&#39;t be added.
+Wrapping up...
+Done.
+Backfitting 4 factors (tolerance: 3.81e-04)...
+  Difference between iterations is within 1.0e+04...
+  Difference between iterations is within 1.0e+03...
+  Difference between iterations is within 1.0e+02...
+  Difference between iterations is within 1.0e+01...
+  Difference between iterations is within 1.0e+00...
+  Difference between iterations is within 1.0e-01...
+  Difference between iterations is within 1.0e-02...
+  Difference between iterations is within 1.0e-03...
+  Backfit complete. Objective: 19468.398 
+Wrapping up...
+Done.
+Nullchecking 4 factors...
+  No factor can be removed without significantly decreasing the objective.
+Done.</code></pre>
+<p>This is a scatter plot of the loadings estimate from the
+point-Laplace fit:</p>
+<pre class="r"><code>plot_loadings(pt_laplace_split_init$pt_laplace_flash_fit$L_pm, Pop = rep(c(&#39;A&#39;,&#39;B&#39;,&#39;C&#39;,&#39;D&#39;), times = c(20,50,30,60)))</code></pre>
+<p><img src="figure/baltree_unequal_popsizes_exploration.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a scatter plot of the factor estimate from the point-Laplace
+fit (due to the symmetry of the Gram matrix, we expect the factor
+estimate to look like the loadings estimate):</p>
+<pre class="r"><code>plot_loadings(pt_laplace_split_init$pt_laplace_flash_fit$F_pm, Pop = rep(c(&#39;A&#39;,&#39;B&#39;,&#39;C&#39;,&#39;D&#39;), times = c(20,50,30,60)))</code></pre>
+<p><img src="figure/baltree_unequal_popsizes_exploration.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>We see that the point-Laplace fit does not recover the binary
+components of the divergence factorization as well as the equal group
+case. For example, the baseline factor spans a range of values rather
+than being binary. The second factor is able to split the groups into
+their two respective branches. The third group also correctly splits the
+second branch into its two leaves. However, the fourth factor only
+identifies one of the two leaves in the first branch.</p>
+<p>This is a plot of the non-negative loadings initialization for the gb
+fit:</p>
+<pre class="r"><code>plot_loadings(pt_laplace_split_init$init_L, Pop = rep(c(&#39;A&#39;,&#39;B&#39;,&#39;C&#39;,&#39;D&#39;), times = c(20,50,30,60)))</code></pre>
+<p><img src="figure/baltree_unequal_popsizes_exploration.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gb-fit" class="section level2">
+<h2>GB fit</h2>
+<p>In this section, I fit the covariance decomposition with generalized
+binary prior. Here, I use the default scale setting for the generalized
+binary prior, which is 0.1.</p>
+<p>Given that the point-Laplace fit missed one of the
+population-specific factors, the generalized binary fit will also miss
+this factor. However, the generalized binary fit might be able to make
+the other factors look more binary, more closely resembling the desired
+tree representation.</p>
+<pre class="r"><code>cov_fit_backfit &lt;- function(covmat, init_L, ebnm_fn = ebnm::ebnm_point_laplace, verbose.lvl = 0) {
+  fl &lt;- flash_init(covmat, var_type = 0) |&gt;
+    flash_set_verbose(verbose.lvl) |&gt;
+    flash_factors_init(list(init_L, init_L), ebnm_fn = ebnm_fn)
+  s2 &lt;- max(0, mean(diag(covmat) - diag(fitted(fl))))
+  s2_diff &lt;- Inf
+  while(s2 &gt; 0 &amp;&amp; abs(s2_diff - 1) &gt; 1e-4) {
+    covmat_minuss2 &lt;- covmat - diag(rep(s2, ncol(covmat)))
+    fl &lt;- fl |&gt;
+      flash_update_data(covmat_minuss2) |&gt;
+      flash_set_verbose(verbose.lvl) |&gt;
+      flash_backfit() |&gt;
+      flash_nullcheck()
+    old_s2 &lt;- s2
+    s2 &lt;- max(0, mean(diag(covmat) - diag(fitted(fl))))
+    s2_diff &lt;- s2 / old_s2
+  }
+  
+  return(list(fl=fl, s2 = s2))
+}</code></pre>
+<pre class="r"><code>ebmfcov_diag_fit &lt;- cov_fit_backfit(sim_data$YYt, 
+                                    init_L = pt_laplace_split_init$init_L,
+                                    ebnm_fn = ebnm::ebnm_generalized_binary)</code></pre>
+<pre><code>Warning in report.maxiter.reached(verbose.lvl): Maximum number of iterations
+reached.</code></pre>
+<pre class="r"><code>ebmfcov_diag_flash_fit_scaled &lt;- ldf(ebmfcov_diag_fit$fl, &#39;i&#39;)
+est_L_scaled &lt;- ebmfcov_diag_flash_fit_scaled$L %*% diag(sqrt(ebmfcov_diag_flash_fit_scaled$D))
+est_F_scaled &lt;- ebmfcov_diag_flash_fit_scaled$F %*% diag(sqrt(ebmfcov_diag_flash_fit_scaled$D))</code></pre>
+<p>This is a plot of the loadings estimate:</p>
+<pre class="r"><code>plot_loadings(est_L_scaled, rep(c(&#39;A&#39;,&#39;B&#39;,&#39;C&#39;,&#39;D&#39;), times = c(20,50,30,60)))</code></pre>
+<p><img src="figure/baltree_unequal_popsizes_exploration.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a plot of the factor estimate. Again, we expect this to match
+the loadings estimate:</p>
+<pre class="r"><code>plot_loadings(est_F_scaled, rep(c(&#39;A&#39;,&#39;B&#39;,&#39;C&#39;,&#39;D&#39;), times = c(20,50,30,60)))</code></pre>
+<p><img src="figure/baltree_unequal_popsizes_exploration.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the two estimates:</p>
+<pre class="r"><code>diag(cor(est_L_scaled, est_F_scaled))</code></pre>
+<pre><code>[1]  0.994789995  0.974333717 -0.004083429  0.998877406  0.981471833
+[6]  0.999339358</code></pre>
+<p>The baseline factor estimates actually have low correlation, and so
+they would get filtered out of the estimate. Perhaps if I used a more
+strictly binary prior, the baseline estimates would have looked more
+similar.</p>
+</div>
+<div id="alternative-gb-fit-with-more-strictly-binary-prior"
+class="section level2">
+<h2>Alternative: GB fit with more strictly binary prior</h2>
+<p>In this section, I fit the covariance decomposition with a more
+strictly binary version of the generalized binary prior. To make the
+prior more binary, I set <code>scale = 0.04</code>.</p>
+<pre class="r"><code>ebmfcov_diag_lower_scale_fit &lt;- cov_fit_backfit(sim_data$YYt, 
+                                    init_L = pt_laplace_split_init$init_L,
+                                    ebnm_fn = flash_ebnm(prior_family = &quot;generalized_binary&quot;, scale = 0.04))</code></pre>
+<pre class="r"><code>ebmfcov_diag_lower_scale_fit_scaled &lt;- ldf(ebmfcov_diag_lower_scale_fit$fl, &#39;i&#39;)
+est_L_lower_scale_scaled &lt;- ebmfcov_diag_lower_scale_fit_scaled$L %*% diag(sqrt(ebmfcov_diag_lower_scale_fit_scaled$D))
+est_F_lower_scale_scaled &lt;- ebmfcov_diag_lower_scale_fit_scaled$F %*% diag(sqrt(ebmfcov_diag_lower_scale_fit_scaled$D))</code></pre>
+<p>This is a plot of the loadings estimate:</p>
+<pre class="r"><code>plot_loadings(est_L_lower_scale_scaled, rep(c(&#39;A&#39;,&#39;B&#39;,&#39;C&#39;,&#39;D&#39;), times = c(20,50,30,60)))</code></pre>
+<p><img src="figure/baltree_unequal_popsizes_exploration.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a plot of the factor estimate. Again, we expect this to match
+the loadings estimate:</p>
+<pre class="r"><code>plot_loadings(est_F_lower_scale_scaled, rep(c(&#39;A&#39;,&#39;B&#39;,&#39;C&#39;,&#39;D&#39;), times = c(20,50,30,60)))</code></pre>
+<p><img src="figure/baltree_unequal_popsizes_exploration.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the two estimates:</p>
+<pre class="r"><code>diag(cor(est_L_lower_scale_scaled, est_F_lower_scale_scaled))</code></pre>
+<pre><code>[1] 1 1 1 1 1 1</code></pre>
+<p>This is the ELBO of the fit:</p>
+<pre class="r"><code>ebmfcov_diag_lower_scale_fit$fl$elbo</code></pre>
+<pre><code>[1] 26402.98</code></pre>
+<p>With a more strictly binary prior, the result looks more like a tree.
+But the representation of the first branch and its corresponding leaves
+is not exactly what we wanted to recover. Does the factor capturing the
+first branch also include the population-specific effect for the green
+population?</p>
+</div>
+</div>
+<div id="initialize-gb-fit-with-the-true-loadings"
+class="section level1">
+<h1>Initialize GB fit with the true loadings</h1>
+<p>In this section, I use the true loadings matrix to initialize the
+covariance decomposition fit. I stick with the more strictly binary
+version of the prior.</p>
+<pre class="r"><code>ebmfcov_diag_true_init_fit &lt;- cov_fit_backfit(sim_data$YYt, 
+                                    init_L = sim_data$LL %*% diag(sqrt(apply(sim_data$FF, 2, function(x){sum(x^2)}))),
+                                    ebnm_fn = flash_ebnm(prior_family = &quot;generalized_binary&quot;, scale = 0.04))</code></pre>
+<pre class="r"><code>ebmfcov_diag_true_init_fit_scaled &lt;- ldf(ebmfcov_diag_true_init_fit$fl, &#39;i&#39;)
+est_L_true_init_scaled &lt;- ebmfcov_diag_true_init_fit_scaled$L %*% diag(sqrt(ebmfcov_diag_true_init_fit_scaled$D))
+est_F_true_init_scaled &lt;- ebmfcov_diag_true_init_fit_scaled$F %*% diag(sqrt(ebmfcov_diag_true_init_fit_scaled$D))</code></pre>
+<p>This is a plot of the loadings estimate:</p>
+<pre class="r"><code>plot_loadings(est_L_true_init_scaled, rep(c(&#39;A&#39;,&#39;B&#39;,&#39;C&#39;,&#39;D&#39;), times = c(20,50,30,60)))</code></pre>
+<p><img src="figure/baltree_unequal_popsizes_exploration.Rmd/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is a plot of the factor estimate. Again, we expect this to match
+the loadings estimate:</p>
+<pre class="r"><code>plot_loadings(est_F_true_init_scaled, rep(c(&#39;A&#39;,&#39;B&#39;,&#39;C&#39;,&#39;D&#39;), times = c(20,50,30,60)))</code></pre>
+<p><img src="figure/baltree_unequal_popsizes_exploration.Rmd/unnamed-chunk-27-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This is the correlation between the two estimates:</p>
+<pre class="r"><code>diag(cor(est_L_true_init_scaled, est_F_true_init_scaled))</code></pre>
+<pre><code>Warning in cor(est_L_true_init_scaled, est_F_true_init_scaled): the standard
+deviation is zero</code></pre>
+<pre><code>[1] NA  1  1  1  1  1  1</code></pre>
+<p>This is the ELBO of the fit:</p>
+<pre class="r"><code>ebmfcov_diag_true_init_fit$fl$elbo</code></pre>
+<pre><code>[1] -267791.3</code></pre>
+<p>The other fit has a higher ELBO. So the method prefers the estimates
+from the previous fit.</p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.5.1 (2025-06-13)
+Platform: aarch64-apple-darwin20
+Running under: macOS Sequoia 15.6
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRblas.0.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+time zone: America/Chicago
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] flashier_1.0.56 ebnm_1.1-42     pheatmap_1.0.13 ggplot2_4.0.0  
+[5] dplyr_1.1.4     workflowr_1.7.2
+
+loaded via a namespace (and not attached):
+ [1] tidyselect_1.2.1      viridisLite_0.4.2     farver_2.1.2         
+ [4] S7_0.2.0              fastmap_1.2.0         lazyeval_0.2.2       
+ [7] promises_1.5.0        digest_0.6.37         lifecycle_1.0.4      
+[10] processx_3.8.6        invgamma_1.2          magrittr_2.0.4       
+[13] compiler_4.5.1        rlang_1.1.6           sass_0.4.10          
+[16] progress_1.2.3        tools_4.5.1           yaml_2.3.10          
+[19] data.table_1.17.8     knitr_1.50            labeling_0.4.3       
+[22] prettyunits_1.2.0     htmlwidgets_1.6.4     scatterplot3d_0.3-44 
+[25] plyr_1.8.9            RColorBrewer_1.1-3    Rtsne_0.17           
+[28] withr_3.0.2           purrr_1.2.0           grid_4.5.1           
+[31] git2r_0.36.2          fastTopics_0.7-30     colorspace_2.1-2     
+[34] scales_1.4.0          gtools_3.9.5          cli_3.6.5            
+[37] rmarkdown_2.30        crayon_1.5.3          generics_0.1.4       
+[40] otel_0.2.0            RcppParallel_5.1.11-1 rstudioapi_0.17.1    
+[43] httr_1.4.7            reshape2_1.4.4        pbapply_1.7-4        
+[46] cachem_1.1.0          stringr_1.6.0         splines_4.5.1        
+[49] parallel_4.5.1        softImpute_1.4-3      vctrs_0.6.5          
+[52] Matrix_1.7-4          jsonlite_2.0.0        callr_3.7.6          
+[55] hms_1.1.4             mixsqp_0.3-54         ggrepel_0.9.6        
+[58] irlba_2.3.5.1         trust_0.1-8           plotly_4.11.0        
+[61] jquerylib_0.1.4       tidyr_1.3.1           glue_1.8.0           
+[64] ps_1.9.1              uwot_0.2.3            cowplot_1.2.0        
+[67] stringi_1.8.7         Polychrome_1.5.4      gtable_0.3.6         
+[70] later_1.4.4           quadprog_1.5-8        NNLM_0.4.4           
+[73] tibble_3.3.0          pillar_1.11.1         htmltools_0.5.8.1    
+[76] truncnorm_1.0-9       R6_2.6.1              rprojroot_2.1.1      
+[79] evaluate_1.0.5        lattice_0.22-7        RhpcBLASctl_0.23-42  
+[82] SQUAREM_2021.1        ashr_2.2-67           httpuv_1.6.16        
+[85] bslib_0.9.0           Rcpp_1.1.0            deconvolveR_1.2-1    
+[88] whisker_0.4.1         xfun_0.54             fs_1.6.6             
+[91] getPass_0.2-4         pkgconfig_2.0.3      </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
