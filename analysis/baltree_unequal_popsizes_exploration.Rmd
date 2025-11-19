@@ -1,0 +1,278 @@
+---
+title: "baltree_unequal_popsizes_exploration"
+author: "Annie Xie"
+date: "2025-11-17"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+# Introduction
+
+In this analysis, I explore a simulation setting where the data is generated according to a balanced tree, but the leaves (i.e. populations) are different sizes. The reason I am interested in this is because of the row split stability selection method. In the row split stability selection method, we randomly split the samples into two groups. When applied to the balanced tree setting, this means that the leaves will likely be slightly different sizes. I want to investigate whether variation in the leaf sizes affects the methods' abilities to recover a tree structure. Ideally the methods would be robust to this, but I'm not exactly sure.
+
+# Packages and Functions
+
+```{r, message = FALSE, warning = FALSE}
+library(dplyr)
+library(ggplot2)
+library(pheatmap)
+library(flashier)
+```
+
+```{r}
+source('code/visualization_functions.R')
+```
+
+# Data Generation
+
+```{r}
+sim_4pops <- function(args) {
+  set.seed(args$seed)
+  
+  n <- sum(args$pop_sizes)
+  p <- args$n_genes
+  
+  FF <- matrix(rnorm(7 * p, sd = rep(args$branch_sds, each = p)), ncol = 7)
+  # if (args$constrain_F) {
+  #   FF_svd <- svd(FF)
+  #   FF <- FF_svd$u
+  #   FF <- t(t(FF) * branch_sds * sqrt(p))
+  # }
+  
+  LL <- matrix(0, nrow = n, ncol = 7)
+  LL[, 1] <- 1
+  LL[, 2] <- rep(c(1, 1, 0, 0), times = args$pop_sizes)
+  LL[, 3] <- rep(c(0, 0, 1, 1), times = args$pop_sizes)
+  LL[, 4] <- rep(c(1, 0, 0, 0), times = args$pop_sizes)
+  LL[, 5] <- rep(c(0, 1, 0, 0), times = args$pop_sizes)
+  LL[, 6] <- rep(c(0, 0, 1, 0), times = args$pop_sizes)
+  LL[, 7] <- rep(c(0, 0, 0, 1), times = args$pop_sizes)
+  
+  E <- matrix(rnorm(n * p, sd = args$indiv_sd), nrow = n)
+  Y <- LL %*% t(FF) + E
+  YYt <- (1/p)*tcrossprod(Y)
+  return(list(Y = Y, YYt = YYt, LL = LL, FF = FF, K = ncol(LL)))
+}
+```
+
+```{r}
+sim_args = list(pop_sizes = c(20,50,30,60), n_genes = 1000, branch_sds = rep(2,7), indiv_sd = 1, seed = 1)
+sim_data <- sim_4pops(sim_args)
+```
+
+This is a heatmap of the scaled Gram matrix:
+```{r}
+plot_heatmap(sim_data$YYt)
+```
+
+This is a heatmap of the loadings matrix:
+```{r}
+plot_heatmap(sim_data$LL)
+```
+
+# GBCD
+
+GBCD is the primary method which performs well in the tree setting, so I want to check if GBCD still performs well. I feel like it should be able to, but I'm not sure if the symmetry in population sizes contributes to the performance of the point-Laplace fit.
+
+We will break down GBCD into its various steps. (Note: this is not exactly the same as what GBCD does, but the general idea behind the steps is the same).
+
+## Investigating a point-Laplace fit
+
+```{r}
+laplace_split_initialization <- function(S, Kmax, verbose = 2, backfit_maxiter = 500, backfit_tol = NULL){
+  # backfitting is important in the tree setting
+  
+  # fit point-laplace fit with flash
+  flash_laplace_fit <- flash_init(data = S, var_type = 0) |>
+    flash_set_verbose(verbose = verbose) |>
+    flash_greedy(Kmax = Kmax, ebnm_fn = ebnm::ebnm_point_laplace) |>
+    flash_backfit(maxiter = backfit_maxiter, tol = backfit_tol) |>
+    flash_nullcheck()
+  
+  # rescale fit so that L and F are of the same scale
+  flash_laplace_fit_scaled <- ldf(flash_laplace_fit, 'i')
+  LL <- flash_laplace_fit_scaled$L
+  ##FF <- flash_laplace_fit_scaled$F
+  
+  # split into positive and negative components
+  LL <- cbind(pmax(LL, 0), pmax(-LL, 0))
+  ##FF <- cbind(pmax(FF, 0), pmax(-FF, 0))
+  
+  # remove columns of zeros
+  idx.nonzero <- apply(LL, 2, function(x){return(sum(x^2))}) > 10^(-10)
+  LL <- LL[, idx.nonzero]
+  
+  # refit weights by least squares
+  n <- nrow(S)
+  llt_vec <- matrix(rep(0, ncol(LL)*n*n), ncol = ncol(LL))
+  for (i in 1:ncol(LL)){
+    llt_vec[,i] <- c(LL[,i]%*%t(LL[,i]))
+  }
+
+  nnlm_fit <- NNLM::nnlm(llt_vec, as.matrix(c(S), ncol = 1), alpha = c(0,0,0))
+
+  indices_keep <- (nnlm_fit$coefficients > 0)
+  LL_scaled <- LL[,indices_keep] %*% diag(sqrt(nnlm_fit$coefficients[indices_keep]))
+  
+  return(list(init_L = LL_scaled, pt_laplace_flash_fit = flash_laplace_fit))
+}
+```
+
+```{r}
+pt_laplace_split_init <- laplace_split_initialization(sim_data$YYt, 7, backfit_maxiter = 500)
+```
+
+This is a scatter plot of the loadings estimate from the point-Laplace fit:
+```{r}
+plot_loadings(pt_laplace_split_init$pt_laplace_flash_fit$L_pm, Pop = rep(c('A','B','C','D'), times = c(20,50,30,60)))
+```
+
+This is a scatter plot of the factor estimate from the point-Laplace fit (due to the symmetry of the Gram matrix, we expect the factor estimate to look like the loadings estimate):
+```{r}
+plot_loadings(pt_laplace_split_init$pt_laplace_flash_fit$F_pm, Pop = rep(c('A','B','C','D'), times = c(20,50,30,60)))
+```
+
+We see that the point-Laplace fit does not recover the binary components of the divergence factorization as well as the equal group case. For example, the baseline factor spans a range of values rather than being binary. The second factor is able to split the groups into their two respective branches. The third group also correctly splits the second branch into its two leaves. However, the fourth factor only identifies one of the two leaves in the first branch.
+
+This is a plot of the non-negative loadings initialization for the gb fit:
+```{r}
+plot_loadings(pt_laplace_split_init$init_L, Pop = rep(c('A','B','C','D'), times = c(20,50,30,60)))
+```
+
+## GB fit
+
+In this section, I fit the covariance decomposition with generalized binary prior. Here, I use the default scale setting for the generalized binary prior, which is 0.1.
+
+Given that the point-Laplace fit missed one of the population-specific factors, the generalized binary fit will also miss this factor. However, the generalized binary fit might be able to make the other factors look more binary, more closely resembling the desired tree representation.
+
+```{r}
+cov_fit_backfit <- function(covmat, init_L, ebnm_fn = ebnm::ebnm_point_laplace, verbose.lvl = 0) {
+  fl <- flash_init(covmat, var_type = 0) |>
+    flash_set_verbose(verbose.lvl) |>
+    flash_factors_init(list(init_L, init_L), ebnm_fn = ebnm_fn)
+  s2 <- max(0, mean(diag(covmat) - diag(fitted(fl))))
+  s2_diff <- Inf
+  while(s2 > 0 && abs(s2_diff - 1) > 1e-4) {
+    covmat_minuss2 <- covmat - diag(rep(s2, ncol(covmat)))
+    fl <- fl |>
+      flash_update_data(covmat_minuss2) |>
+      flash_set_verbose(verbose.lvl) |>
+      flash_backfit() |>
+      flash_nullcheck()
+    old_s2 <- s2
+    s2 <- max(0, mean(diag(covmat) - diag(fitted(fl))))
+    s2_diff <- s2 / old_s2
+  }
+  
+  return(list(fl=fl, s2 = s2))
+}
+```
+
+```{r}
+ebmfcov_diag_fit <- cov_fit_backfit(sim_data$YYt, 
+                                    init_L = pt_laplace_split_init$init_L,
+                                    ebnm_fn = ebnm::ebnm_generalized_binary)
+```
+
+```{r}
+ebmfcov_diag_flash_fit_scaled <- ldf(ebmfcov_diag_fit$fl, 'i')
+est_L_scaled <- ebmfcov_diag_flash_fit_scaled$L %*% diag(sqrt(ebmfcov_diag_flash_fit_scaled$D))
+est_F_scaled <- ebmfcov_diag_flash_fit_scaled$F %*% diag(sqrt(ebmfcov_diag_flash_fit_scaled$D))
+```
+
+This is a plot of the loadings estimate:
+```{r}
+plot_loadings(est_L_scaled, rep(c('A','B','C','D'), times = c(20,50,30,60)))
+```
+
+This is a plot of the factor estimate. Again, we expect this to match the loadings estimate:
+```{r}
+plot_loadings(est_F_scaled, rep(c('A','B','C','D'), times = c(20,50,30,60)))
+```
+
+This is the correlation between the two estimates:
+```{r}
+diag(cor(est_L_scaled, est_F_scaled))
+```
+
+The baseline factor estimates actually have low correlation, and so they would get filtered out of the estimate. Perhaps if I used a more strictly binary prior, the baseline estimates would have looked more similar.
+
+## Alternative: GB fit with more strictly binary prior
+
+In this section, I fit the covariance decomposition with a more strictly binary version of the generalized binary prior. To make the prior more binary, I set `scale = 0.04`.
+
+```{r}
+ebmfcov_diag_lower_scale_fit <- cov_fit_backfit(sim_data$YYt, 
+                                    init_L = pt_laplace_split_init$init_L,
+                                    ebnm_fn = flash_ebnm(prior_family = "generalized_binary", scale = 0.04))
+```
+
+```{r}
+ebmfcov_diag_lower_scale_fit_scaled <- ldf(ebmfcov_diag_lower_scale_fit$fl, 'i')
+est_L_lower_scale_scaled <- ebmfcov_diag_lower_scale_fit_scaled$L %*% diag(sqrt(ebmfcov_diag_lower_scale_fit_scaled$D))
+est_F_lower_scale_scaled <- ebmfcov_diag_lower_scale_fit_scaled$F %*% diag(sqrt(ebmfcov_diag_lower_scale_fit_scaled$D))
+```
+
+This is a plot of the loadings estimate:
+```{r}
+plot_loadings(est_L_lower_scale_scaled, rep(c('A','B','C','D'), times = c(20,50,30,60)))
+```
+
+This is a plot of the factor estimate. Again, we expect this to match the loadings estimate:
+```{r}
+plot_loadings(est_F_lower_scale_scaled, rep(c('A','B','C','D'), times = c(20,50,30,60)))
+```
+
+This is the correlation between the two estimates:
+```{r}
+diag(cor(est_L_lower_scale_scaled, est_F_lower_scale_scaled))
+```
+
+This is the ELBO of the fit:
+```{r}
+ebmfcov_diag_lower_scale_fit$fl$elbo
+```
+
+With a more strictly binary prior, the result looks more like a tree. But the representation of the first branch and its corresponding leaves is not exactly what we wanted to recover. Does the factor capturing the first branch also include the population-specific effect for the green population?
+
+# Initialize GB fit with the true loadings
+
+In this section, I use the true loadings matrix to initialize the covariance decomposition fit. I stick with the more strictly binary version of the prior.
+
+```{r}
+ebmfcov_diag_true_init_fit <- cov_fit_backfit(sim_data$YYt, 
+                                    init_L = sim_data$LL %*% diag(sqrt(apply(sim_data$FF, 2, function(x){sum(x^2)}))),
+                                    ebnm_fn = flash_ebnm(prior_family = "generalized_binary", scale = 0.04))
+```
+
+```{r}
+ebmfcov_diag_true_init_fit_scaled <- ldf(ebmfcov_diag_true_init_fit$fl, 'i')
+est_L_true_init_scaled <- ebmfcov_diag_true_init_fit_scaled$L %*% diag(sqrt(ebmfcov_diag_true_init_fit_scaled$D))
+est_F_true_init_scaled <- ebmfcov_diag_true_init_fit_scaled$F %*% diag(sqrt(ebmfcov_diag_true_init_fit_scaled$D))
+```
+
+This is a plot of the loadings estimate:
+```{r}
+plot_loadings(est_L_true_init_scaled, rep(c('A','B','C','D'), times = c(20,50,30,60)))
+```
+
+This is a plot of the factor estimate. Again, we expect this to match the loadings estimate:
+```{r}
+plot_loadings(est_F_true_init_scaled, rep(c('A','B','C','D'), times = c(20,50,30,60)))
+```
+
+This is the correlation between the two estimates:
+```{r}
+diag(cor(est_L_true_init_scaled, est_F_true_init_scaled))
+```
+
+This is the ELBO of the fit:
+```{r}
+ebmfcov_diag_true_init_fit$fl$elbo
+```
+
+The other fit has a higher ELBO. So the method prefers the estimates from the previous fit.
+
