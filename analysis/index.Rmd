@@ -25,7 +25,8 @@ DSC analyses (9/8/2025):
 * [Results comparing methods from the same initialization](pt_laplace_split_init_comparison.html) and an [example of results](pt_laplace_split_init_comparison_pt2.html)
 
 All other analyses:    
-  
+   
+* Exploration of [balanced tree setting with unequal sized groups](baltree_unequal_popsizes_exploration.html)  
 * Comparison of [three different initializations with large K input](initialization_larger_K_comparison.html)  
 * Exploration of [similarity metrics and what thresholds to use](metric_threshold_exploration.html)  
 * Exploration of [initialization in the balanced tree setting](init_comparison_baltree_setting.html)  
